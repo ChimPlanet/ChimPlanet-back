@@ -1,0 +1,14 @@
+# appspec.yml
+
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/ubuntu/chimplanet # 인스턴스에서 파일이 저장될 위치
+
+permissions: #권한 허용
+  - object: /home/ubuntu/chimplanet/
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
