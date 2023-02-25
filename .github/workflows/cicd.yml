@@ -43,3 +43,7 @@ jobs:
 
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name deploy_chimplanet_code --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name deploy_chimplanet_code --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+        # application-name = Deploy 애플리케이션 이름 / deployment-config-name = 배포 그룹 설정에서 선택했던 배포 방식 / deployment-group-name = 배포 그룹 이름
