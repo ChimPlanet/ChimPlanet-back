@@ -18,5 +18,4 @@ public class ChimPlanetBackApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ChimPlanetBackApplication.class, args);
 	}
-
 }
