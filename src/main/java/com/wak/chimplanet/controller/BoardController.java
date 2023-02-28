@@ -24,7 +24,6 @@ public class BoardController {
     }
 
     @GetMapping("/api/boards")
-    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80"})
     public List<Board> getAllBoardList() {
         return boardService.getAllBoardList();
     }
