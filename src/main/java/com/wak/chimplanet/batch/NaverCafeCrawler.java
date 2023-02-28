@@ -31,7 +31,7 @@ public class NaverCafeCrawler {
                 "&userDisplay=50" +
                 "&search.boardtype=L";
 
-        logger.debug("iframeUrl  = {} ", iframeUrl);
+        logger.info("iframeUrl  = {} ", iframeUrl);
 
         try {
             // iframe 페이지 HTML 코드 가져오기
@@ -50,7 +50,7 @@ public class NaverCafeCrawler {
                 String likeCount = articleElement.select(".td_likes").text();
                 String endStr = isEnd(title);
 
-                logger.debug("boardId : {}, Title: {}, articleId = {}, likeCount = {}, " +
+                logger.info("boardId : {}, Title: {}, articleId = {}, likeCount = {}, " +
                                 "viewCount = {}, regDate = {}, writer = {}, endStr = {}",
                         boardId, title, articleId, likeCount, viewCount, regDate, writer, endStr);
 
@@ -61,7 +61,7 @@ public class NaverCafeCrawler {
                         .regDate(regDate)
                         .viewCount(viewCount)
                         .likeCount(likeCount)
-                        .regDate(writer)
+                        .writer(writer)
                         .imgUrl(null)
                         .endStr(endStr)
                         .build();
