@@ -5,8 +5,6 @@ name: CICD
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 env:
   S3_BUCKET_NAME: chimplanet-bucket #s3버킷 이름
