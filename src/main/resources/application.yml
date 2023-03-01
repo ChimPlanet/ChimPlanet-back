@@ -10,4 +10,4 @@ spring:
       matching-strategy: ant_path_matcher
 
 logging-module:
-  version: 0.0.2
+  version: 0.0.3
