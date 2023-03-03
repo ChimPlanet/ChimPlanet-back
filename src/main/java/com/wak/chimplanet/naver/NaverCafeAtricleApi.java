@@ -1,5 +1,9 @@
 package com.wak.chimplanet.naver;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
 import java.io.BufferedReader;
@@ -11,8 +15,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,14 +24,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class NaverCafeAtricleApi {
-    protected static final Logger logger = LoggerFactory.getLogger(NaverCafeCrawler.class);
+    protected static final Logger logger = LoggerFactory.getLogger(NaverCafeAtricleApi.class);
     
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
 
     /**
      * 네이버 API 연동
      */
-    public static JSONObject getNaverCafeArticleList(String API_URL) {
+    public static JsonObject getNaverCafeArticleList(String API_URL) {
+
+        logger.info("API_URL: {}", API_URL);
+
         try {
             URL url = new URL(API_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -47,56 +52,63 @@ public class NaverCafeAtricleApi {
                 while((line = br.readLine()) != null) {
                     sb.append(line).append("\n");
                 }
+
                 br.close();
-                System.out.println(sb.toString());
-                JSONObject responseData = new JSONObject(sb.toString());
+                conn.disconnect();
+                JsonObject responseData = JsonParser.parseString(sb.toString()).getAsJsonObject();
+                logger.info(responseData.toString());
                 return responseData;
             } else {
-                System.out.println(conn.getResponseMessage());
+                logger.error(conn.getResponseMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return new JSONObject().append("error", "조회된 값이 없습니다.");
+        JsonObject obj = new JsonObject();
+        obj.addProperty("error", "조회된 게시물이 없습니다.");
+
+        return obj;
     }
 
     /**
      * 응답 객체를 바탕으로 전체 데이터 파싱
      */
     public static ArrayList<Board> getArticles(String API_URL) {
-        JSONObject obj = getNaverCafeArticleList(API_URL).getJSONObject("message");
-
+        JsonObject obj  = getNaverCafeArticleList(API_URL).getAsJsonObject("message");
         ArrayList<Board> boardArrayList = new ArrayList<>();
 
-        JSONObject result = obj.getJSONObject("result");
-        JSONArray articleList = result.getJSONArray("articleList");
+        JsonObject result = obj.getAsJsonObject("result");
+        JsonArray articleList = result.getAsJsonArray("articleList");
 
-        for (int i = 0; i < articleList.length(); i++) {
-            JSONObject data = articleList.getJSONObject(i);
-            String articleId = String.valueOf(data.getLong("articleId"));
-            String title = data.getString("subject");
-            String viewCount = String.valueOf(data.getInt("readCount"));
-            String writer = data.getString("writerNickname");
+        for (int i = 0; i < articleList.size(); i++) {
+            JsonObject data = articleList.get(i).getAsJsonObject();
+            String articleId = String.valueOf(data.get("articleId").getAsLong());
+            String title = data.get("subject").getAsString();
+            String readCount = String.valueOf(data.get("readCount").getAsInt());
+            String writer = data.get("writerNickname").getAsString();
             String redirectURL = "https://cafe.naver.com/steamindiegame" + articleId;
-            String thumbnailURL = data.optString("representImage");
-            String regDate = dateTimeStampToString(data.getLong("writeDateTimestamp"));
+            String thumbnailURL = null;
+            if(data.has("representImage")) {
+                thumbnailURL = data.get("representImage").getAsString();
+            }
+            String regDate = dateTimeStampToString(data.get("writeDateTimestamp").getAsLong());
             String isEnd = isEnd(title);
 
             logger.info("title: {}, viewCount: {}, articleId: {}, writer: {}"
                     + ", redirectURL: {}, thumbnailURL: {}, regDate: {}"
-                , title, viewCount, articleId, writer, redirectURL, thumbnailURL, regDate);
+                , title, readCount, articleId, writer, redirectURL, thumbnailURL, regDate);
 
             Board board = Board.builder()
-                .boardTitle(title)
-                .writer(writer)
-                .articleId(articleId)
-                .readCount(viewCount)
-                .thumbnailURL(thumbnailURL)
-                .redirectURL(redirectURL)
-                .isEnd(isEnd)
-                .regDate(regDate)
-                .build();
+                    .boardTitle(title)
+                    .writer(writer)
+                    .articleId(articleId)
+                    .readCount(readCount)
+                    .thumbnailURL(thumbnailURL)
+                    .redirectURL(redirectURL)
+                    .isEnd(isEnd)
+                    .regDate(regDate)
+                    .build();
 
             boardArrayList.add(board);
         }
@@ -106,22 +118,21 @@ public class NaverCafeAtricleApi {
 
     public BoardDetail getNaverCafeArticleOne(String articleId) {
         String API_URL = "https://apis.naver.com/cafe-web/cafe-articleapi/v2.1/cafes/27842958/articles/"
-            + articleId
-            + "?query=&menuId=148&boardType=L&useCafeId=true&requestFrom=A";
+            + articleId;
+            // + "?query=&menuId=148&boardType=L&useCafeId=true&requestFrom=A";
 
-        logger.info("API_URL: {}", API_URL);
+        JsonObject obj = getNaverCafeArticleList(API_URL).getAsJsonObject("result");
+        JsonObject article = obj.getAsJsonObject("article");
 
-        JSONObject obj = getNaverCafeArticleList(API_URL);// .getJSONObject("result");
-        System.out.println(obj.toString());
-        JSONObject article = obj.getJSONObject("article");
-
-        logger.info("articleId: {}, contentHtml: {}", article.getString("id"), article.get("contentHtml"));
+        logger.info(article.toString());
+        logger.info("articleId: {}, contentHtml: {}", article.get("id"), article.get("contentHtml"));
 
         BoardDetail boardDetail = BoardDetail.builder()
-            .articleId(article.getString("id"))
-            .content(article.getString("contentHtml"))
-            .redirectURL("https://cafe.naver.com/steamindiegame" + articleId)
-            .build();
+                .articleId(article.get("id").getAsString())
+                .content(article.get("contentHtml").getAsString())
+                .redirectURL("https://cafe.naver.com/steamindiegame" + articleId)
+                .build();
+
         return boardDetail;
     }
 
