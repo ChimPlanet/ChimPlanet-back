@@ -1,9 +1,8 @@
-package com.wak.chimplanet.batch;
+package com.wak.chimplanet.naver;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import com.wak.chimplanet.entity.Board;
@@ -35,8 +34,8 @@ public class NaverCafeCrawler {
         String iframeUrl = "https://cafe.naver.com/ArticleList.nhn?" +
                 "search.clubid="+ clubId +
                 "&search.menuid=" + menuId +
-                "&userDisplay=50" +
-                "&search.boardtype=L";
+                "&search.boardtype=C";
+                // "search.page=2" 페이징 처리
 
         logger.info("iframeUrl  = {} ", iframeUrl);
 
@@ -44,39 +43,39 @@ public class NaverCafeCrawler {
             // iframe 페이지 HTML 코드 가져오기
             Document iframeDocument = Jsoup.connect(iframeUrl).get();
             // 게시물 목록 요소 가져오기
-            Elements articleElements = iframeDocument.select("#main-area > div.article-board.m-tcol-c > table > tbody > tr");
+            Elements articleElements = iframeDocument.select("#main-area > ul.article-movie-sub > li");
 
             for (Element articleElement : articleElements) {
+                String redirectURL = articleElement.select("a").first().attr("href");
+                String boardId = parseQueryString(redirectURL).get("articleid");
+                String title = articleElement.selectFirst(".inner").text();
+                String articleId = createArticleURL(boardId);
+                String regDate = articleElement.select(".date").text();
                 String writer = articleElement.select(".m-tcol-c").text();
-                if(writer.equals(GOD)) continue; // 공지게시물 스킵안 -> 개선방법 찾아보기
-                String boardId = articleElement.select(".inner_number").text();
-                String title = articleElement.selectFirst("a.article").text();
-                String articleId = articleElement.select("a").first().attr("href");
-                String regDate = articleElement.select(".td_date").text();
-                String viewCount = articleElement.select(".td_view").text();
-                String likeCount = articleElement.select(".td_likes").text();
-                String endStr = isEnd(title);
+                String viewCount = articleElement.select(".num").text().split(" ")[1];
+                String thumbnail = null;
+                String isEnd = isEnd(title);
+                if(!articleElement.select("div.movie-img > a > img").isEmpty()) {
+                    thumbnail = articleElement.select("div.movie-img > a > img").first().attr("src");
+                }
 
-                logger.info("boardId : {}, Title: {}, articleId = {}, likeCount = {}, " +
-                                "viewCount = {}, regDate = {}, writer = {}, endStr = {}",
-                        boardId, title, articleId, likeCount, viewCount, regDate, writer, endStr);
+                logger.debug("boardId : {}, Title: {}, articleId = {}, likeCount = {}, viewCount = {}, " +
+                        "regDate = {}, writer = {}, thumbnail = {}, isEnd = {}",
+                    boardId, title, articleId, "likeCount", viewCount, regDate, writer, thumbnail, isEnd);
 
-                // articleId 주소로 변환
-                articleId = createArticleURL(parseQueryString(articleId).get("articleid"));
-
-                Board board = Board.builder()
-                        .boardId(boardId)
+                /*Board board = Board.builder()
+                    .
                         .title(title)
                         .articleId(articleId)
                         .regDate(regDate)
                         .viewCount(viewCount)
-                        .likeCount(likeCount)
+                        .likeCount(thumbnail)
                         .writer(writer)
                         .imgUrl(null)
-                        .endStr(endStr)
+                        .endStr(isEnd)
                         .build();
 
-                boardList.add(board);
+                boardList.add(board);*/
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -99,8 +98,8 @@ public class NaverCafeCrawler {
      */
     private static Map<String, String> parseQueryString(String queryString) {
         return Arrays.stream(queryString.split("&"))
-            .map(params -> params.split("="))
-            .collect(Collectors.toMap(param -> param[0], param -> param[1]));
+            .map(params -> params.split("=", 2))
+            .collect(Collectors.toMap(param -> param[0], param -> param.length > 1 ? param[1] : null));
     }
 
     /**
@@ -108,5 +107,11 @@ public class NaverCafeCrawler {
      */
     private static String createArticleURL(String articleId) {
         return "https://cafe.naver.com/steamindiegame/" + articleId;
+    }
+
+    public static void main(String[] args) {
+        NaverCafeCrawler ncc = new NaverCafeCrawler();
+        List<Board> list = ncc.getNaverCafeBoard();
+        System.out.println(list.toString());
     }
 }

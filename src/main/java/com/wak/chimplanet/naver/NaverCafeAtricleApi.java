@@ -52,63 +52,56 @@ public class NaverCafeAtricleApi {
                 while((line = br.readLine()) != null) {
                     sb.append(line).append("\n");
                 }
-
                 br.close();
-                conn.disconnect();
-                JsonObject responseData = JsonParser.parseString(sb.toString()).getAsJsonObject();
-                logger.info(responseData.toString());
+                System.out.println(sb.toString());
+                JSONObject responseData = new JSONObject(sb.toString());
                 return responseData;
             } else {
-                logger.error(conn.getResponseMessage());
+                System.out.println(conn.getResponseMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        JsonObject obj = new JsonObject();
-        obj.addProperty("error", "조회된 게시물이 없습니다.");
-
-        return obj;
+        return new JSONObject().append("error", "조회된 값이 없습니다.");
     }
 
     /**
      * 응답 객체를 바탕으로 전체 데이터 파싱
      */
     public static ArrayList<Board> getArticles(String API_URL) {
-        JsonObject obj  = getNaverCafeArticleList(API_URL).getAsJsonObject("message");
+        JSONObject obj = getNaverCafeArticleList(API_URL).getJSONObject("message");
+
         ArrayList<Board> boardArrayList = new ArrayList<>();
 
-        JsonObject result = obj.getAsJsonObject("result");
-        JsonArray articleList = result.getAsJsonArray("articleList");
+        JSONObject result = obj.getJSONObject("result");
+        JSONArray articleList = result.getJSONArray("articleList");
 
-        for (int i = 0; i < articleList.size(); i++) {
-            JsonObject data = articleList.get(i).getAsJsonObject();
-            String articleId = String.valueOf(data.get("articleId").getAsLong());
-            String title = data.get("subject").getAsString();
-            String readCount = String.valueOf(data.get("readCount").getAsInt());
-            String writer = data.get("writerNickname").getAsString();
+        for (int i = 0; i < articleList.length(); i++) {
+            JSONObject data = articleList.getJSONObject(i);
+            String articleId = String.valueOf(data.getLong("articleId"));
+            String title = data.getString("subject");
+            String viewCount = String.valueOf(data.getInt("readCount"));
+            String writer = data.getString("writerNickname");
             String redirectURL = "https://cafe.naver.com/steamindiegame" + articleId;
-            String thumbnailURL = null;
-            if(data.has("representImage")) {
-                thumbnailURL = data.get("representImage").getAsString();
-            }
-            String regDate = dateTimeStampToString(data.get("writeDateTimestamp").getAsLong());
+            String thumbnailURL = data.optString("representImage");
+            String regDate = dateTimeStampToString(data.getLong("writeDateTimestamp"));
             String isEnd = isEnd(title);
 
             logger.info("title: {}, viewCount: {}, articleId: {}, writer: {}"
                     + ", redirectURL: {}, thumbnailURL: {}, regDate: {}"
-                , title, readCount, articleId, writer, redirectURL, thumbnailURL, regDate);
+                , title, viewCount, articleId, writer, redirectURL, thumbnailURL, regDate);
 
             Board board = Board.builder()
-                    .boardTitle(title)
-                    .writer(writer)
-                    .articleId(articleId)
-                    .readCount(readCount)
-                    .thumbnailURL(thumbnailURL)
-                    .redirectURL(redirectURL)
-                    .isEnd(isEnd)
-                    .regDate(regDate)
-                    .build();
+                .boardTitle(title)
+                .writer(writer)
+                .articleId(articleId)
+                .readCount(viewCount)
+                .thumbnailURL(thumbnailURL)
+                .redirectURL(redirectURL)
+                .isEnd(isEnd)
+                .regDate(regDate)
+                .build();
 
             boardArrayList.add(board);
         }
