@@ -12,13 +12,13 @@ import javax.persistence.Id;
 @Builder // 임시 추가 -> DTO 로 옮겨야함
 public class Board {
     @Id
-    private String boardId;
-    private String writer;
-    private String title;
     private String articleId;
+    private String writer;
+    private String boardTitle;
     private String likeCount;
-    private String viewCount;
+    private String readCount;
     private String regDate;
-    private String imgUrl;
-    private String endStr; // 추후 ENUM 으로 리팩토링
+    private String thumbnailURL;
+    private String redirectURL;
+    private String isEnd; // 추후 ENUM 으로 리팩토링
 }
