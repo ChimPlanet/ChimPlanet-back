@@ -29,6 +29,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
 	implementation 'org.slf4j:slf4j-api:1.7.25'
 
+	// https://mvnrepository.com/artifact/org.json/json
+	implementation 'org.json:json:20210307'
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
