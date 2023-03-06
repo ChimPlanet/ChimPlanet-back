@@ -3,7 +3,7 @@ spring:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:tcp://localhost/~/chimplanet
     username: sa
-    password: 1234
+    password:
 
   jpa:
     hibernate:
@@ -21,6 +21,11 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  # 파일 업로드제한 20MB
+  servlet:
+    multipart:
+      maxFileSize: 20MB
+      maxRequestSize: 20MB
 
 logging-module:
   version: 0.0.3
