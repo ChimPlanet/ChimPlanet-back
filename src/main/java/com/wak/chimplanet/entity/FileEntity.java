@@ -1,10 +1,8 @@
 package com.wak.chimplanet.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,14 +18,30 @@ public class FileEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(value = "이미지 아이디")
     private long fileId;
 
     @Column(nullable = false, unique = true, length = 1000)
-    private String filename;
+    @ApiModelProperty(value = "이미지 파일명")
+    private String fileName;
+
+    @Column
+    @ApiModelProperty(value = "사용 여부")
+    private String useYn;
+
+    @Column
+    @ApiModelProperty(value = "연결할 url 주소")
+    private String redirectUrl;
+
+    @Enumerated(EnumType.STRING)
+    @ApiModelProperty(value = "파일 이미지 타입(Main, Mid)")
+    private ImageType imageType; // 이미지 타입 [Main, Mid]
+
+    @Column
+    @ApiModelProperty(value = "모바일 사용여부")
+    private String mobileYn;
 
     @Column(nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private String created_dt;
-
-    //fileType 구현할것인지...
-
+    @ApiModelProperty(value = "생성일자")
+    private String createdDate;
 }
