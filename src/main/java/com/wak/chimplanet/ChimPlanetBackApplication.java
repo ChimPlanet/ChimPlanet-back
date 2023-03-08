@@ -8,11 +8,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
 // dataSource 제외 임시옵션 추가
-@SpringBootApplication(exclude = {
-		DataSourceAutoConfiguration.class,
-		DataSourceTransactionManagerAutoConfiguration.class,
-		HibernateJpaAutoConfiguration.class
-})
+@SpringBootApplication
 public class ChimPlanetBackApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ChimPlanetBackApplication.class, args);
