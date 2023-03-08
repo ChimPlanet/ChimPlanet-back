@@ -36,7 +36,7 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 상세정보 가져오기(articleId)", notes = "왁물원 공고 게시글 내용가져오기")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시글이 상세 조회 성공", content = @Content(schema = @Schema(implementation = BoardDetail.class)))
+            @ApiResponse(responseCode = "200", description = "게시글 상세 조회 성공", content = @Content(schema = @Schema(implementation = BoardDetail.class)))
             // @ApiResponse(responseCode = "400", description = "접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ApiErrorResult.class))),
             //@ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiErrorResult.class)))
     })
