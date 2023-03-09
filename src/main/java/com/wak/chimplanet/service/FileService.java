@@ -48,7 +48,7 @@ public class FileService {
         }
 
         final FileEntity fileEntity = FileEntity.builder()
-            .filename(safeFile)
+            .fileName(safeFile)
             .build();
 
         return fileRepository.save(fileEntity);

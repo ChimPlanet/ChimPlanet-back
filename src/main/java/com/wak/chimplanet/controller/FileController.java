@@ -1,18 +1,21 @@
 package com.wak.chimplanet.controller;
 
+import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.FileEntity;
 import com.wak.chimplanet.service.FileService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -39,10 +42,11 @@ public class FileController {
      * @return Map<String, Object>
      */
     @PostMapping("/image")
+    @ApiOperation(value = "이미지 파일 업로드")
     public ResponseEntity<FileEntity> uploadImage(HttpServletRequest request,
-        @RequestParam(value = "file", required = false)MultipartFile[] files,
-        @RequestParam(value="comment", required = false) String comment) {
-        return ResponseEntity.ok().body(fileService.uploadImage(files, comment));
+        @RequestPart(value = "file", required = false)MultipartFile[] files,
+        @RequestParam(value="fileType", required = false) String fileType) {
+        return ResponseEntity.ok().body(fileService.uploadImage(files, fileType));
     }
 
 }
