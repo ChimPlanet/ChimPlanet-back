@@ -82,6 +82,10 @@ public class BoardService {
         return boardRepository.findAllBoard();
     }
 
+    public List<Board> findBoardsByReadCount() {
+        return boardRepository.findBoardsByReadCount();
+    }
+
     /**
      * 게시글에서 태그 리스트 분류하기
      */

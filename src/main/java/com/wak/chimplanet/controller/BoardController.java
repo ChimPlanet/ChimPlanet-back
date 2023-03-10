@@ -29,7 +29,7 @@ public class BoardController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "리스트 로드 성공", content = @Content(schema = @Schema(implementation = Board.class)))
     })
-    @GetMapping("/api/boards")
+    @GetMapping("/api/boards/new")
     public ResponseEntity<List<Board>> getAllBoardList() {
         return ResponseEntity.ok().body(boardService.getAllBoardList());
     }
@@ -44,4 +44,18 @@ public class BoardController {
     public ResponseEntity<BoardDetail> getBoardOne(@PathVariable String articleId) {
         return ResponseEntity.ok().body(boardService.getBoardOne(articleId));
     }
+
+    @ApiOperation(value = "데이터 베이스에서 게시글 가져오기" , notes = "1차 분류 완료")
+    @GetMapping("/api/boards/")
+    public ResponseEntity<List<Board>> findAllBoard() {
+        return ResponseEntity.ok().body(boardService.findAllBoard());
+    }
+
+    @ApiOperation(value = "데이터 베이스에서 게시글 인기글 가져오기" , notes = "정렬 기준 read_count")
+    @GetMapping("/api/boards/popular")
+    public ResponseEntity<List<Board>> findAllBoardByPopular() {
+        return ResponseEntity.ok().body(boardService.findBoardsByReadCount());
+    }
+
+
 }

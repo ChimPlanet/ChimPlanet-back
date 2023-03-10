@@ -43,4 +43,9 @@ public class BoardRepository {
         return em.createQuery("select b from Board b", Board.class)
             .getResultList();
     }
+
+    public List<Board> findBoardsByReadCount() {
+        return em.createQuery("select b from Board b where read_count >= 500", Board.class)
+            .getResultList();
+    }
 }
