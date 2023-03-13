@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,8 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileService {
 
     private final FileRepository fileRepository;
-
-    private final String filePath = "src/main/resources/static/images/";
+    @Value("${path.upload-images}")
+    private String filePath;
+    // private final String filePath = "src/main/resources/static/images/";
     
     public List<FileEntity> findAllImages() {
         return fileRepository.findAll();

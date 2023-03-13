@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name="file")
+@Table(name = "file")
 public class FileEntity {
 
     @Id
@@ -38,8 +39,8 @@ public class FileEntity {
     private ImageType imageType; // 이미지 타입 [Main, Mid]
 
     @Column
-    @ApiModelProperty(value = "모바일 사용여부")
-    private String mobileYn;
+    @ApiModelProperty(value = "기기별 이미지 타입(MOBILE, PC)")
+    private DeviceType deviceType;
 
     @Column(nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @ApiModelProperty(value = "생성일자")
