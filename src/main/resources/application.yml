@@ -29,3 +29,7 @@ spring:
 
 logging-module:
   version: 0.0.3
+
+path:
+  upload-images: 'D:/TemporaryFiles/'
+#    upload-images: 'D:/TemporaryFiles/' 서버 저장위치 ~ 분리 필요
