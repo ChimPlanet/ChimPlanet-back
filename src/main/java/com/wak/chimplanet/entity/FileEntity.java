@@ -1,5 +1,6 @@
 package com.wak.chimplanet.entity;
 
+import java.time.LocalDateTime;
 import javax.persistence.*;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 @Getter
 @Builder
@@ -44,5 +46,6 @@ public class FileEntity {
 
     @Column(nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @ApiModelProperty(value = "생성일자")
-    private String createdDate;
+    @CreatedDate
+    private LocalDateTime createdDate;
 }
