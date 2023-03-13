@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class BoardController {
     }
 
     @ApiOperation(value = "데이터 베이스에서 게시글 가져오기" , notes = "1차 분류 완료")
-    @GetMapping("/api/boards/")
+    @PostMapping("/api/boards/")
     public ResponseEntity<List<Board>> findAllBoard() {
         return ResponseEntity.ok().body(boardService.findAllBoard());
     }
