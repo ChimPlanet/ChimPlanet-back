@@ -1,6 +1,8 @@
 package com.wak.chimplanet.service;
 
+import com.wak.chimplanet.entity.DeviceType;
 import com.wak.chimplanet.entity.FileEntity;
+import com.wak.chimplanet.entity.ImageType;
 import com.wak.chimplanet.repository.FileRepository;
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +33,8 @@ public class FileService {
      * 이미지 업로드
      * @return Map<String, Object>
      */
-    public FileEntity uploadImage(MultipartFile[] files, String comment) {
+    public FileEntity uploadImage(MultipartFile[] files, ImageType imageType, String useYn,
+        DeviceType deviceType, String redirectUrl) {
         String fileNames = "";
 
         String originFileName = files[0].getOriginalFilename();
@@ -51,6 +54,10 @@ public class FileService {
 
         final FileEntity fileEntity = FileEntity.builder()
             .fileName(safeFile)
+            .deviceType(deviceType)
+            .redirectUrl(redirectUrl)
+            .useYn(useYn)
+            .imageType(imageType)
             .build();
 
         return fileRepository.save(fileEntity);
