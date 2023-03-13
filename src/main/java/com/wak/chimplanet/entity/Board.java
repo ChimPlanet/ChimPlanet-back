@@ -8,8 +8,10 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Entity
-@Getter @Setter
+@Table(name = "board")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ApiModel(description = "게시글 정보")
@@ -42,11 +44,11 @@ public class Board {
     @ApiModelProperty(value = "작성일시", example = "2022-03-05 14:30")
     private String regDate;
 
-    @Column(name = "thumbnail_url")
+    @Column(name = "thumbnail_url", length = 1000)
     @ApiModelProperty(value = "썸네일 URL")
     private String thumbnailURL;
 
-    @Column(name = "redirect_url")
+    @Column(name = "redirect_url", length = 1000)
     @ApiModelProperty(value = "리다이렉트 URL", example = "https://cafe.naver.com/steamindiegame/1")
     private String redirectURL;
 
@@ -57,4 +59,7 @@ public class Board {
     @Builder.Default
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
     private List<BoardTag> boardtags = new ArrayList<>();
+
+
+    // private String official; [공식] 모집 게시물
 }
