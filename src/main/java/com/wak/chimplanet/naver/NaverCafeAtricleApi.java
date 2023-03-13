@@ -116,10 +116,16 @@ public class NaverCafeAtricleApi {
         return boardArrayList;
     }
 
+
+    /**
+     * 공고 게시물 가져오기
+     * @param articleId
+     * @return
+     */
     public BoardDetail getNaverCafeArticleOne(String articleId) {
         String API_URL = "https://apis.naver.com/cafe-web/cafe-articleapi/v2.1/cafes/27842958/articles/"
-            + articleId;
-            // + "?query=&menuId=148&boardType=L&useCafeId=true&requestFrom=A";
+            + articleId
+            + "?query=&menuId=148&boardType=L&useCafeId=true&requestFrom=A";
 
         JsonObject obj = getNaverCafeArticleList(API_URL).getAsJsonObject("result");
         JsonObject article = obj.getAsJsonObject("article");

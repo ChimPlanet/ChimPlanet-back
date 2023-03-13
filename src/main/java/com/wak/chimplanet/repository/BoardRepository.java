@@ -15,6 +15,7 @@ public class BoardRepository {
 
     public List<Board> saveAll(List<Board> articles) {
         int batchSize = 50;
+        
         List<Board> savedBoards = new ArrayList<>();
         int i = 0;
         for (Board board : articles) {
@@ -40,6 +41,7 @@ public class BoardRepository {
 
     public List<Board> findAllBoard() {
         return em.createQuery("select b from Board b", Board.class)
-                .getResultList();
+            .getResultList();
     }
+
 }
