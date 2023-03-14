@@ -1,5 +1,6 @@
 package com.wak.chimplanet.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +8,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "tag")
-@Getter @Setter
+@Getter
+@Builder
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

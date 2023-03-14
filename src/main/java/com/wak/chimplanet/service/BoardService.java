@@ -2,6 +2,7 @@ package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
+import com.wak.chimplanet.entity.Tag;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
 import com.wak.chimplanet.repository.BoardRepository;
 import java.util.Arrays;
@@ -56,6 +57,7 @@ public class BoardService {
     /**
      * 게시판 내용 대량 저장하기
      *  10페이지씩 순회하면서 데이터 저장
+     *  Batch 쪽으로 추후 변경 예정
      */
     @Transactional
     public List<Board> saveAllBoards() {
@@ -64,6 +66,16 @@ public class BoardService {
         for(int i = 1; i <= 20; i++) {
             articles = naverCafeAtricleApi.getArticles(API_URL + i);
             log.info("articleSize : {} ", articles.size());
+
+            // 게시글 가져오기 + 태그저장
+            for(int j = 0; j < articles.size(); j++) {
+                String articleId = articles.get(j).getArticleId();
+                BoardDetail boardDetail = getBoardOne(articleId);
+                String content = boardDetail.getContent();
+
+                List<String> tags = categorizingTag(content);
+            }
+
             boardRepository.saveAll(articles);
         }
 
@@ -87,12 +99,22 @@ public class BoardService {
     }
 
     /**
+     * 태그 목록 저장하기
+                    */
+    public void saveBoardsWithTags(List<Board> boards) {
+        for(Board board : boards) {
+            // List<Tag> tags = categorizingTag(getBoardOne(board.getArticleId()));
+        }
+    }
+
+    /**
      * 게시글에서 태그 리스트 분류하기
      */
     public List<String> categorizingTag(String content) {
         // 문장에서 찾은 태그명
         Set<String> foundTags = new HashSet<>();
 
+        // 테스트용 분류 데이터 셋
         List<String> tags = Arrays.asList("공식", "백엔드", "기획", "프론트엔드", "디자인", "디자이너");
 
         for(String tag : tags) {
@@ -102,6 +124,7 @@ public class BoardService {
         }
 
         log.info("찾은 태그명 : {}", foundTags.toString());
+
         return foundTags.stream().collect(Collectors.toList());
     }
 
