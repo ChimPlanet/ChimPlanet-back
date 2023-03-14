@@ -37,12 +37,18 @@ public class FileEntity {
     private String redirectUrl;
 
     @Enumerated(EnumType.STRING)
-    @ApiModelProperty(value = "파일 이미지 타입(Main, Mid)")
+    @ApiModelProperty(value = "파일 이미지 타입(MAIN, MID)")
     private ImageType imageType; // 이미지 타입 [Main, Mid]
 
     @Column
     @ApiModelProperty(value = "기기별 이미지 타입(MOBILE, PC)")
     private DeviceType deviceType;
+
+    @ApiModelProperty(value = "리다이렉션 타입")
+    private String redirectType;
+
+    @ApiModelProperty(value = "배너 순서")
+    private String sequence;
 
     @Column(nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @ApiModelProperty(value = "생성일자")
