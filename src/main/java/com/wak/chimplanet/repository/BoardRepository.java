@@ -40,7 +40,7 @@ public class BoardRepository {
     }
 
     public List<Board> findAllBoard() {
-        return em.createQuery("select b from Board b", Board.class)
+        return em.createQuery("select b from Board b join fetch b.boardtags", Board.class)
             .getResultList();
     }
 

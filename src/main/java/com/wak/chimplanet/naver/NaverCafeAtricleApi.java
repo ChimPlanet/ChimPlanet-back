@@ -126,18 +126,24 @@ public class NaverCafeAtricleApi {
         String API_URL = "https://apis.naver.com/cafe-web/cafe-articleapi/v2.1/cafes/27842958/articles/"
             + articleId
             + "?query=&menuId=148&boardType=L&useCafeId=true&requestFrom=A";
+            // + "$buid=d0a510a5-6bd3-491d-b48f-527de1947875";
 
         JsonObject obj = getNaverCafeArticleList(API_URL).getAsJsonObject("result");
         JsonObject article = obj.getAsJsonObject("article");
+
+        if(article.isJsonNull()) {
+            logger.info("권한이 없는 게시물 입니다.");
+            throw new IllegalArgumentException("권한이 없는 게시물 입니다.");
+        }
 
         logger.info(article.toString());
         logger.info("articleId: {}, contentHtml: {}", article.get("id"), article.get("contentHtml"));
 
         BoardDetail boardDetail = BoardDetail.builder()
-                .articleId(article.get("id").getAsString())
-                .content(article.get("contentHtml").getAsString())
-                .redirectURL("https://cafe.naver.com/steamindiegame" + articleId)
-                .build();
+            .articleId(article.get("id").getAsString())
+            .content(article.get("contentHtml").getAsString())
+            .redirectURL("https://cafe.naver.com/steamindiegame" + articleId)
+            .build();
 
         return boardDetail;
     }

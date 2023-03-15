@@ -56,10 +56,12 @@ public class Board {
     @ApiModelProperty(value = "공고 마갑여부", example = "ING || END")
     private String isEnd;
 
-    @Builder.Default
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
-    private List<BoardTag> boardtags = new ArrayList<>();
+    private List<BoardTag> boardTags = new ArrayList<>();
 
+    @Column(name = "unauthorized")
+    @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N ")
+    private String unauthorized;
 
     // private String official; [공식] 모집 게시물
 }
