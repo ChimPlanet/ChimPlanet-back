@@ -78,6 +78,9 @@ local.properties
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.idea/**/misc.xml
+.idea/**/dataSources.xml
+
 
 # AWS User-specific
 .idea/**/aws.xml
