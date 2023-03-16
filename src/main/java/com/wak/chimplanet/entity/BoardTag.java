@@ -2,8 +2,6 @@ package com.wak.chimplanet.entity;
 
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Entity
@@ -20,5 +18,5 @@ public class BoardTag {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id", nullable = false)
-    private Tag tag;
+    private TagObj tag;
 }

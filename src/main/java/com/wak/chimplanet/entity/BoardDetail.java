@@ -1,7 +1,6 @@
 package com.wak.chimplanet.entity;
 
 import java.util.List;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,6 +18,6 @@ public class BoardDetail {
     private String articleId;
     private String content;
     private String redirectURL;
-    private List<Tag> tagList;
+    private List<TagObj> tagList;
 
 }

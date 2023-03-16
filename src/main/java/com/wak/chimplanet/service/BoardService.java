@@ -2,7 +2,6 @@ package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
-import com.wak.chimplanet.entity.Tag;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
 import com.wak.chimplanet.repository.BoardRepository;
 import java.util.Arrays;

@@ -1,16 +1,19 @@
 package com.wak.chimplanet.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tag")
+@Table(name = "tag_obj")
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Builder
-public class Tag {
+public class TagObj {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id", nullable = false)
@@ -22,6 +25,6 @@ public class Tag {
     @Column(name = "parent_tag_id", length = 50, nullable = false)
     private String parentTagId;
 
-    @Column(name = "child_tag_id", length = 50, nullable = false)
-    private String childTagId;
+//    @Column(name = "child_tag_id", length = 50, nullable = false)
+//    private String childTagId;
 }
