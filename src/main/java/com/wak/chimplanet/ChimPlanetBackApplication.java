@@ -6,8 +6,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-// dataSource 제외 임시옵션 추가
+@EnableScheduling
 @SpringBootApplication
 public class ChimPlanetBackApplication {
 	public static void main(String[] args) {

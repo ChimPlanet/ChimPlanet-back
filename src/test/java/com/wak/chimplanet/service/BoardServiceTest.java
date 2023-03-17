@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.EntityManager;
 import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
+import org.mockito.internal.matchers.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
@@ -54,6 +56,12 @@ public class BoardServiceTest {
 
         // then
         assertArrayEquals(expectedTags.toArray(new String[0]), actualTags.toArray(new String[0]));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void 권한이_없는_게시물() {
+        String articleId = "10117009"; // 권한이 없는 친구
+        BoardDetail boardOne = boardService.getBoardOne(articleId);
     }
 
 }
