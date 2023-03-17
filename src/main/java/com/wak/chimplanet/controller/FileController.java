@@ -59,8 +59,9 @@ public class FileController {
         @RequestParam(value = "fileType") ImageType ImageType,
         @RequestParam(value = "useYn") String useYn,
         @RequestParam(value = "deviceType") DeviceType deviceType,
-        @RequestParam(value = "redirectUrl") String redirectUrl) {
-        return ResponseEntity.ok().body(fileService.uploadImage(files, ImageType, useYn, deviceType, redirectUrl));
+        @RequestParam(value = "redirectUrl") String redirectUrl,
+        @RequestParam(value = "sequence") int sequence) {
+        return ResponseEntity.ok().body(fileService.uploadImage(files, ImageType, useYn, deviceType, redirectUrl, sequence));
     }
 
 }
