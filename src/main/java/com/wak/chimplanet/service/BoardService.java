@@ -109,7 +109,7 @@ public class BoardService {
         }
     }
 
-    /**회
+    /**
      * 게시글에서 태그 리스트 분류하기
      */
     public List<String> categorizingTag(String content) {
@@ -118,6 +118,9 @@ public class BoardService {
 
         // 테스트용 분류 데이터 셋
         List<String> tags = Arrays.asList("공식", "백엔드", "기획", "프론트엔드", "디자인", "디자이너");
+
+        // 실제사용
+        // List<Tag> tags = tagRepository.findALl();
 
         for(String tag : tags) {
             if(kmpSearch(content, tag)) {

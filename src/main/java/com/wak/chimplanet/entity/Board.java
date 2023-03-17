@@ -3,6 +3,7 @@ package com.wak.chimplanet.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -60,7 +61,8 @@ public class Board {
     private List<BoardTag> boardTags = new ArrayList<>();
 
     @Column(name = "unauthorized")
-    @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N ")
+    @ColumnDefault("Y")
+    @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N, default = Y")
     private String unauthorized;
 
     // private String official; [공식] 모집 게시물
