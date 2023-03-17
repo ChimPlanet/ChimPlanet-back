@@ -108,10 +108,4 @@ public class NaverCafeCrawler {
     private static String createArticleURL(String articleId) {
         return "https://cafe.naver.com/steamindiegame/" + articleId;
     }
-
-    public static void main(String[] args) {
-        NaverCafeCrawler ncc = new NaverCafeCrawler();
-        List<Board> list = ncc.getNaverCafeBoard();
-        System.out.println(list.toString());
-    }
 }
