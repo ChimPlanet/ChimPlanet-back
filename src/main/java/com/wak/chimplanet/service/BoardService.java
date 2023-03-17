@@ -30,7 +30,7 @@ public class BoardService {
         + "search.clubid=27842958"
         + "&search.queryType=lastArticle"
         + "&search.menuid=148"
-        + "&search.perPage=50" // 페이징 + 갯수 처리 필요
+        + "&search.perPage=20" // 페이징 + 갯수 처리 필요
         + "&search.page=";
 
     @Autowired
