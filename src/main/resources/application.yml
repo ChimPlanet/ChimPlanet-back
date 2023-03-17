@@ -53,4 +53,4 @@ path:
   # 로컬 저장위치
 # upload-images: 'D:/TemporaryFiles/'
   # 서버 저장위치 ~ 분리 필요
-  upload-images: '/home/wak/images/'
+  upload-images: '/home/ec2-user/wak/images/'
