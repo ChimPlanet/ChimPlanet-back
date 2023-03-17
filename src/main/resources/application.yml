@@ -10,7 +10,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: update # 설정 주의해주세요...
     properties:
       hibernate:
         #        show_sql : true
