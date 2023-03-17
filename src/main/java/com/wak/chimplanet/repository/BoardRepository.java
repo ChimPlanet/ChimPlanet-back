@@ -40,15 +40,15 @@ public class BoardRepository {
     }
 
     public List<Board> findAllBoard() {
-        return em.createQuery("select b from Board b", Board.class)
-                .getResultList();
+        return em.createQuery("select b from Board b join fetch b.boardtags", Board.class)
+            .getResultList();
     }
 
     public List<Board> findBoardsByReadCount() {
         return em.createQuery("select b from Board b where read_count >= 500", Board.class)
                 .getResultList();
     }
-
+    
     public void saveTags(List<String> tags, String articleId) {
         ;
     }

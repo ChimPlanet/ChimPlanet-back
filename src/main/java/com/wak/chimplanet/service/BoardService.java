@@ -63,17 +63,19 @@ public class BoardService {
     public List<Board> saveAllBoards() {
         ArrayList<Board> articles = new ArrayList<>();
 
-        for(int i = 1; i <= 20; i++) {
+        for(int i = 1; i <= 4; i++) {
             articles = naverCafeAtricleApi.getArticles(API_URL + i);
             log.info("articleSize : {} ", articles.size());
 
             // 게시글 가져오기 + 태그저장
             for(int j = 0; j < articles.size(); j++) {
-                String articleId = articles.get(j).getArticleId();
+                Board board = articles.get(i);
+                String articleId = board.getArticleId();
                 BoardDetail boardDetail = getBoardOne(articleId);
                 String content = boardDetail.getContent();
 
                 List<String> tags = categorizingTag(content);
+
             }
 
             boardRepository.saveAll(articles);
@@ -103,7 +105,7 @@ public class BoardService {
                     */
     public void saveBoardsWithTags(List<Board> boards) {
         for(Board board : boards) {
-            // List<Tag> tags = categorizingTag(getBoardOne(board.getArticleId()));
+            List<String> tags = categorizingTag(getBoardOne(board.getArticleId()).getContent());
         }
     }
 
@@ -116,6 +118,9 @@ public class BoardService {
 
         // 테스트용 분류 데이터 셋
         List<String> tags = Arrays.asList("공식", "백엔드", "기획", "프론트엔드", "디자인", "디자이너");
+
+        // 실제사용
+        // List<Tag> tags = tagRepository.findALl();
 
         for(String tag : tags) {
             if(kmpSearch(content, tag)) {
