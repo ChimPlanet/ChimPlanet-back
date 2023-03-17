@@ -10,11 +10,12 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
     hibernate:
-       ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         #        show_sql : true
         format_sql: true
+        
   # 개발환경
   #  datasource:
   #    driver-class-name: org.h2.Driver
@@ -28,7 +29,6 @@ spring:
   #    properties:
   #      hibernate:
   #        #        show_sql : true
-
   #        format_sql: true
 
 
