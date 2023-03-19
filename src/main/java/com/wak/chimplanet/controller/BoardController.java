@@ -1,5 +1,6 @@
 package com.wak.chimplanet.controller;
 
+import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
 import com.wak.chimplanet.service.BoardService;
@@ -42,7 +43,7 @@ public class BoardController {
             //@ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiErrorResult.class)))
     })
     @GetMapping("/api/boards/{articleId}")
-    public ResponseEntity<BoardDetail> getBoardOne(@PathVariable String articleId) {
+    public ResponseEntity<BoardDetailResponseDTO> getBoardOne(@PathVariable String articleId) {
         return ResponseEntity.ok().body(boardService.getBoardOne(articleId));
     }
 

@@ -1,21 +1,22 @@
 package com.wak.chimplanet.service;
 
+import com.wak.chimplanet.common.config.exception.NotFoundException;
+import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
+import com.wak.chimplanet.entity.BoardTag;
 import com.wak.chimplanet.entity.Tag;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
 import com.wak.chimplanet.repository.BoardRepository;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
+
+import com.wak.chimplanet.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 
 @Service
 // @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class BoardService {
 
     private final NaverCafeAtricleApi naverCafeAtricleApi;
     private final BoardRepository boardRepository;
+    private final TagRepository tagRepository;
 
     private final static String API_URL = "https://apis.naver.com/cafe-web/cafe2/ArticleListV2.json?"
         + "search.clubid=27842958"
@@ -35,9 +37,10 @@ public class BoardService {
 
     @Autowired
     public BoardService(NaverCafeAtricleApi naverCafeAtricleApi,
-        BoardRepository boardRepository) {
+                        BoardRepository boardRepository, TagRepository tagRepository) {
         this.naverCafeAtricleApi = naverCafeAtricleApi;
         this.boardRepository = boardRepository;
+        this.tagRepository = tagRepository;
     }
 
     /**
@@ -48,10 +51,13 @@ public class BoardService {
     }
 
     /**
-     * 게시판 게시물 가져오기
+     * 게시판 게시물 상세내용 가져오기
      */
-    public BoardDetail getBoardOne(String articleId) {
-        return naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
+    public BoardDetailResponseDTO getBoardOne(String articleId) {
+        BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
+        Board board = boardRepository.findBoardWithTags(articleId);
+        return Optional.of(BoardDetailResponseDTO.from(boardDetail, board))
+                .orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
     }
 
     /**
@@ -61,27 +67,44 @@ public class BoardService {
      */
     @Transactional
     public List<Board> saveAllBoards() {
-        ArrayList<Board> articles = new ArrayList<>();
+        ArrayList<Board> boards = new ArrayList<>();
 
-        for(int i = 1; i <= 4; i++) {
-            articles = naverCafeAtricleApi.getArticles(API_URL + i);
+        for(int i = 1; i <= 1; i++) {
+            ArrayList<Board> articles = naverCafeAtricleApi.getArticles(API_URL + i);
             log.info("articleSize : {} ", articles.size());
 
             // 게시글 가져오기 + 태그저장
             for(int j = 0; j < articles.size(); j++) {
-                Board board = articles.get(i);
+                Board board = articles.get(j);
                 String articleId = board.getArticleId();
-                BoardDetail boardDetail = getBoardOne(articleId);
+                BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
+
+                /*
+                    예외 처리되는 경우 추가 UNAUTHORIZED 컬럼을 추가해줘야함
+                    + H2DB 경우 Default 값이 엔티티에서 제대로 설정이 안됨...
+                */
+                if(boardDetail == null) continue; // 개선 필요
+
                 String content = boardDetail.getContent();
 
-                List<String> tags = categorizingTag(content);
+                List<Tag> tags = categorizingTag(content);
+                List<BoardTag> boardTags = new ArrayList<>();
 
+                for(Tag tag : tags) {
+                    BoardTag boardTag = BoardTag.createBoardTag(tag, board);
+                    board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
+                    boardTags.add(boardTag);
+                }
+
+                Board newBoard = Board.createBoardWithTag(board, boardTags);
+                System.out.println("newBoard = " + newBoard.toString());
+                boards.add(newBoard);
             }
 
-            boardRepository.saveAll(articles);
+            boardRepository.saveAll(boards);
         }
 
-        return articles;
+        return boards;
     }
 
     @Transactional
@@ -100,37 +123,29 @@ public class BoardService {
         return boardRepository.findBoardsByReadCount();
     }
 
-    /**
-     * 태그 목록 저장하기
-                    */
-    public void saveBoardsWithTags(List<Board> boards) {
-        for(Board board : boards) {
-            List<String> tags = categorizingTag(getBoardOne(board.getArticleId()).getContent());
-        }
-    }
 
     /**
      * 게시글에서 태그 리스트 분류하기
      */
-    public List<String> categorizingTag(String content) {
+    public List<Tag> categorizingTag(String content) {
         // 문장에서 찾은 태그명
         Set<String> foundTags = new HashSet<>();
+        List<Tag> tags = tagRepository.findALl();
 
-        // 테스트용 분류 데이터 셋
-        List<String> tags = Arrays.asList("공식", "백엔드", "기획", "프론트엔드", "디자인", "디자이너");
+       for(Tag tag : tags) {
+           log.info("검색하는 태그명: {}",tag.getTagName());
+//            if (kmpSearch(content, tag.getTagName())) { // 태그 이름으로 검색
+//                foundTags.add(tag.getTagName());
+//            }
+           if(content.contains(tag.getTagName())) {
+               foundTags.add(tag.getTagName());
+           }
 
-        // 실제사용
-        // List<Tag> tags = tagRepository.findALl();
-
-        for(String tag : tags) {
-            if(kmpSearch(content, tag)) {
-                foundTags.add(tag);
-            }
         }
 
         log.info("찾은 태그명 : {}", foundTags.toString());
 
-        return foundTags.stream().collect(Collectors.toList());
+       return tagRepository.findAllByName(new ArrayList<>(foundTags));
     }
 
     /**
