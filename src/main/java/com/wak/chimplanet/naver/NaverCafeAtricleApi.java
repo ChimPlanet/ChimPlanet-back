@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
 import java.io.BufferedReader;
@@ -56,10 +57,10 @@ public class NaverCafeAtricleApi {
                 br.close();
                 conn.disconnect();
                 JsonObject responseData = JsonParser.parseString(sb.toString()).getAsJsonObject();
-                logger.info(responseData.toString());
+                logger.info("ResponseData: {}", responseData.toString());
                 return responseData;
             } else {
-                logger.error(conn.getResponseMessage());
+                logger.error("ResponseMessage: {}", conn.getResponseMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,13 +129,16 @@ public class NaverCafeAtricleApi {
             + "?query=&menuId=148&boardType=L&useCafeId=true&requestFrom=A";
             // + "$buid=d0a510a5-6bd3-491d-b48f-527de1947875";
 
-        JsonObject obj = getNaverCafeArticleList(API_URL).getAsJsonObject("result");
-        JsonObject article = obj.getAsJsonObject("article");
+        JsonObject obj = getNaverCafeArticleList(API_URL);
 
-        if(article.isJsonNull()) {
-            logger.info("권한이 없는 게시물 입니다.");
-            throw new IllegalArgumentException("권한이 없는 게시물 입니다.");
+        if(obj.has("error")) {
+            logger.warn("권한이 없는 게시물 입니다.");
+            return null;
+            // throw new IllegalArgumentException("권한이 없는 게시물 입니다.");
         }
+
+        JsonObject article = obj.getAsJsonObject("result").getAsJsonObject("article");
+        JsonObject writer = article.getAsJsonObject("writer");
 
         logger.info(article.toString());
         logger.info("articleId: {}, contentHtml: {}", article.get("id"), article.get("contentHtml"));
@@ -142,6 +146,8 @@ public class NaverCafeAtricleApi {
         BoardDetail boardDetail = BoardDetail.builder()
             .articleId(article.get("id").getAsString())
             .content(article.get("contentHtml").getAsString())
+            .boardTitle(article.get("subject").getAsString())
+            .writer(writer.get("nick").getAsString())
             .redirectURL("https://cafe.naver.com/steamindiegame" + articleId)
             .build();
 

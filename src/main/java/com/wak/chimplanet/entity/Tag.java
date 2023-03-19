@@ -1,14 +1,18 @@
 package com.wak.chimplanet.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import io.swagger.annotations.ApiModel;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tag")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@ApiModel(description = "태그 정보")
 @Builder
 public class Tag {
     @Id
@@ -24,4 +28,5 @@ public class Tag {
 
     @Column(name = "child_tag_id", length = 50, nullable = false)
     private String childTagId;
+
 }

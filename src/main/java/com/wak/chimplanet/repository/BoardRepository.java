@@ -40,8 +40,8 @@ public class BoardRepository {
     }
 
     public List<Board> findAllBoard() {
-        return em.createQuery("select b from Board b join fetch b.boardtags", Board.class)
-            .getResultList();
+        return em.createQuery("select distinct b from Board b join fetch b.boardTags", Board.class)
+                .getResultList();
     }
 
     public List<Board> findBoardsByReadCount() {
@@ -51,5 +51,11 @@ public class BoardRepository {
     
     public void saveTags(List<String> tags, String articleId) {
         ;
+    }
+
+    public Board findBoardWithTags(String articleId) {
+        return em.createQuery("select b from Board b join fetch b.boardTags where b.articleId = :articleId", Board.class)
+                .setParameter("articleId", articleId)
+                .getSingleResult();
     }
 }
