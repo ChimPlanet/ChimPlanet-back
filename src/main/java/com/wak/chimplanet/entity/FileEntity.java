@@ -1,6 +1,5 @@
 package com.wak.chimplanet.entity;
 
-import io.swagger.annotations.Api;
 import java.time.LocalDateTime;
 import javax.persistence.*;
 
@@ -19,7 +18,7 @@ import org.springframework.data.annotation.CreatedDate;
 @Entity(name="file")
 @Table(name = "file", uniqueConstraints = {@UniqueConstraint(
     name = "sequence_unique",
-    columnNames = {"sequence"}
+    columnNames = {"sequence", "imageType"}
 )})
 public class FileEntity {
 
@@ -46,14 +45,14 @@ public class FileEntity {
 
     @Enumerated(EnumType.STRING)
     @ApiModelProperty(value = "파일 이미지 타입(MAIN, MID)")
-    private ImageType imageType; // 이미지 타입 [Main, Mid]
+    private ImageType imageType;
 
     @Column
     @ApiModelProperty(value = "기기별 이미지 타입(MOBILE, PC)")
     private DeviceType deviceType;
 
     @Column
-    @ApiModelProperty(value = "리다이렉션 타입")
+    @ApiModelProperty(value = "리다이렉션 타입(Y, N)")
     private String redirectType;
 
     @Column
