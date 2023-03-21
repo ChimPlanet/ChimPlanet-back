@@ -1,58 +1,6 @@
 spring:
-  #  운영환경
-  datasource:
-    # driver-class-name: com.mysql.cj.jdbc.Driver
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://chimplanet-db.cff65pogxbuj.ap-northeast-1.rds.amazonaws.com:3306/chimplanet?serverTimezone=Asia/Seoul
-    username: root
-    password:
-  jpa:
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    open-in-view: false
-    hibernate:
-      ddl-auto: update # 설정 주의해주세요...
-    properties:
-      hibernate:
-        #        show_sql : true
-        format_sql: true
-        
-  # 개발환경
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:tcp://localhost/~/chimplanet
-#    username: sa
-#    password: 1234
-#
-#  jpa:
-#    hibernate:
-#      ddl-auto: create
-#    properties:
-#      hibernate:
-#        #        show_sql : true
-#        format_sql: true
-
-
-
-  logging:
-    level:
-      org.hibernate.SQL: debug
-      # org.hibernate.type: trace
-
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-  # 파일 업로드제한 20MB
-  servlet:
-    multipart:
-      maxFileSize: 20MB
-      maxRequestSize: 20MB
+  profiles:
+    default: dev # 기본 실행환경 설정
 
 logging-module:
   version: 0.0.3
-
-path:
-  # 로컬 저장위치
-  # upload-images: 'D:/TemporaryFiles/'
-  upload-images: '/Users/ich/Downloads/'
-  # 서버 저장위치 ~ 분리 필요
-  # upload-images: '/home/ec2-user/wak/images/'

@@ -1,0 +1,35 @@
+# Development environment
+spring:
+  profiles:
+    active:
+      on-profile: dev
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/chimplanet
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        # show_sql : true
+        format_sql: true
+
+  logging:
+    level:
+      org.hibernate.SQL: debug
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  servlet:
+    multipart:
+      maxFileSize: 20MB
+      maxRequestSize: 20MB
+
+path:
+  # upload-images: '/Users/ich/Downloads/'
+  upload-images: 'D:\TemporaryFiles/'
