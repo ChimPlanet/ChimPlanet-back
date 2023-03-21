@@ -1,5 +1,6 @@
 package com.wak.chimplanet.service;
 
+import com.wak.chimplanet.dto.requestDto.FileUploadRequestDto;
 import com.wak.chimplanet.entity.DeviceType;
 import com.wak.chimplanet.entity.FileEntity;
 import com.wak.chimplanet.entity.ImageType;
@@ -75,10 +76,11 @@ public class FileService {
         return fileRepository.save(fileEntity);
     }
 
-    public FileEntity updateImage(Long fileId, MultipartFile file) {
+    public FileEntity updateImage(FileUploadRequestDto fileUploadRequestDto) {
         /**
          * 구현예정
          */
+        log.info("[updateImage]");
         return null;
     }
 }

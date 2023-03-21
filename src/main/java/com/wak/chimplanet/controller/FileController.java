@@ -1,5 +1,6 @@
 package com.wak.chimplanet.controller;
 
+import com.wak.chimplanet.dto.requestDto.FileUploadRequestDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.DeviceType;
 import com.wak.chimplanet.entity.FileEntity;
@@ -7,6 +8,7 @@ import com.wak.chimplanet.entity.ImageType;
 import com.wak.chimplanet.service.FileService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import java.io.File;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,7 +47,7 @@ public class FileController {
      * 이미지 업로드
      * @return Map<String, Object>
      */
-    @PostMapping("/image")
+    @PutMapping("/image/{}")
     @ApiOperation(value = "이미지 파일 업로드")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "files", required = false, dataType = "MultipartFile", value = "첨부 이미지 파일"),
@@ -55,6 +57,7 @@ public class FileController {
         @ApiImplicitParam(name = "deviceType ", required = false, dataType = "DeviceType", value = "파일 사용 기기[PC, MOBILE]")
     })
     public ResponseEntity<FileEntity> uploadImage(HttpServletRequest request,
+        @PathVariable(required = true) Long fileId,
         @RequestPart(value = "file")MultipartFile[] files,
         @RequestParam(value = "fileType") ImageType ImageType,
         @RequestParam(value = "useYn") String useYn,
@@ -62,6 +65,10 @@ public class FileController {
         @RequestParam(value = "redirectUrl") String redirectUrl,
         @RequestParam(value = "sequence") int sequence) {
         return ResponseEntity.ok().body(fileService.uploadImage(files, ImageType, useYn, deviceType, redirectUrl, sequence));
+    }
+
+    public ResponseEntity<FileEntity> updateImage(FileUploadRequestDto fileUploadRequestDto) {
+        return ResponseEntity.ok().body(fileService.updateImage(fileUploadRequestDto));
     }
 
 }
