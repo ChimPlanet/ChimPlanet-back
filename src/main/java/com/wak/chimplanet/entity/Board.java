@@ -1,5 +1,6 @@
 package com.wak.chimplanet.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -7,6 +8,7 @@ import org.apache.tomcat.util.digester.ArrayStack;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +44,8 @@ public class Board {
     @Column(name = "reg_date")
     @Temporal(TemporalType.TIMESTAMP)
     @ApiModelProperty(value = "작성일시", example = "2022-03-05 14:30")
-    private String regDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime regDate;
 
     @Column(name = "thumbnail_url", length = 1000)
     @ApiModelProperty(value = "썸네일 URL")
