@@ -93,11 +93,10 @@ public class BoardService {
                 for(Tag tag : tags) {
                     BoardTag boardTag = BoardTag.createBoardTag(tag, board);
                     board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
-                    boardTags.add(boardTag);
+                    boardTags.add(boardTag); // BoardTag 리스트에도 추가
                 }
 
                 Board newBoard = Board.createBoardWithTag(board, boardTags);
-                System.out.println("newBoard = " + newBoard.toString());
                 boards.add(newBoard);
             }
 
