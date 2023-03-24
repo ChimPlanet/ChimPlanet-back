@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.wak.chimplanet.entity.FileEntity;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.DisplayName;
@@ -35,4 +36,32 @@ class FileControllerTest {
         mockMvc.perform(multipart("/api/file/image").file(file))
             .andExpect(status().isOk());
     }
+
+    /*@Test
+    public void 파일이미지_변경_테스트() throws Exception {
+        // given
+        FileEntity fileEntity = FileEntity.builder()
+            .fileName("test.png")
+            .imageUri("")
+            .build();
+        fileEntity.setFileName("test.jpg");
+        fileEntity.setFilePath("/home/user/");
+        fileEntity.setFileSize(1000L);
+        fileEntity.setFileType("jpg");
+        fileRepository.save(fileEntity);
+
+        FileUploadRequestDto dto = new FileUploadRequestDto();
+        dto.setFileId(fileEntity.getId());
+        dto.setFileName("new_test.jpg");
+
+        // when
+        mockMvc.perform(put("/updateImage")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isOk());
+        // then
+        FileEntity updatedEntity = fileRepository.findById(fileEntity.getId()).orElse(null);
+        assertNotNull(updatedEntity);
+        assertEquals(dto.getFileName(), updatedEntity.getFileName());
+    }*/
 }

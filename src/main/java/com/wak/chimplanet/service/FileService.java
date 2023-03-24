@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,11 +77,23 @@ public class FileService {
         return fileRepository.save(fileEntity);
     }
 
-    public FileEntity updateImage(FileUploadRequestDto fileUploadRequestDto) {
-        /**
-         * 구현예정
-         */
-        log.info("[updateImage]");
-        return null;
+    @Transactional
+    public Long updateImage(FileUploadRequestDto fileUploadRequestDto, MultipartFile[] multipartFiles) throws Exception {
+        FileEntity findFileEntityById = fileRepository.findById(fileUploadRequestDto.getFileId())
+            .orElseThrow(
+                // ID로 조회한 결과값이 없는 경우
+                () -> new IllegalArgumentException("File not found with id " + fileUploadRequestDto.getFileId())
+            );
+        
+        // 조회한 엔티티를 변경
+        FileEntity fileEntity = findFileEntityById.updateFile(fileUploadRequestDto, multipartFiles);
+
+        log.info("updateFileEntity : {}", fileEntity.toString());
+
+        // 이미지 파일변경
+        findFileEntityById.changeFile(fileEntity.getFileName()
+            , fileEntity.getFileName(), filePath, multipartFiles);
+
+        return findFileEntityById.getFileId();
     }
 }

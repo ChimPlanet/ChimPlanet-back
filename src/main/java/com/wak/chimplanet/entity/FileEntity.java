@@ -74,40 +74,72 @@ public class FileEntity {
 
     //== 비즈니스 로직 ==/
     /**
+     * DDD 패턴으로 리팩토링
      * 이미지 파일 변경
-     * @param requestDto
      */
-    public FileEntity changeImage(FileUploadRequestDto requestDto, String filePath) {
-        MultipartFile[] multipartFile = requestDto.getFile();
-        String originFileName = multipartFile[0].getOriginalFilename();
-        long fileSize = multipartFile[0].getSize();
-        String safeFileName = UUID.randomUUID().toString() + "-" + originFileName; // 고유 파일명
-
-        String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("images/")// 리소스 핸들러 명칭
-            .path(safeFileName)
-            .toUriString();
-
+    public void changeFile(String originalFileName, String safeFileName, String filePath, MultipartFile[] multipartFile) {
         File file = new File(filePath + File.separator + safeFileName);
+        File originalFile = new File(filePath + File.separator + originalFileName);
 
-        log.info("originFileName: {}, fileSize: {}, safeFileName: {}, filePath: {}",
-            originFileName, fileSize, safeFileName, filePath);
+        log.info("save FilePath: {}", filePath + File.separator + safeFileName);
 
         try {
+            // 기존파일 삭제
+            if (originalFile.exists()) {
+                boolean result = originalFile.delete();
+                if (!result) {
+                    log.error("Failed to delete original file: {}", originalFile.getAbsolutePath());
+                }
+            }
             multipartFile[0].transferTo(file);
         } catch (IOException e) {
             log.error("[FileService.class] IOException", e);
             throw new RuntimeException(e);
         }
+    }
 
-        return FileEntity.builder()
-            .fileName(safeFileName)
-            .deviceType(deviceType)
-            .redirectUrl(redirectUrl)
-            .useYn(useYn)
-            .imageType(imageType)
-            .imageUri(fileUri)
-            .sequence(sequence)
-            .build();
+
+    /**
+     * 이미지파일 정보 변경 감지 update
+     */
+    public FileEntity updateFile(FileUploadRequestDto fileUploadRequestDto, MultipartFile[] multipartFile) {
+        String safeFileName = UUID.randomUUID().toString() + "-" + multipartFile[0].getOriginalFilename();
+
+        log.info("Updating file with id {} with the following changes: fileName={}, useYn={}, deviceType={}, imageType={}, redirectUrl={}, imageUri={}, redirectType={}, sequence={}",
+            this.fileId, safeFileName, fileUploadRequestDto.getUseYn(), fileUploadRequestDto.getDeviceType(),
+            fileUploadRequestDto.getImageType(), fileUploadRequestDto.getRedirectUrl(), getImageUri(safeFileName),
+            fileUploadRequestDto.getRedirectType(), fileUploadRequestDto.getSequence());
+
+        this.fileName = safeFileName;
+        this.useYn = fileUploadRequestDto.getUseYn();
+        this.deviceType = fileUploadRequestDto.getDeviceType();
+        this.imageType = fileUploadRequestDto.getImageType();
+        this.redirectUrl = fileUploadRequestDto.getRedirectUrl();
+        this.imageUri = getImageUri(safeFileName);
+        this.redirectType = fileUploadRequestDto.getRedirectType();
+        this.sequence = fileUploadRequestDto.getSequence();
+
+        return this;
+    }
+
+    /**
+     * 고유 파일명 생성하여 리턴
+     * @param multipartFile
+     * @return{String}
+     */
+    public String getFileName(MultipartFile multipartFile) {
+        String originFileName = multipartFile.getOriginalFilename();
+        return UUID.randomUUID().toString() + "-" + originFileName; // 고유 파일명
+    }
+
+    /**
+     * 호출할 이미지 URI 생성하여 리턴
+     * @return{String}
+     */
+    public String getImageUri(String safeFileName) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("images/")// 리소스 핸들러 명칭
+            .path(safeFileName)
+            .toUriString();
     }
 }

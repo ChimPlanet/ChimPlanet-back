@@ -1,15 +1,16 @@
 package com.wak.chimplanet.dto.requestDto;
 
 import com.wak.chimplanet.entity.DeviceType;
-import com.wak.chimplanet.entity.FileEntity;
 import com.wak.chimplanet.entity.ImageType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FileUploadRequestDto {
@@ -20,11 +21,21 @@ public class FileUploadRequestDto {
     private String useYn;
     private DeviceType deviceType;
     private String redirectUrl;
+    private String redirectType;
     private int sequence;
 
 
-    public FileEntity toEntity() {
-        return FileEntity.builder().build();
+    public static FileUploadRequestDto createFileUploadRequestDto(Long fileId, MultipartFile[] file, ImageType imageType,
+        String useYn, DeviceType deviceType, String redirectUrl, String redirectType, int sequence) {
+        return FileUploadRequestDto.builder()
+            .fileId(fileId)
+            .file(file)
+            .imageType(imageType)
+            .useYn(useYn)
+            .deviceType(deviceType)
+            .redirectUrl(redirectUrl)
+            .redirectType(redirectType)
+            .sequence(sequence)
+            .build();
     }
-
 }

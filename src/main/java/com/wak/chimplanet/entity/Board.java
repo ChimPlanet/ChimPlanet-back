@@ -2,6 +2,8 @@ package com.wak.chimplanet.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.*;
 import org.apache.tomcat.util.digester.ArrayStack;
 import org.hibernate.annotations.ColumnDefault;
@@ -40,7 +42,6 @@ public class Board {
     private String readCount;
 
     @Column(name = "reg_date")
-    @Temporal(TemporalType.TIMESTAMP)
     @ApiModelProperty(value = "작성일시", example = "2022-03-05 14:30")
     private String regDate;
 
@@ -56,6 +57,7 @@ public class Board {
     @ApiModelProperty(value = "공고 마갑여부", example = "ING || END")
     private String isEnd;
 
+    @Builder.Default
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
     private List<BoardTag> boardTags = new ArrayList<>();
 

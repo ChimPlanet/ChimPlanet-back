@@ -40,4 +40,5 @@ public class BoardDetailResponseDTO {
                 .unauthorized(board.getUnauthorized().equals("N"))
                 .build();
     }
+
 }
