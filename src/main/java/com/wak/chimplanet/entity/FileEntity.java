@@ -3,6 +3,8 @@ package com.wak.chimplanet.entity;
 import com.wak.chimplanet.dto.requestDto.FileUploadRequestDto;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.persistence.*;

@@ -7,6 +7,9 @@ import com.wak.chimplanet.entity.ImageType;
 import com.wak.chimplanet.repository.FileRepository;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManagerFactory;
@@ -95,5 +98,28 @@ public class FileService {
             , fileEntity.getFileName(), filePath, multipartFiles);
 
         return findFileEntityById.getFileId();
+    }
+
+    @Transactional
+    public Long deleteImage(Long fileId) {
+        FileEntity fileEntity = fileRepository.findById(fileId)
+            .orElseThrow(() -> new IllegalArgumentException("File not found with id " + fileId));
+
+        Path filePath = Paths.get(fileEntity.getImageUri());
+
+        if (!Files.exists(filePath)) {
+            // 삭제할 파일이 존재하지 않는경우
+            throw new IllegalArgumentException("File does not exist.");
+        }
+
+        try {
+            Files.delete(filePath);
+            fileRepository.delete(fileEntity);
+        } catch (IOException e) {
+            // 파일 삭제 중 오류 발생
+            throw new IllegalArgumentException("Failed to delete file.");
+        }
+
+        return fileId;
     }
 }
