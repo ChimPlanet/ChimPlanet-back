@@ -1,7 +1,12 @@
 package com.wak.chimplanet.entity;
 
-import io.swagger.annotations.Api;
+import com.wak.chimplanet.dto.requestDto.FileUploadRequestDto;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import javax.persistence.*;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -10,7 +15,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Getter
 @Builder
@@ -19,8 +27,9 @@ import org.springframework.data.annotation.CreatedDate;
 @Entity(name="file")
 @Table(name = "file", uniqueConstraints = {@UniqueConstraint(
     name = "sequence_unique",
-    columnNames = {"sequence"}
+    columnNames = {"sequence", "imageType"}
 )})
+@Slf4j
 public class FileEntity {
 
     @Id
@@ -46,14 +55,14 @@ public class FileEntity {
 
     @Enumerated(EnumType.STRING)
     @ApiModelProperty(value = "파일 이미지 타입(MAIN, MID)")
-    private ImageType imageType; // 이미지 타입 [Main, Mid]
+    private ImageType imageType;
 
     @Column
     @ApiModelProperty(value = "기기별 이미지 타입(MOBILE, PC)")
     private DeviceType deviceType;
 
     @Column
-    @ApiModelProperty(value = "리다이렉션 타입")
+    @ApiModelProperty(value = "리다이렉션 타입(Y, N)")
     private String redirectType;
 
     @Column
@@ -64,4 +73,75 @@ public class FileEntity {
     @ApiModelProperty(value = "생성일자")
     @CreatedDate
     private LocalDateTime createdDate;
+
+    //== 비즈니스 로직 ==/
+    /**
+     * DDD 패턴으로 리팩토링
+     * 이미지 파일 변경
+     */
+    public void changeFile(String originalFileName, String safeFileName, String filePath, MultipartFile[] multipartFile) {
+        File file = new File(filePath + File.separator + safeFileName);
+        File originalFile = new File(filePath + File.separator + originalFileName);
+
+        log.info("save FilePath: {}", filePath + File.separator + safeFileName);
+
+        try {
+            // 기존파일 삭제
+            if (originalFile.exists()) {
+                boolean result = originalFile.delete();
+                if (!result) {
+                    log.error("Failed to delete original file: {}", originalFile.getAbsolutePath());
+                }
+            }
+            multipartFile[0].transferTo(file);
+        } catch (IOException e) {
+            log.error("[FileService.class] IOException", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * 이미지파일 정보 변경 감지 update
+     */
+    public FileEntity updateFile(FileUploadRequestDto fileUploadRequestDto, MultipartFile[] multipartFile) {
+        String safeFileName = UUID.randomUUID().toString() + "-" + multipartFile[0].getOriginalFilename();
+
+        log.info("Updating file with id {} with the following changes: fileName={}, useYn={}, deviceType={}, imageType={}, redirectUrl={}, imageUri={}, redirectType={}, sequence={}",
+            this.fileId, safeFileName, fileUploadRequestDto.getUseYn(), fileUploadRequestDto.getDeviceType(),
+            fileUploadRequestDto.getImageType(), fileUploadRequestDto.getRedirectUrl(), getImageUri(safeFileName),
+            fileUploadRequestDto.getRedirectType(), fileUploadRequestDto.getSequence());
+
+        this.fileName = safeFileName;
+        this.useYn = fileUploadRequestDto.getUseYn();
+        this.deviceType = fileUploadRequestDto.getDeviceType();
+        this.imageType = fileUploadRequestDto.getImageType();
+        this.redirectUrl = fileUploadRequestDto.getRedirectUrl();
+        this.imageUri = getImageUri(safeFileName);
+        this.redirectType = fileUploadRequestDto.getRedirectType();
+        this.sequence = fileUploadRequestDto.getSequence();
+
+        return this;
+    }
+
+    /**
+     * 고유 파일명 생성하여 리턴
+     * @param multipartFile
+     * @return{String}
+     */
+    public String getFileName(MultipartFile multipartFile) {
+        String originFileName = multipartFile.getOriginalFilename();
+        return UUID.randomUUID().toString() + "-" + originFileName; // 고유 파일명
+    }
+
+    /**
+     * 호출할 이미지 URI 생성하여 리턴
+     * @return{String}
+     */
+    public String getImageUri(String safeFileName) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("images/")// 리소스 핸들러 명칭
+            .path(safeFileName)
+            .toUriString();
+    }
 }
