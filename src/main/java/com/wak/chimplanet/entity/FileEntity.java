@@ -3,8 +3,6 @@ package com.wak.chimplanet.entity;
 import com.wak.chimplanet.dto.requestDto.FileUploadRequestDto;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.persistence.*;
@@ -25,10 +23,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name="file")
-@Table(name = "file", uniqueConstraints = {@UniqueConstraint(
+/*@Table(name = "file", uniqueConstraints = {@UniqueConstraint(
     name = "sequence_unique",
     columnNames = {"sequence", "imageType"}
-)})
+)})*/
 @Slf4j
 public class FileEntity {
 
@@ -76,6 +74,23 @@ public class FileEntity {
 
     //== 비즈니스 로직 ==/
     /**
+     * 객체 생성
+     */
+    public static FileEntity createFileEntity(String fileName, String useYn, String redirectUrl, String imageUri,
+                                    ImageType imageType, DeviceType deviceType, String redirectType, int sequence) {
+        return FileEntity.builder()
+                .fileName(fileName)
+                .useYn(useYn)
+                .redirectUrl(redirectUrl)
+                .imageUri(imageUri)
+                .imageType(imageType)
+                .deviceType(deviceType)
+                .redirectType(redirectType)
+                .sequence(sequence)
+                .build();
+    }
+
+    /**
      * DDD 패턴으로 리팩토링
      * 이미지 파일 변경
      */
@@ -122,6 +137,14 @@ public class FileEntity {
         this.sequence = fileUploadRequestDto.getSequence();
 
         return this;
+    }
+
+    /**
+     * 시퀀스 값을 변경합니다.
+     * @param sequence 변경할 시퀀스 값
+     */
+    public void changeSequence(int sequence) {
+        this.sequence = sequence;
     }
 
     /**

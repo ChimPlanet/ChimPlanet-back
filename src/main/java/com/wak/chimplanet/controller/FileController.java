@@ -1,7 +1,8 @@
 package com.wak.chimplanet.controller;
 
+import com.wak.chimplanet.dto.requestDto.FileSequenceRequestDto;
 import com.wak.chimplanet.dto.requestDto.FileUploadRequestDto;
-import com.wak.chimplanet.dto.responseDto.ResponseDto;
+import com.wak.chimplanet.dto.responseDto.FileResponseDto;
 import com.wak.chimplanet.entity.DeviceType;
 import com.wak.chimplanet.entity.FileEntity;
 import com.wak.chimplanet.entity.ImageType;
@@ -39,6 +40,7 @@ public class FileController {
     /**
      * 이미지 불러오기
      */
+    @ApiOperation(value = "배너 파일 불러오기")
     @GetMapping("banner")
     public ResponseEntity<List<FileEntity>> findAllImages() {
         return ResponseEntity.ok().body(fileService.findAllImages());
@@ -73,13 +75,13 @@ public class FileController {
      * @ReqestParam 으로 각각의 DTO내용을 받은 후, 새로운 DTO객체에 넣어 DTO 를 만들어 사용
      * 추후 RequestBody + RequestPart로 변경
      */
-    @ApiOperation(value = "Update Image", notes = "Update an image file")
+    @ApiOperation(value = "이미지 업데이트", notes = "배너 이미지 관련 업데이트")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = ResponseDto.class),
-        @ApiResponse(code = 500, message = "Internal Server Error", response = ResponseDto.class)
+        @ApiResponse(code = 200, message = "OK", response = FileResponseDto.class),
+        @ApiResponse(code = 500, message = "Internal Server Error", response = FileResponseDto.class)
     })
     @PutMapping("/updateImage/{fileId}")
-    public ResponseEntity<ResponseDto> updateImage(
+    public ResponseEntity<FileResponseDto> updateImage(
         // @RequestPart(value= "fileUploadRequestDto") @ApiParam(value="배너 변경 정보", required = true) FileUploadRequestDto fileUploadRequestDto,
         @RequestParam(value = "fileType") ImageType ImageType,
         @RequestParam(value = "useYn") String useYn,
@@ -98,9 +100,9 @@ public class FileController {
             fileService.updateImage(fileUploadRequestDto, files);
 
             // 응답 및 메타데이터 생성 부 클래스 따로 빼서 처리하기
-            ResponseDto responseDto = new ResponseDto();
-            responseDto.setMessage("File uploaded successfully");
-            responseDto.setStatus(HttpStatus.OK);
+            FileResponseDto fileResponseDto = new FileResponseDto();
+            fileResponseDto.setMessage("File uploaded successfully");
+            fileResponseDto.setStatus(HttpStatus.OK);
 
             // 메타데이터 생성
             Map<String, Object> metadata = new HashMap<>();
@@ -108,15 +110,15 @@ public class FileController {
             metadata.put("fileSize", files[0].getSize());
             metadata.put("fileExtension", FilenameUtils.getExtension(files[0].getOriginalFilename()));
             metadata.put("uploadTime", LocalDateTime.now());
-            responseDto.setData(metadata);
+            fileResponseDto.setData(metadata);
 
-            return ResponseEntity.ok().body(responseDto);
+            return ResponseEntity.ok().body(fileResponseDto);
         } catch (Exception e) {
-            ResponseDto responseDto = new ResponseDto();
-            responseDto.setMessage("File upload failed: " + e.getMessage());
-            responseDto.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            responseDto.setData(null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+            FileResponseDto fileResponseDto = new FileResponseDto();
+            fileResponseDto.setMessage("File upload failed: " + e.getMessage());
+            fileResponseDto.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            fileResponseDto.setData(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(fileResponseDto);
         }
     }
     /**
@@ -127,25 +129,36 @@ public class FileController {
      */
     @ApiOperation(value = "파일 삭제", notes = "파일 ID를 이용하여 파일을 삭제합니다.")
     @DeleteMapping("/delete/{fileId}")
-    public ResponseEntity<ResponseDto<FileEntity>> deleteFile(@PathVariable Long fileId) {
+    public ResponseEntity<FileResponseDto<FileEntity>> deleteFile(@PathVariable Long fileId) {
         try {
             Long deletedFileId = fileService.deleteImage(fileId);
 
-            ResponseDto<FileEntity> responseDto = new ResponseDto<>();
-            responseDto.setStatus(HttpStatus.OK);
-            responseDto.setMessage("File Delete successfully");
-            responseDto.setData("deleteFileId :: " + deletedFileId);
+            FileResponseDto<FileEntity> fileResponseDto = new FileResponseDto<>();
+            fileResponseDto.setStatus(HttpStatus.OK);
+            fileResponseDto.setMessage("File Delete successfully");
+            fileResponseDto.setData("deleteFileId :: " + deletedFileId);
 
-            return ResponseEntity.ok(responseDto);
+            return ResponseEntity.ok(fileResponseDto);
         } catch (IllegalArgumentException e) {
 
-            ResponseDto<FileEntity> responseDto = new ResponseDto<>();
-            responseDto.setMessage("File Delete failed: " + e.getMessage());
-            responseDto.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            responseDto.setData("deleteFileId :: " + fileId);
+            FileResponseDto<FileEntity> fileResponseDto = new FileResponseDto<>();
+            fileResponseDto.setMessage("File Delete failed: " + e.getMessage());
+            fileResponseDto.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            fileResponseDto.setData("deleteFileId :: " + fileId);
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(fileResponseDto);
         }
+    }
+
+    @ApiOperation(value = "이미지 시퀀스를 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = FileResponseDto.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = FileResponseDto.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = FileResponseDto.class)})
+    @PutMapping("/sequence")
+    public ResponseEntity<FileResponseDto> updateSequence(@RequestBody List<FileSequenceRequestDto> sequenceList) {
+        fileService.updateSequence(sequenceList);
+        return ResponseEntity.ok().body(new FileResponseDto<>());
     }
 
 }
