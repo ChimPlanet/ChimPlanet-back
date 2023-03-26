@@ -7,7 +7,7 @@ spring:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:tcp://localhost/~/chimplanet
     username: sa
-    password:
+    password: 1234
 
   jpa:
     hibernate:
