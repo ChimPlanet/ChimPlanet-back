@@ -108,7 +108,7 @@ public class NaverCafeAtricleApi {
                     .thumbnailURL(thumbnailURL)
                     .redirectURL(redirectURL)
                     .isEnd(isEnd)
-                    .regDate(regDate)
+                    .regDate(LocalDateTime.parse(regDate))
                     .build();
 
             boardArrayList.add(board);
