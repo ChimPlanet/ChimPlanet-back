@@ -1,20 +1,21 @@
 package com.wak.chimplanet.entity;
 
 import io.swagger.annotations.ApiModel;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "tag")
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "tag_obj")
+@NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "태그 정보")
+@Getter
 @Builder
-public class Tag {
+@ApiModel(description = "태그 정보")
+public class TagObj {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id", nullable = false)
@@ -26,7 +27,6 @@ public class Tag {
     @Column(name = "parent_tag_id", length = 50, nullable = false)
     private String parentTagId;
 
-    @Column(name = "child_tag_id", length = 50, nullable = false)
-    private String childTagId;
-
+//    @Column(name = "child_tag_id", length = 50, nullable = false)
+//    private String childTagId;
 }

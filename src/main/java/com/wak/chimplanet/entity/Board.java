@@ -61,7 +61,7 @@ public class Board {
     private String isEnd;
 
     @Builder.Default
-    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tagObj", cascade = CascadeType.ALL)
     private List<BoardTag> boardTags = new ArrayList<>();
 
     @Column(name = "unauthorized")

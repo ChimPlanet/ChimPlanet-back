@@ -25,10 +25,10 @@ public class BoardTag {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id", nullable = false)
-    private Tag tag;
+    private TagObj tag;
 
     // 생성메서드
-    public static BoardTag createBoardTag(Tag tag, Board board) {
+    public static BoardTag createBoardTag(TagObj tag, Board board) {
         BoardTag boardTag = BoardTag.builder()
                 .board(board)
                 .tag(tag)
@@ -37,7 +37,7 @@ public class BoardTag {
         return boardTag;
     }
 
-    public static BoardTag addBoardTag(Tag tag, Board board) {
+    public static BoardTag addBoardTag(TagObj tag, Board board) {
         return BoardTag.builder()
                 .board(board)
                 .tag(tag)

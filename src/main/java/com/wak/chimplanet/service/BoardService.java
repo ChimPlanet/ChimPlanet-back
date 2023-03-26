@@ -2,21 +2,16 @@ package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.common.config.exception.NotFoundException;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
-import com.wak.chimplanet.entity.Board;
-import com.wak.chimplanet.entity.BoardDetail;
-import com.wak.chimplanet.entity.BoardTag;
-import com.wak.chimplanet.entity.Tag;
+import com.wak.chimplanet.entity.*;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
 import com.wak.chimplanet.repository.BoardRepository;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.wak.chimplanet.repository.TagRepository;
+import com.wak.chimplanet.repository.TagObjRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 @Service
 // @RequiredArgsConstructor
@@ -26,7 +21,7 @@ public class BoardService {
 
     private final NaverCafeAtricleApi naverCafeAtricleApi;
     private final BoardRepository boardRepository;
-    private final TagRepository tagRepository;
+    private final TagObjRepository tagRepository;
 
     private final static String API_URL = "https://apis.naver.com/cafe-web/cafe2/ArticleListV2.json?"
         + "search.clubid=27842958"
@@ -37,7 +32,7 @@ public class BoardService {
 
     @Autowired
     public BoardService(NaverCafeAtricleApi naverCafeAtricleApi,
-                        BoardRepository boardRepository, TagRepository tagRepository) {
+                        BoardRepository boardRepository, TagObjRepository tagRepository) {
         this.naverCafeAtricleApi = naverCafeAtricleApi;
         this.boardRepository = boardRepository;
         this.tagRepository = tagRepository;
@@ -87,10 +82,10 @@ public class BoardService {
 
                 String content = boardDetail.getContent();
 
-                List<Tag> tags = categorizingTag(content);
+                List<TagObj> tags = categorizingTag(content);
                 List<BoardTag> boardTags = new ArrayList<>();
 
-                for(Tag tag : tags) {
+                for(TagObj tag : tags) {
                     BoardTag boardTag = BoardTag.createBoardTag(tag, board);
                     board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
                     boardTags.add(boardTag); // BoardTag 리스트에도 추가
@@ -126,12 +121,12 @@ public class BoardService {
     /**
      * 게시글에서 태그 리스트 분류하기
      */
-    public List<Tag> categorizingTag(String content) {
+    public List<TagObj> categorizingTag(String content) {
         // 문장에서 찾은 태그명
         Set<String> foundTags = new HashSet<>();
-        List<Tag> tags = tagRepository.findALl();
+        List<TagObj> tags = tagRepository.findALl();
 
-       for(Tag tag : tags) {
+       for(TagObj tag : tags) {
            log.info("검색하는 태그명: {}",tag.getTagName());
 //            if (kmpSearch(content, tag.getTagName())) { // 태그 이름으로 검색
 //                foundTags.add(tag.getTagName());

@@ -3,9 +3,9 @@ package com.wak.chimplanet.service;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
-import com.wak.chimplanet.entity.Tag;
+import com.wak.chimplanet.entity.TagObj;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
-import com.wak.chimplanet.repository.TagRepository;
+import com.wak.chimplanet.repository.TagObjRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
@@ -29,7 +29,8 @@ import static org.junit.Assert.assertEquals;
 public class BoardServiceTest {
 
     @Autowired NaverCafeAtricleApi naverCafeAtricleApi;
-    @Autowired TagRepository tagRepository;
+    @Autowired
+    TagObjRepository tagRepository;
     @Autowired BoardService boardService;
     @Autowired EntityManager em;
 
@@ -53,7 +54,7 @@ public class BoardServiceTest {
 
         // when
         List<String> expectedTags = Arrays.asList("백엔드");
-        List<Tag> actualTags = boardService.categorizingTag(content);
+        List<TagObj> actualTags = boardService.categorizingTag(content);
 
         // then
         assertEquals(actualTags.get(0).getTagName(), "백엔드");

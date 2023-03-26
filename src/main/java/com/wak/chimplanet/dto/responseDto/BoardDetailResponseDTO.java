@@ -3,7 +3,7 @@ package com.wak.chimplanet.dto.responseDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
-import com.wak.chimplanet.entity.Tag;
+import com.wak.chimplanet.entity.TagObj;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ public class BoardDetailResponseDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime regDate; /* 생성일자 */
     private String isEnd; /* 마감여부 */
-    private List<Tag> tags; /* 태그이름 */
+    private List<TagObj> tags; /* 태그이름 */
     private boolean unauthorized; /* 접근권한 */
 
     public static BoardDetailResponseDTO from(BoardDetail boardDetail, Board board) {
@@ -34,7 +34,7 @@ public class BoardDetailResponseDTO {
                 .content(boardDetail.getContent())
                 .redirectURL(boardDetail.getRedirectURL())
                 .readCount(board.getReadCount())
-                .regDate(LocalDateTime.parse(board.getRegDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+//                .regDate(LocalDateTime.parse(board.getRegDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .isEnd(board.getIsEnd())
                 .tags(boardDetail.getTagList())
                 .unauthorized(board.getUnauthorized().equals("N"))

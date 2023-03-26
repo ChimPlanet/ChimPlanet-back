@@ -1,6 +1,6 @@
 package com.wak.chimplanet.repository;
 
-import com.wak.chimplanet.entity.Tag;
+import com.wak.chimplanet.entity.TagObj;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ public class TagRepositoryTest {
     EntityManager em;
 
     @Autowired
-    private TagRepository tagRepository;
+    private TagObjRepository tagRepository;
 
 
     @Test
     public void findALl() {
-        List<Tag> tagRepositoryList = tagRepository.findALl();
+        List<TagObj> tagRepositoryList = tagRepository.findALl();
         assertEquals(tagRepositoryList.size(), 8);
     }
 
