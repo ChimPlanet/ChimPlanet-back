@@ -43,7 +43,7 @@ public class FileService {
      * 추후 DTO 로 리팩토링 변경예정
      */
     public FileEntity uploadImage(MultipartFile[] files, ImageType imageType, String useYn,
-        DeviceType deviceType, String redirectUrl, int sequence) {
+        DeviceType deviceType, String redirectUrl, int sequence, String redirectType) {
         String fileNames = "";
 
         String originFileName = files[0].getOriginalFilename();
@@ -67,7 +67,7 @@ public class FileService {
             throw new RuntimeException(e);
         }
 
-        final FileEntity fileEntity = FileEntity.builder()
+        FileEntity fileEntity = FileEntity.builder()
             .fileName(safeFile)
             .deviceType(deviceType)
             .redirectUrl(redirectUrl)
@@ -75,6 +75,7 @@ public class FileService {
             .imageType(imageType)
             .imageUri(fileUri)
             .sequence(sequence)
+            .redirectType(redirectType)
             .build();
 
         return fileRepository.save(fileEntity);
@@ -105,15 +106,17 @@ public class FileService {
         FileEntity fileEntity = fileRepository.findById(fileId)
             .orElseThrow(() -> new IllegalArgumentException("File not found with id " + fileId));
 
-        Path filePath = Paths.get(fileEntity.getImageUri());
+        Path deletePath = Paths.get(filePath + File.separator + fileEntity.getFileName());
 
-        if (!Files.exists(filePath)) {
-            // 삭제할 파일이 존재하지 않는경우
+        log.info("deleteFileName : {}, deleteFilePath : {}", fileEntity.getFileName(), deletePath.toString());
+
+        if (!Files.exists(deletePath)) {
+            // 삭제할 파일이 존재하지 않는 경우
             throw new IllegalArgumentException("File does not exist.");
         }
 
         try {
-            Files.delete(filePath);
+            Files.delete(deletePath);
             fileRepository.delete(fileEntity);
         } catch (IOException e) {
             // 파일 삭제 중 오류 발생

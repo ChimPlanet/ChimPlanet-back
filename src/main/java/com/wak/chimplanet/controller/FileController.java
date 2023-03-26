@@ -62,8 +62,9 @@ public class FileController {
         @RequestParam(value = "useYn") String useYn,
         @RequestParam(value = "deviceType") DeviceType deviceType,
         @RequestParam(value = "redirectUrl") String redirectUrl,
+        @RequestParam(value = "redirectType") String redirectType,
         @RequestParam(value = "sequence") int sequence) {
-        return ResponseEntity.ok().body(fileService.uploadImage(files, ImageType, useYn, deviceType, redirectUrl, sequence));
+        return ResponseEntity.ok().body(fileService.uploadImage(files, ImageType, useYn, deviceType, redirectUrl, sequence, redirectType));
     }
 
     /**
@@ -118,10 +119,33 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
     }
-
+    /**
+     * 파일 삭제 API
+     * @param fileId 삭제할 파일 ID
+     * @return 삭제된 파일 ID
+     * @throws IllegalArgumentException 파일이 존재하지 않거나 삭제 중 오류 발생시 예외 발생
+     */
+    @ApiOperation(value = "파일 삭제", notes = "파일 ID를 이용하여 파일을 삭제합니다.")
     @DeleteMapping("/delete/{fileId}")
-    public ResponseEntity<ResponseDto> deleteFile() {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto());
+    public ResponseEntity<ResponseDto<FileEntity>> deleteFile(@PathVariable Long fileId) {
+        try {
+            Long deletedFileId = fileService.deleteImage(fileId);
+
+            ResponseDto<FileEntity> responseDto = new ResponseDto<>();
+            responseDto.setStatus(HttpStatus.OK);
+            responseDto.setMessage("File Delete successfully");
+            responseDto.setData("deleteFileId :: " + deletedFileId);
+
+            return ResponseEntity.ok(responseDto);
+        } catch (IllegalArgumentException e) {
+
+            ResponseDto<FileEntity> responseDto = new ResponseDto<>();
+            responseDto.setMessage("File Delete failed: " + e.getMessage());
+            responseDto.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            responseDto.setData("deleteFileId :: " + fileId);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
     }
 
 }
