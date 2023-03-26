@@ -156,9 +156,16 @@ public class FileController {
             @ApiResponse(code = 400, message = "Bad Request", response = FileResponseDto.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = FileResponseDto.class)})
     @PutMapping("/sequence")
-    public ResponseEntity<FileResponseDto> updateSequence(@RequestBody List<FileSequenceRequestDto> sequenceList) {
-        fileService.updateSequence(sequenceList);
-        return ResponseEntity.ok().body(new FileResponseDto<>());
+    public ResponseEntity<FileResponseDto> updateSequence(
+            @RequestBody List<FileSequenceRequestDto> sequenceList) {
+        try {
+            fileService.updateSequence(sequenceList);
+            FileResponseDto<FileEntity> responseDto = new FileResponseDto<>();
+            return ResponseEntity.ok().body(responseDto);
+        } catch (IllegalArgumentException e) {
+            FileResponseDto<String> responseDto = new FileResponseDto<>(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.badRequest().body(responseDto);
+        }
     }
 
 }
