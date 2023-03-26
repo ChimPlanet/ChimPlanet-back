@@ -1,5 +1,6 @@
 package com.wak.chimplanet.service;
 
+import com.wak.chimplanet.dto.requestDto.FileSequenceRequestDto;
 import com.wak.chimplanet.dto.requestDto.FileUploadRequestDto;
 import com.wak.chimplanet.entity.DeviceType;
 import com.wak.chimplanet.entity.FileEntity;
@@ -10,9 +11,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import javax.persistence.EntityManagerFactory;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -124,5 +129,51 @@ public class FileService {
         }
 
         return fileId;
+    }
+
+/*
+    @Transactional
+    public void updateSequence(List<FileSequenceRequestDto> sequenceList) {
+
+        for (FileSequenceRequestDto fileSequenceRequestDto : sequenceList ) {
+            FileEntity fileEntity = fileRepository.findById(fileSequenceRequestDto.getFileId())
+                    .orElseThrow(() -> new IllegalArgumentException("File not found with id " + fileSequenceRequestDto.getFileId()));
+
+            // 시퀀스 값이 유효하지 않은 경우 예외를 던집니다.
+            int newSequence = fileSequenceRequestDto.getSequence();
+            if (newSequence < 0) {
+                throw new IllegalArgumentException("Invalid sequence: " + newSequence);
+            }
+
+            if (fileEntity.getSequence() != newSequence) {
+                fileEntity.changeSequence(newSequence);
+            }
+        }
+    }
+*/
+
+    @Transactional
+    public void updateSequence(List<FileSequenceRequestDto> sequenceList) {
+        Map<Long, Integer> newSequenceMap = new HashMap<>();
+        for (FileSequenceRequestDto fileSequenceRequestDto : sequenceList ) {
+            int newSequence = fileSequenceRequestDto.getSequence();
+            if (newSequence < 0) {
+                throw new IllegalArgumentException("Invalid sequence: " + newSequence);
+            }
+            newSequenceMap.put(fileSequenceRequestDto.getFileId(), newSequence);
+        }
+
+        List<FileEntity> fileEntities = fileRepository.findAllById(newSequenceMap.keySet());
+        Map<Long, FileEntity> fileEntityMap = fileEntities.stream().collect(Collectors.toMap(FileEntity::getFileId, Function.identity()));
+
+        for (FileEntity fileEntity : fileEntities) {
+            int newSequence = newSequenceMap.get(fileEntity.getFileId());
+            if (fileEntity.getSequence() != newSequence) {
+//                if (fileRepository.existsById(fileEntity.getFileId())) {
+//                    throw new IllegalArgumentException("Sequence " + newSequence + " is already in use for image type " + fileEntity.getImageType());
+//                }
+                fileEntity.changeSequence(newSequence);
+            }
+        }
     }
 }
