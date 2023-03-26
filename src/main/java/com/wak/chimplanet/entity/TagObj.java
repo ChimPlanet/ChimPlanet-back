@@ -27,6 +27,6 @@ public class TagObj {
     @Column(name = "parent_tag_id", length = 50, nullable = false)
     private String parentTagId;
 
-//    @Column(name = "child_tag_id", length = 50, nullable = false)
-//    private String childTagId;
+    @Column(name = "child_tag_id", length = 50, nullable = false)
+    private String childTagId;
 }
