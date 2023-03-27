@@ -63,6 +63,7 @@ public class BoardService {
     @Transactional
     public List<Board> saveAllBoards() {
         ArrayList<Board> boards = new ArrayList<>();
+        int pageSize = 20; // 저장할 페이지 갯수
 
         for(int i = 1; i <= 1; i++) {
             ArrayList<Board> articles = naverCafeAtricleApi.getArticles(API_URL + i);
