@@ -24,12 +24,13 @@ public class TagObjRepository {
                 .getResultList();
     }
 
+
+    public TagObj findById(int tagId) {
+        return em.find(TagObj.class, tagId);
+    }
+
     public void save(TagObj tagObj) {
-        if(tagObj.getTagId() == null){
-            em.persist(tagObj);
-        }else{
-            em.merge((tagObj));
-        }
+        em.persist(tagObj);
     }
 
     public void deleteById (TagObj tagObj){

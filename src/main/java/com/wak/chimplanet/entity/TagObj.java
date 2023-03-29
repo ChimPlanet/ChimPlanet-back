@@ -1,19 +1,16 @@
 package com.wak.chimplanet.entity;
 
 import io.swagger.annotations.ApiModel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "tag_obj")
+@Getter @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Builder
 @ApiModel(description = "태그 정보")
 public class TagObj {
     @Id

@@ -26,7 +26,7 @@ public class TagObjController {
         return ResponseEntity.ok().body(tagObjService.getTagList(tagObj));
     }
 
-    @PostMapping
+    @PostMapping("tagObj")
     public ResponseEntity<List<TagObj>> saveTag(TagObj tagObj){
         return ResponseEntity.ok().body(tagObjService.saveTag(tagObj));
     }
