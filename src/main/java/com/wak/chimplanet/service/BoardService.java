@@ -73,13 +73,19 @@ public class BoardService {
             for(int j = 0; j < articles.size(); j++) {
                 Board board = articles.get(j);
                 String articleId = board.getArticleId();
+
                 BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
 
                 /*
                     예외 처리되는 경우 추가 UNAUTHORIZED 컬럼을 추가해줘야함
                     + H2DB 경우 Default 값이 엔티티에서 제대로 설정이 안됨...
+                    상세 내역이 조회 안되는 경우 = 접근권한이 없음(네이버 로그인 해야함)
                 */
-                if(boardDetail == null) continue; // 개선 필요
+                String unauthorized = "N"; // 접근권한 여부
+
+                if(boardDetail == null) {
+                    unauthorized = "Y";
+                };
 
                 String content = boardDetail.getContent();
 
@@ -92,8 +98,15 @@ public class BoardService {
                     boardTags.add(boardTag); // BoardTag 리스트에도 추가
                 }
 
-                Board newBoard = Board.createBoardWithTag(board, boardTags);
-                boards.add(newBoard);
+                Board newBoard = Board.createBoardWithTag(board, boardTags, unauthorized);
+                Board existingBoard = boardRepository.findById(articleId)
+                    .orElse(null); // 기존에 같은 ID를 가지고 있는 경우 UPDATE 쿼리를 날림
+
+                if(existingBoard != null) {
+                    boards.add(newBoard);
+                } else {
+                    // board.updateBoard(board, boardTags);
+                }
             }
 
             boardRepository.saveAll(boards);
@@ -128,7 +141,7 @@ public class BoardService {
         List<TagObj> tags = tagRepository.findALl();
 
        for(TagObj tag : tags) {
-           log.info("검색하는 태그명: {}",tag.getTagName());
+           // log.info("검색하는 태그명: {}", tag.getTagName());
 //            if (kmpSearch(content, tag.getTagName())) { // 태그 이름으로 검색
 //                foundTags.add(tag.getTagName());
 //            }

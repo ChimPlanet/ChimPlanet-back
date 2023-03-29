@@ -3,7 +3,9 @@ package com.wak.chimplanet.repository;
 import com.wak.chimplanet.entity.Board;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -57,5 +59,19 @@ public class BoardRepository {
         return em.createQuery("select b from Board b join fetch b.boardTags where b.articleId = :articleId", Board.class)
                 .setParameter("articleId", articleId)
                 .getSingleResult();
+    }
+
+    public Optional<Board> findById(String articleId) {
+        Optional<Board> board = null;
+
+        try {
+            board = Optional.ofNullable(em.createQuery("select b from Board b where b.articleId = :articleId", Board.class)
+                .setParameter("articleId", articleId)
+                .getSingleResult());
+        } catch (NoResultException e) {
+            board = Optional.empty();
+        } finally {
+            return board;
+        }
     }
 }
