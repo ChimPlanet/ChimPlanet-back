@@ -42,12 +42,12 @@ public class BoardRepository {
     }
 
     public List<Board> findAllBoard() {
-        return em.createQuery("select distinct b from Board b join fetch b.boardTags", Board.class)
+        return em.createQuery( "SELECT b FROM Board b LEFT JOIN FETCH b.boardTags", Board.class)
                 .getResultList();
     }
 
     public List<Board> findBoardsByReadCount() {
-        return em.createQuery("select b from Board b where read_count >= 500", Board.class)
+        return em.createQuery("select b from Board b LEFT JOIN FETCH where read_count >= 500", Board.class)
                 .getResultList();
     }
     

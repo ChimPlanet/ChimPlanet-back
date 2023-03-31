@@ -72,8 +72,11 @@ public class BoardServiceTest {
 
         // when
         Board retrievedBoard = boardRepository.findById(articleId).orElse(null);
-        retrievedBoard.setUnauthorized("Y");
-        boardRepository.saveBoard(retrievedBoard);
+        if(naverCafeAtricleApi.getNaverCafeArticleOne(articleId) == null) {
+            retrievedBoard.setUnauthorized("Y");
+            boardRepository.saveBoard(retrievedBoard);
+        }
+
 
         // then
         assertEquals("Y", boardRepository.findById(articleId).orElse(null).getUnauthorized());

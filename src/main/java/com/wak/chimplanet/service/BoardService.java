@@ -27,7 +27,7 @@ public class BoardService {
         + "search.clubid=27842958"
         + "&search.queryType=lastArticle"
         + "&search.menuid=148"
-        + "&search.perPage=20" // 페이징 + 갯수 처리 필요
+        + "&search.perPage=20"
         + "&search.page=";
 
     @Autowired
@@ -65,53 +65,80 @@ public class BoardService {
         ArrayList<Board> boards = new ArrayList<>();
         int pageSize = 20; // 저장할 페이지 갯수
 
-        for(int i = 1; i <= 1; i++) {
+        for(int i = 1; i <= 5; i++) {
             ArrayList<Board> articles = naverCafeAtricleApi.getArticles(API_URL + i);
             log.info("articleSize : {} ", articles.size());
 
-            // 게시글 가져오기 + 태그저장
+/*
+            // 리팩토리중인 소스코드
+            for(Board board : articles) {
+                String articleId = board.getArticleId();
+                BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
+
+                if(boardDetail == null) {
+                    board.setUnauthorized("Y");
+                } else {
+                    List<TagObj> tags = categorizingTag(boardDetail.getContent());
+                    List<BoardTag> boardTags = new ArrayList<>();
+
+                    for(TagObj tag : tags) {
+                        BoardTag boardTag = BoardTag.createBoardTag(tag, board);
+                        board.addBoardTag(boardTag);
+                        boardTags.add(boardTag);
+                    }
+                }
+
+            }*/
+
+            // 게시글 가져오기 + 태그저장 => 일단 돌아만 가게 만든 소스코드
             for(int j = 0; j < articles.size(); j++) {
                 Board board = articles.get(j);
                 String articleId = board.getArticleId();
 
                 BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
 
-                /*
-                    예외 처리되는 경우 추가 UNAUTHORIZED 컬럼을 추가해줘야함
-                    + H2DB 경우 Default 값이 엔티티에서 제대로 설정이 안됨...
-                    상세 내역이 조회 안되는 경우 = 접근권한이 없음(네이버 로그인 해야함)
-                */
                 String unauthorized = "N"; // 접근권한 여부
-
                 if(boardDetail == null) {
                     unauthorized = "Y";
-                };
+                    board.setUnauthorized(unauthorized);
 
-                String content = boardDetail.getContent();
+                    // System.out.println("권한 확인 : " + board.getUnauthorized());
+                    List<BoardTag> boardTags = new ArrayList<>();
+                    Board newBoard = Board.createBoardWithTag(board, boardTags, unauthorized);
+                    Board existingBoard = boardRepository.findById(articleId).orElse(null); // 기존에 같은 ID를 가지고 있는 경우 UPDATE 쿼리를 날림
 
-                List<TagObj> tags = categorizingTag(content);
-                List<BoardTag> boardTags = new ArrayList<>();
-
-                for(TagObj tag : tags) {
-                    BoardTag boardTag = BoardTag.createBoardTag(tag, board);
-                    board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
-                    boardTags.add(boardTag); // BoardTag 리스트에도 추가
-                }
-
-                Board newBoard = Board.createBoardWithTag(board, boardTags, unauthorized);
-                Board existingBoard = boardRepository.findById(articleId)
-                    .orElse(null); // 기존에 같은 ID를 가지고 있는 경우 UPDATE 쿼리를 날림
-
-                if(existingBoard != null) {
-                    boards.add(newBoard);
+                    if(existingBoard != null) {
+                        log.info("기존에 있던 게시물 : {}", board.getArticleId());
+                        board.updateBoard(board, boardTags);
+                    } else {
+                        boards.add(newBoard);
+                    }
                 } else {
-                    // board.updateBoard(board, boardTags);
+                    String content = Optional.ofNullable(boardDetail.getContent()).orElse(null);
+
+                    List<TagObj> tags = categorizingTag(content);
+                    List<BoardTag> boardTags = new ArrayList<>();
+
+                    for(TagObj tag : tags) {
+                        BoardTag boardTag = BoardTag.createBoardTag(tag, board);
+                        board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
+                        boardTags.add(boardTag); // BoardTag 리스트에도 추가
+                    }
+
+                    Board newBoard = Board.createBoardWithTag(board, boardTags, unauthorized);
+                    Board existingBoard = boardRepository.findById(articleId).orElse(null); // 기존에 같은 ID를 가지고 있는 경우 UPDATE 쿼리를 날림
+
+                    if(existingBoard != null) {
+                        log.info("기존에 있던 게시물 : {}", board.getArticleId());
+                        board.updateBoard(board, boardTags);
+                    } else {
+                        boards.add(newBoard);
+                    }
                 }
             }
 
             boardRepository.saveAll(boards);
         }
-
         return boards;
     }
 
@@ -124,18 +151,23 @@ public class BoardService {
      * 게시판 목록 가져오기 from DataBase
      */
     public List<Board> findAllBoard() {
-        return boardRepository.findAllBoard();
+        List<Board> allBoard = boardRepository.findAllBoard();
+        return allBoard;
     }
 
+     /**
+     * 게시판 목록 인기글 가져오기
+     */
     public List<Board> findBoardsByReadCount() {
         return boardRepository.findBoardsByReadCount();
     }
-
 
     /**
      * 게시글에서 태그 리스트 분류하기
      */
     public List<TagObj> categorizingTag(String content) {
+        if(content.isEmpty()) return null;
+
         // 문장에서 찾은 태그명
         Set<String> foundTags = new HashSet<>();
         List<TagObj> tags = tagRepository.findALl();
