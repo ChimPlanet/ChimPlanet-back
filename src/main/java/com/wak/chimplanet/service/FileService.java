@@ -169,6 +169,7 @@ public class FileService {
         for (FileEntity fileEntity : fileEntities) {
             int newSequence = newSequenceMap.get(fileEntity.getFileId());
             if (fileEntity.getSequence() != newSequence) {
+                // 해당 로직 변경 필요.
 //                if (fileRepository.existsById(fileEntity.getFileId())) {
 //                    throw new IllegalArgumentException("Sequence " + newSequence + " is already in use for image type " + fileEntity.getImageType());
 //                }
