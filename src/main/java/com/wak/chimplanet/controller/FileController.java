@@ -89,7 +89,7 @@ public class FileController {
         @RequestParam(value = "redirectUrl") String redirectUrl,
         @RequestParam(value = "sequence") int sequence,
         @RequestParam(value = "redirectType") String redirectType,
-        @RequestPart(value = "files") @ApiParam(value="변경 파일", required = false) MultipartFile[] files,
+        @RequestPart(value = "files", required = false) @ApiParam(value="변경 파일", required = false) MultipartFile[] files,
         @PathVariable Long fileId) {
 
         FileUploadRequestDto fileUploadRequestDto = FileUploadRequestDto.createFileUploadRequestDto(
@@ -163,7 +163,9 @@ public class FileController {
             FileResponseDto<FileEntity> responseDto = new FileResponseDto<>();
             return ResponseEntity.ok().body(responseDto);
         } catch (IllegalArgumentException e) {
-            FileResponseDto<String> responseDto = new FileResponseDto<>(HttpStatus.BAD_REQUEST, e.getMessage());
+            FileResponseDto<String> responseDto = new FileResponseDto<>();
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage(e.getMessage());
             return ResponseEntity.badRequest().body(responseDto);
         }
     }

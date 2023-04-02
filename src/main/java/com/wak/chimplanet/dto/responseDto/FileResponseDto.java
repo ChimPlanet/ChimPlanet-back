@@ -22,9 +22,4 @@ public class FileResponseDto<T> {
         this.message = "Success";
     }
 
-    public FileResponseDto(HttpStatus httpStatus, String message) {
-        this.status = httpStatus;
-        this.message = "Success";
-    }
-
 }
