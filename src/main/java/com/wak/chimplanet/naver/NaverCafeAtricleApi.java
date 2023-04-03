@@ -19,7 +19,6 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.web.format.DateTimeFormatters;
 import org.springframework.stereotype.Component;
 
 /**
@@ -88,7 +87,7 @@ public class NaverCafeAtricleApi {
             JsonObject data = articleList.get(i).getAsJsonObject();
             String articleId = String.valueOf(data.get("articleId").getAsLong());
             String title = data.get("subject").getAsString();
-            String readCount = String.valueOf(data.get("readCount").getAsInt());
+            Integer readCount = data.get("readCount").getAsInt();
             String writer = data.get("writerNickname").getAsString();
             String redirectURL = "https://cafe.naver.com/steamindiegame" + articleId;
             String thumbnailURL = null;
@@ -110,7 +109,7 @@ public class NaverCafeAtricleApi {
                     .thumbnailURL(thumbnailURL)
                     .redirectURL(redirectURL)
                     .isEnd(isEnd)
-                    .regDate(LocalDateTime.parse(regDate, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
+                    .regDate(LocalDateTime.parse(regDate, FORMATTER))
                     .build();
 
             boardArrayList.add(board);

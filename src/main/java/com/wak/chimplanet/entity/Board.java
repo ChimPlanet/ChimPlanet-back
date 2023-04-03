@@ -41,12 +41,11 @@ public class Board {
 
     @Column(name = "read_count")
     @ApiModelProperty(value = "조회수", example = "100")
-    private String readCount;
+    private Integer readCount;
 
     @Column(name = "reg_date")
     @ApiModelProperty(value = "작성일시", example = "2022-03-05 14:30")
-    @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
-    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH:mm")
     private LocalDateTime regDate;
 
     @Column(name = "thumbnail_url", length = 1000)
