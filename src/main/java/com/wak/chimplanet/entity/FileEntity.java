@@ -119,8 +119,13 @@ public class FileEntity {
     /**
      * 이미지파일 정보 변경 감지 update
      */
-    public FileEntity updateFile(FileUploadRequestDto fileUploadRequestDto, MultipartFile[] multipartFile) {
-        String safeFileName = UUID.randomUUID().toString() + "-" + multipartFile[0].getOriginalFilename();
+    public FileEntity updateFile(FileUploadRequestDto fileUploadRequestDto, MultipartFile[] multipartFiles) {
+        String safeFileName;
+        if (multipartFiles != null && multipartFiles.length > 0 && !multipartFiles[0].isEmpty()) {
+            safeFileName = UUID.randomUUID().toString() + "-" + multipartFiles[0].getOriginalFilename();
+        } else {
+            safeFileName = this.fileName;
+        }
 
         log.info("Updating file with id {} with the following changes: fileName={}, useYn={}, deviceType={}, imageType={}, redirectUrl={}, imageUri={}, redirectType={}, sequence={}",
             this.fileId, safeFileName, fileUploadRequestDto.getUseYn(), fileUploadRequestDto.getDeviceType(),

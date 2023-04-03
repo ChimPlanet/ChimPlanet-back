@@ -104,16 +104,22 @@ public class FileController {
             fileResponseDto.setMessage("File uploaded successfully");
             fileResponseDto.setStatus(HttpStatus.OK);
 
-            // 메타데이터 생성
-            Map<String, Object> metadata = new HashMap<>();
-            metadata.put("fileName", files[0].getOriginalFilename());
-            metadata.put("fileSize", files[0].getSize());
-            metadata.put("fileExtension", FilenameUtils.getExtension(files[0].getOriginalFilename()));
-            metadata.put("uploadTime", LocalDateTime.now());
-            fileResponseDto.setData(metadata);
+            if (files != null && files.length > 0) {
+                // 파일 업로드가 있었을 때만 메타데이터 생성
+                // 메타데이터 생성
+                Map<String, Object> metadata = new HashMap<>();
+                metadata.put("fileName", files[0].getOriginalFilename());
+                metadata.put("fileSize", files[0].getSize());
+                metadata.put("fileExtension", FilenameUtils.getExtension(files[0].getOriginalFilename()));
+                metadata.put("uploadTime", LocalDateTime.now());
+                fileResponseDto.setData(metadata);
+            } else {
+                fileResponseDto.setData(null);
+            }
 
             return ResponseEntity.ok().body(fileResponseDto);
         } catch (Exception e) {
+            e.printStackTrace();
             FileResponseDto fileResponseDto = new FileResponseDto();
             fileResponseDto.setMessage("File upload failed: " + e.getMessage());
             fileResponseDto.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
