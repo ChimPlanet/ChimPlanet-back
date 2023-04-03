@@ -58,7 +58,7 @@ public class Board {
     private String redirectURL;
 
     @Column(name = "is_end")
-    @ApiModelProperty(value = "공고 마갑여부", example = "ING || END")
+    @ApiModelProperty(value = "공고 마감여부", example = "ING || END")
     private String isEnd;
 
     @Builder.Default
@@ -67,7 +67,7 @@ public class Board {
 
     @Column(name = "unauthorized")
     // @ColumnDefault("Y")
-    @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N, default = Y")
+    @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N, default = N")
     private String unauthorized;
 
     // private String official; [공식] 모집 게시물
@@ -84,7 +84,7 @@ public class Board {
     /**
      * 생성메서드
      */
-    public static Board createBoardWithTag(Board board, List<BoardTag> boardTags) {
+    public static Board createBoardWithTag(Board board, List<BoardTag> boardTags, String unauthorized) {
         return Board.builder()
                 .articleId(board.articleId)
                 .writer(board.articleId)
@@ -96,10 +96,23 @@ public class Board {
                 .readCount(board.readCount)
                 .regDate(board.regDate)
                 .thumbnailURL(board.thumbnailURL)
-                .unauthorized(board.unauthorized)
+                .unauthorized(unauthorized)
                 .boardTags(boardTags)
                 .build();
     }
+
+    /**
+     * update : 변경감지
+     */
+    public void updateBoard(Board board, List<BoardTag> boardTags) {
+        this.boardTitle = board.boardTitle;
+        this.readCount = board.readCount;
+        this.thumbnailURL = board.thumbnailURL;
+        this.isEnd = board.isEnd;
+        this.boardTags = boardTags;
+        this.unauthorized = board.unauthorized;
+    }
+
 
 
 }

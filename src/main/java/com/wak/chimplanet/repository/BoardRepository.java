@@ -3,7 +3,9 @@ package com.wak.chimplanet.repository;
 import com.wak.chimplanet.entity.Board;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -40,12 +42,12 @@ public class BoardRepository {
     }
 
     public List<Board> findAllBoard() {
-        return em.createQuery("select distinct b from Board b join fetch b.boardTags", Board.class)
+        return em.createQuery( "SELECT b FROM Board b LEFT JOIN FETCH b.boardTags", Board.class)
                 .getResultList();
     }
 
     public List<Board> findBoardsByReadCount() {
-        return em.createQuery("select b from Board b where read_count >= 500", Board.class)
+        return em.createQuery("select b from Board b LEFT JOIN FETCH where read_count >= 500", Board.class)
                 .getResultList();
     }
     
@@ -57,5 +59,19 @@ public class BoardRepository {
         return em.createQuery("select b from Board b join fetch b.boardTags where b.articleId = :articleId", Board.class)
                 .setParameter("articleId", articleId)
                 .getSingleResult();
+    }
+
+    public Optional<Board> findById(String articleId) {
+        Optional<Board> board = null;
+
+        try {
+            board = Optional.ofNullable(em.createQuery("select b from Board b where b.articleId = :articleId", Board.class)
+                .setParameter("articleId", articleId)
+                .getSingleResult());
+        } catch (NoResultException e) {
+            board = Optional.empty();
+        } finally {
+            return board;
+        }
     }
 }

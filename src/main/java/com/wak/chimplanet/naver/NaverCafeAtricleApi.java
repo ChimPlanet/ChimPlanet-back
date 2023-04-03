@@ -15,9 +15,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.web.format.DateTimeFormatters;
 import org.springframework.stereotype.Component;
 
 /**
@@ -108,7 +110,7 @@ public class NaverCafeAtricleApi {
                     .thumbnailURL(thumbnailURL)
                     .redirectURL(redirectURL)
                     .isEnd(isEnd)
-                    .regDate(LocalDateTime.parse(regDate))
+                    .regDate(LocalDateTime.parse(regDate, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
                     .build();
 
             boardArrayList.add(board);
