@@ -55,6 +55,24 @@ public class OfficialBoard{
 
     @Builder.Default
     @OneToMany(mappedBy = "tagObj", cascade = CascadeType.ALL)
-    private List<BoardTag> boardTags = new ArrayList<>();
+    private List<OfficialBoardTag> officialBoardTags = new ArrayList<>();
 
+    /**
+     * 생성메서드
+     */
+    public static OfficialBoard createBoardWithTag(OfficialBoard officialBoard, List<OfficialBoardTag> officialBoardTags) {
+        return OfficialBoard.builder()
+                .articleId(officialBoard.articleId)
+                .writer(officialBoard.articleId)
+                .boardTitle(officialBoard.boardTitle)
+                .writer(officialBoard.writer)
+                .articleId(officialBoard.articleId)
+                .isEnd(officialBoard.isEnd)
+                .redirectURL(officialBoard.redirectURL)
+                .readCount(officialBoard.readCount)
+                .regDate(officialBoard.regDate)
+                .thumbnailURL(officialBoard.thumbnailURL)
+//                .OfficialBoardTags(officialBoardTags)
+                .build();
+    }
 }
