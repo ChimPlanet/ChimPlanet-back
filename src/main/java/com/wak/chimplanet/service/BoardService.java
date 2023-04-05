@@ -2,6 +2,7 @@ package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.common.config.exception.NotFoundException;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
+import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.*;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
 import com.wak.chimplanet.repository.BoardRepository;
@@ -150,9 +151,9 @@ public class BoardService {
     /**
      * 게시판 목록 가져오기 from DataBase
      */
-    public List<Board> findAllBoard() {
+    public List<BoardResponseDto> findAllBoard() {
         List<Board> allBoard = boardRepository.findAllBoard();
-        return allBoard;
+        return BoardResponseDto.from(allBoard);
     }
 
      /**

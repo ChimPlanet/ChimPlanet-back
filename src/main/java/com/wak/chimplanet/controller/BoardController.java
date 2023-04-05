@@ -1,6 +1,7 @@
 package com.wak.chimplanet.controller;
 
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
+import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
 import com.wak.chimplanet.service.BoardService;
@@ -49,7 +50,7 @@ public class BoardController {
 
     @ApiOperation(value = "데이터 베이스에서 게시글 가져오기" , notes = "1차 분류 완료")
     @PostMapping("/api/boards/")
-    public ResponseEntity<List<Board>> findAllBoard() {
+    public ResponseEntity<List<BoardResponseDto>> findAllBoard() {
         return ResponseEntity.ok().body(boardService.findAllBoard());
     }
 

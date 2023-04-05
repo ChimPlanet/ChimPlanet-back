@@ -17,7 +17,7 @@ public class BoardTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_tag_id", nullable = false)
-    private Integer boardTagId;
+    private Long boardTagId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id", nullable = false)
