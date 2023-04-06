@@ -1,12 +1,19 @@
 package com.wak.chimplanet.repository;
 
+import static com.wak.chimplanet.entity.QBoard.board;
+
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.wak.chimplanet.entity.Board;
+import com.wak.chimplanet.entity.QBoardTag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,6 +21,12 @@ import org.springframework.stereotype.Repository;
 public class BoardRepository {
 
     private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
+
+    public BoardRepository(EntityManager em) {
+        this.em = em;
+        this.queryFactory = new JPAQueryFactory(em);
+    }
 
     public List<Board> saveAll(List<Board> articles) {
         int batchSize = 50;
@@ -42,8 +55,28 @@ public class BoardRepository {
     }
 
     public List<Board> findAllBoard() {
+        // JPQL 사용쿼리
         return em.createQuery( "SELECT b FROM Board b LEFT JOIN FETCH b.boardTags", Board.class)
                 .getResultList();
+    }
+
+    /**
+     * 무한스크롤 구현
+     */
+    public List<Board> findAllBoards(String lastBoardId, int size) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if(lastBoardId != null) {
+            booleanBuilder.and(board.articleId.lt(lastBoardId));
+        }
+
+        return queryFactory
+            .selectFrom(board)
+            .leftJoin(board.boardTags, QBoardTag.boardTag)
+            .where(booleanBuilder)
+            .orderBy(board.articleId.desc())
+            .limit(20)
+            .fetch();
     }
 
     public List<Board> findBoardsByReadCount() {

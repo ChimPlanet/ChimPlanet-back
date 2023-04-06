@@ -1,9 +1,12 @@
 package com.wak.chimplanet.service;
 
 import static org.junit.Assert.assertEquals;
+import static com.wak.chimplanet.entity.QBoard.board;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
+
 import com.wak.chimplanet.entity.TagObj;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
 import com.wak.chimplanet.repository.BoardRepository;
@@ -19,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
 
 
 @RunWith(SpringRunner.class)
@@ -80,6 +84,19 @@ public class BoardServiceTest {
 
         // then
         assertEquals("Y", boardRepository.findById(articleId).orElse(null).getUnauthorized());
+    }
+
+    @Test
+    public void findByQueryDsl() {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        Board findBoard = queryFactory
+            .select(board)
+            .from(board)
+            .where(board.articleId.eq("10604364"))
+            .fetchOne();
+
+        assertEquals("10604364", findBoard.getArticleId());
     }
 
 }
