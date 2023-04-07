@@ -4,6 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Utility {
+
+    /**
+     * 문자열이 비어있는지 확인
+     */
+    public static boolean isStringEmpty(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
     /**
      * 태그명 찾기 - KMP 알고리즘 사용
      */

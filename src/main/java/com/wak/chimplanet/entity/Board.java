@@ -111,7 +111,4 @@ public class Board {
         this.boardTags = boardTags;
         this.unauthorized = board.unauthorized;
     }
-
-
-
 }

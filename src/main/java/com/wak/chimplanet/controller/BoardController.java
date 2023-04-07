@@ -6,26 +6,30 @@ import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
 import com.wak.chimplanet.service.BoardService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class BoardController {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final BoardService boardService;
 
     @ApiOperation(value = "왁물원 게시글 공고 리스트", notes = "현재 20개 고정")
@@ -49,16 +53,30 @@ public class BoardController {
     }
 
     @ApiOperation(value = "데이터 베이스에서 게시글 가져오기" , notes = "1차 분류 완료")
-    @PostMapping("/api/boards/")
+    @PostMapping("/api/boards/old")
     public ResponseEntity<List<BoardResponseDto>> findAllBoard() {
         return ResponseEntity.ok().body(boardService.findAllBoard());
     }
+
+    @PostMapping("/api/boards")
+    @ApiOperation(value = "게시판 목록 조회 API", notes = "게시판 목록을 조회하고, 페이징 처리합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "게시판 목록 조회 성공")
+    })
+    public ResponseEntity<Slice<BoardResponseDto>> getBoards(
+        @ApiParam(value = "마지막 게시물 아이디") @RequestParam(value = "lastArticleId", required = false) String lastArticleId,
+        @ApiParam(value = "한 페이지당 게시물 개수", defaultValue = "20") @RequestParam(value = "size", defaultValue = "20") int size,
+        @ApiParam(value = "페이지 번호", defaultValue = "0") @RequestParam(value = "page", defaultValue = "0") int page
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("articleId").descending());
+        return ResponseEntity.ok().body(boardService.findBoardsByPaging(lastArticleId, pageable));
+    }
+
 
     @ApiOperation(value = "데이터 베이스에서 게시글 인기글 가져오기" , notes = "정렬 기준 read_count")
     @GetMapping("/api/boards/popular")
     public ResponseEntity<List<Board>> findAllBoardByPopular() {
         return ResponseEntity.ok().body(boardService.findBoardsByReadCount());
     }
-
 
 }

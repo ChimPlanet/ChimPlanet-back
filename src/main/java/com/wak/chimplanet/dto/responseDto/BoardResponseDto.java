@@ -51,5 +51,4 @@ public class BoardResponseDto {
             .map(BoardResponseDto::new)
             .collect(Collectors.toList());
     }
-    
 }

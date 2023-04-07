@@ -9,6 +9,10 @@ import com.wak.chimplanet.repository.BoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -156,7 +160,17 @@ public class BoardService {
         return BoardResponseDto.from(allBoard);
     }
 
-     /**
+    /**
+     * 게시판 목록 가져오기 페이징 처리 추가
+     */
+    public Slice<BoardResponseDto> findBoardsByPaging(String lastArticleId, Pageable pageable) {
+        Slice<BoardResponseDto> boards = boardRepository.findBoardsByLastArticleId(
+            lastArticleId, pageable);
+        log.info("Slice BoardResponse size: {} ", boards.getSize());
+        return boards;
+    }
+
+    /**
      * 게시판 목록 인기글 가져오기
      */
     public List<Board> findBoardsByReadCount() {
