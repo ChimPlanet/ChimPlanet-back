@@ -203,5 +203,10 @@ public class BoardService {
        return tagRepository.findAllByName(new ArrayList<>(foundTags));
     }
 
-
+    /**
+     * 모집중인 게시글 숫자 반환
+     */
+    public Map<String, Object> getRecruitBoardCount() {
+        return null;
+    }
 }
