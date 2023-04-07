@@ -81,7 +81,7 @@ public class BoardRepository {
     }
 
     public List<Board> findBoardsByReadCount() {
-        return em.createQuery("select b from Board b LEFT JOIN FETCH where b.boardTags read_count >= 500", Board.class)
+        return em.createQuery("select b from Board b LEFT JOIN FETCH  b.boardTags where read_count >= 500", Board.class)
                 .getResultList();
     }
     
