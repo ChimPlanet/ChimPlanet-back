@@ -5,6 +5,8 @@ import com.wak.chimplanet.entity.DeviceType;
 import com.wak.chimplanet.entity.FileEntity;
 import com.wak.chimplanet.entity.ImageType;
 import com.wak.chimplanet.repository.FileRepository;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +33,7 @@ public class FileServiceTest {
     @Autowired FileService fileService;
     @Value("${path.upload-images}")
     private String filePath;
-    @Autowired
-    private FileRepository fileRepository;
+    @Autowired private FileRepository fileRepository;
 
 
     @Test
@@ -99,4 +100,5 @@ public class FileServiceTest {
         // then
         // 예외 발생
     }
+
 }

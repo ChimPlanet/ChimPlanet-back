@@ -2,12 +2,17 @@ package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.common.config.exception.NotFoundException;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
+import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.*;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
 import com.wak.chimplanet.repository.BoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -150,12 +155,22 @@ public class BoardService {
     /**
      * 게시판 목록 가져오기 from DataBase
      */
-    public List<Board> findAllBoard() {
+    public List<BoardResponseDto> findAllBoard() {
         List<Board> allBoard = boardRepository.findAllBoard();
-        return allBoard;
+        return BoardResponseDto.from(allBoard);
     }
 
-     /**
+    /**
+     * 게시판 목록 가져오기 페이징 처리 추가
+     */
+    public Slice<BoardResponseDto> findBoardsByPaging(String lastArticleId, Pageable pageable) {
+        Slice<BoardResponseDto> boards = boardRepository.findBoardsByLastArticleId(
+            lastArticleId, pageable);
+        log.info("Slice BoardResponse size: {} ", boards.getSize());
+        return boards;
+    }
+
+    /**
      * 게시판 목록 인기글 가져오기
      */
     public List<Board> findBoardsByReadCount() {
@@ -188,50 +203,5 @@ public class BoardService {
        return tagRepository.findAllByName(new ArrayList<>(foundTags));
     }
 
-    /**
-     * 태그명 찾기 - KMP 알고리즘 사용
-     */
-    private boolean kmpSearch(String content, String tag) {
-        int n = content.length();
-        int m = tag.length();
-        int[] pi = getPi(tag);
-
-        int idx = 0; // 글자수
-        for (int i = 0; i < n; i++) {
-            while (idx > 0 && content.charAt(i) != tag.charAt(idx)) {
-                idx = pi[idx - 1];
-            }
-            
-            // 글자가 대응되는 경우
-            if (content.charAt(i) == tag.charAt(idx)) {
-                if (idx == m - 1) {
-                    log.info("{} 번째에서 태그 발견 ~ {}", i-idx-1, i+1);
-                    return true;
-                } else {
-                    idx++;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * tag의 접두사와 접미사가 일치하는 길의를 계산하는 배열 pi 를 리턴
-     */
-    private int[] getPi(String pattern) {
-        int m = pattern.length();
-        int[] pi = new int[m];
-
-        int j = 0;
-        for (int i = 1; i < m; i++) {
-            while (j > 0 && pattern.charAt(i) != pattern.charAt(j)) {
-                j = pi[j - 1];
-            }
-            if (pattern.charAt(i) == pattern.charAt(j)) {
-                pi[i] = ++j;
-            }
-        }
-        return pi;
-    }
 
 }

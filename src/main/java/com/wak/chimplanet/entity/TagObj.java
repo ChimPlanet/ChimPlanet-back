@@ -19,7 +19,7 @@ public class TagObj {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id", nullable = false)
-    private Integer tagId;
+    private Long tagId;
 
     @Column(name = "tag_name", length = 50, nullable = false)
     private String tagName;
@@ -29,4 +29,5 @@ public class TagObj {
 
     @Column(name = "child_tag_id", length = 50, nullable = false)
     private String childTagId;
+
 }

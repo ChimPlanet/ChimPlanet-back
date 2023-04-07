@@ -60,14 +60,14 @@ public class Board {
     @ApiModelProperty(value = "공고 마감여부", example = "ING || END")
     private String isEnd;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "tagObj", cascade = CascadeType.ALL)
-    private List<BoardTag> boardTags = new ArrayList<>();
-
     @Column(name = "unauthorized")
     // @ColumnDefault("Y")
     @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N, default = N")
     private String unauthorized;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<BoardTag> boardTags = new ArrayList<>();
 
     // private String official; [공식] 모집 게시물
 
@@ -111,7 +111,4 @@ public class Board {
         this.boardTags = boardTags;
         this.unauthorized = board.unauthorized;
     }
-
-
-
 }
