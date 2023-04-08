@@ -98,6 +98,7 @@ public class FileEntity {
         File file = new File(filePath + File.separator + safeFileName);
         File originalFile = new File(filePath + File.separator + originalFileName);
 
+        log.info("origin FilePath: {}", originalFile.getAbsoluteFile());
         log.info("save FilePath: {}", filePath + File.separator + safeFileName);
 
         try {
@@ -106,6 +107,8 @@ public class FileEntity {
                 boolean result = originalFile.delete();
                 if (!result) {
                     log.error("Failed to delete original file: {}", originalFile.getAbsolutePath());
+                } else {
+                    log.info("Success to delete origin fie : {}", originalFile.getAbsolutePath());
                 }
             }
             multipartFile[0].transferTo(file);
