@@ -1,10 +1,8 @@
 package com.wak.chimplanet.naver;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
 import java.io.BufferedReader;
@@ -15,11 +13,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.web.format.DateTimeFormatters;
 import org.springframework.stereotype.Component;
 
 /**
