@@ -1,4 +1,4 @@
-package com.wak.chimplanet.dto.responseDto;
+package com.wak.chimplanet.dto.responseDto.admin;
 
 
 import com.wak.chimplanet.entity.Board;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AdminUpdateBoardResponseDto {
+public class AdminGetBoardResponseDto {
 
     private String articleId;
     private String boardTitle;
@@ -27,7 +27,7 @@ public class AdminUpdateBoardResponseDto {
     private List<BoardTag> boardTags;
 
     /* Entity -> DTO */
-    public AdminUpdateBoardResponseDto(Board board) {
+    public AdminGetBoardResponseDto(Board board) {
         this.articleId = board.getArticleId();
         this.boardTitle = board.getBoardTitle();
         this.writer = board.getWriter();

@@ -1,8 +1,7 @@
 package com.wak.chimplanet.service;
 
 
-import com.wak.chimplanet.dto.responseDto.AdminUpdateBoardResponseDto;
-import com.wak.chimplanet.entity.Board;
+import com.wak.chimplanet.dto.responseDto.admin.AdminGetBoardResponseDto;
 import com.wak.chimplanet.repository.AdminBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,7 @@ public class adminBoardService {
 
 
     @Transactional
-    public AdminUpdateBoardResponseDto updateBoard() {
+    public AdminGetBoardResponseDto updateBoard() {
         // Board board = adminBoardRepository.findByArticleId();
         return null;
     }
