@@ -3,6 +3,8 @@ package com.wak.chimplanet.dto.responseDto;
 import com.wak.chimplanet.entity.Board;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import io.swagger.models.auth.In;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,7 +25,7 @@ public class BoardResponseDto {
     private LocalDateTime regDate;
     private String thumbnailURL;
     private String redirectURL;
-    private String readCount;
+    private Integer readCount;
     private String isEnd;
     private String unauthorized;
     private List<BoardTagResponseDto> boardTags;
