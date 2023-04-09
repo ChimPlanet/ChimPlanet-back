@@ -1,20 +1,56 @@
 package com.wak.chimplanet.dto.responseDto;
 
+import com.wak.chimplanet.entity.Board;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import io.swagger.models.auth.In;
 import lombok.*;
 
-import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
+/**
+ * 게시글 목록을 리턴할 Response 클래스
+ * Entity 클래스를 생성자 파라미터로 받아 DTO 로 변환하여 응답합니다.
+ * Board 엔티티를 그대로 반환하는 경우 Board 와 BoardTag 의 무한참조를 방지하기 위해
+ * 별도의 responseDto 객체를 생성합니다.
+ */
 @Getter
-@ToString
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardResponseDto {
 
-    private Long boardId;
+    private String articleId;
+    private String boardTitle;
     private String writer;
-    private String title;
-    private Long articleId;
-    private String likeCount;
-    private String viewCount;
-    private String regDate;
+    private LocalDateTime regDate;
+    private String thumbnailURL;
+    private String redirectURL;
+    private Integer readCount;
+    private String isEnd;
+    private String unauthorized;
+    private List<BoardTagResponseDto> boardTags;
+
+    /* Entity -> Dto */
+    public BoardResponseDto(Board board) {
+        this.articleId = board.getArticleId();
+        this.boardTitle = board.getBoardTitle();
+        this.writer = board.getWriter();
+        this.regDate = board.getRegDate();
+        this.thumbnailURL = board.getThumbnailURL();
+        this.redirectURL = board.getRedirectURL();
+        this.readCount = board.getReadCount();
+        this.isEnd = board.getIsEnd();
+        this.unauthorized = board.getUnauthorized();
+        this.boardTags = board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(
+            Collectors.toList());
+    }
+
+    /**
+     * 리스트 형태로 전달
+     */
+    public static List<BoardResponseDto> from(List<Board> boards) {
+        return boards.stream()
+            .map(BoardResponseDto::new)
+            .collect(Collectors.toList());
+    }
 }

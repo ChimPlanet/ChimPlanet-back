@@ -93,7 +93,7 @@ public class FileService {
                 // ID로 조회한 결과값이 없는 경우
                 () -> new IllegalArgumentException("File not found with id " + fileUploadRequestDto.getFileId())
             );
-
+        String orignFileName = findFileEntityById.getFileName();
         log.info("findFileEntityById : {}, fileName: {}", findFileEntityById.getFileId(), findFileEntityById.getFileName());
         
         // 조회한 엔티티를 변경
@@ -104,9 +104,7 @@ public class FileService {
 
         // 파일이 존재하는 경우에만 이미지 파일을 변경
         if (multipartFiles != null && multipartFiles.length > 0) {
-            log.info("변경하려는 파일이 없습니다.");
-            findFileEntityById.changeFile(fileEntity.getFileName()
-                , fileEntity.getFileName(), filePath, multipartFiles);
+            findFileEntityById.changeFile(orignFileName, fileEntity.getFileName(), filePath, multipartFiles);
         }
 
         return findFileEntityById.getFileId();
