@@ -185,7 +185,7 @@ public class BoardService {
 
         // 문장에서 찾은 태그명
         Set<String> foundTags = new HashSet<>();
-        List<TagObj> tags = tagRepository.findALl();
+        List<TagObj> tags = tagRepository.findAll();
 
        for(TagObj tag : tags) {
            // log.info("검색하는 태그명: {}", tag.getTagName());

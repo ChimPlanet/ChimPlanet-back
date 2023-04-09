@@ -3,16 +3,11 @@ package com.wak.chimplanet.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.*;
-import org.apache.tomcat.util.digester.ArrayStack;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -111,4 +106,14 @@ public class Board {
         this.boardTags = boardTags;
         this.unauthorized = board.unauthorized;
     }
+    
+    /**
+     * admin update : 변경감지
+     * 태그정보, 마감여부 수정
+     */
+    public void updateAdminBoard(String isEnd, List<BoardTag> boardTags) {
+        this.isEnd = isEnd;
+        this.boardTags = boardTags;
+    }
+
 }
