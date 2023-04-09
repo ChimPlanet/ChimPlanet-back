@@ -13,7 +13,7 @@ public class TagObjRepository {
 
     private final EntityManager em;
 
-    public List<TagObj> findALl() {
+    public List<TagObj> findAll() {
         return em.createQuery("select t from TagObj t", TagObj.class)
                 .getResultList();
     }
@@ -21,6 +21,12 @@ public class TagObjRepository {
     public List<TagObj> findAllByName(List<String> tagNames) {
         return em.createQuery("SELECT t FROM TagObj t WHERE t.tagName IN :tagNames", TagObj.class)
                 .setParameter("tagNames", tagNames)
+                .getResultList();
+    }
+
+    public List<TagObj> findAllByChildId(List<String> childIds) {
+        return em.createQuery("SELECT t FROM TagObj t WHERE t.tagName IN :childIds", TagObj.class)
+                .setParameter("childIds", childIds)
                 .getResultList();
     }
 

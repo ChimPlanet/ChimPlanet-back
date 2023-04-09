@@ -18,13 +18,13 @@ public class TagObjService {
 
     public List<TagObj> getTagList(TagObj tagObj) {
 
-        return tagObjRepository.findALl();
+        return tagObjRepository.findAll();
     }
 
     @Transactional
     public List<TagObj> saveTag(TagObj tagObj) {
         tagObjRepository.save(tagObj);
-        return tagObjRepository.findALl();
+        return tagObjRepository.findAll();
 
     }
 }
