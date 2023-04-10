@@ -35,17 +35,17 @@ public class adminBoardService {
     @Transactional
     public Board updateBoard(AdminBoardUpdateRequestDto dto) {
         Board findBoard = adminBoardRepository.findBoardWithTags(dto.getArticleId())
-                .orElseThrow(() -> new IllegalArgumentException("Board not found with id " + dto.getArticleId()));
+            .orElseThrow(() -> new IllegalArgumentException("Board not found with id " + dto.getArticleId()));
 
         List<TagObj> tags = tagRepository.findAllByChildId(dto.getBoardTags().stream()
-                .map(BoardTagRequestDto::getChildTagId)
-                .collect(Collectors.toList()));
+            .map(BoardTagRequestDto::getChildTagId)
+            .collect(Collectors.toList()));
+
         List<BoardTag> boardTags = new ArrayList<>();
+        List<BoardTag> existingBoardTagId = findBoard.getBoardTags(); // 기존 BoardTag 엔티티 리스트 가져오기
 
         for(TagObj tag : tags) {
-            BoardTag boardTag = BoardTag.createBoardTag(tag, findBoard);
-            findBoard.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
-            boardTags.add(boardTag); // BoardTag 리스트에도 추가
+
         }
 
         findBoard.updateAdminBoard(dto.getIsEnd(), boardTags);

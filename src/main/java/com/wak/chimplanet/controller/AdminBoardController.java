@@ -40,6 +40,6 @@ public class AdminBoardController {
             @RequestBody AdminBoardUpdateRequestDto adminBoardUpdateRequestDto) {
 
         Board updateBoard = adminBoardService.updateBoard(adminBoardUpdateRequestDto);
-        return ResponseEntity.ok().body(new AdminUpdateBoardResponseDto("Success", HttpStatus.OK, updateBoard));
+        return ResponseEntity.ok().body(new AdminUpdateBoardResponseDto("Success", HttpStatus.OK, null));
     }
 }
