@@ -53,9 +53,9 @@ public class BoardService {
      */
     public BoardDetailResponseDto getBoardOne(String articleId) {
         BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
-        Board board = boardRepository.findBoardWithTags(articleId).orElse(null);
+        Board board = boardRepository.findBoardWithTags(articleId);
         return Optional.of(BoardDetailResponseDto.from(boardDetail, board))
-            .orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
     }
 
     /**
@@ -154,8 +154,7 @@ public class BoardService {
      * 게시판 목록 가져오기 from DataBase
      */
     public List<BoardResponseDto> findAllBoard() {
-        List<Board> allBoard = boardRepository.findAllBoard();
-        return BoardResponseDto.from(allBoard);
+        return BoardResponseDto.from(boardRepository.findAllBoard());
     }
 
     /**
@@ -201,5 +200,10 @@ public class BoardService {
        return tagRepository.findAllByName(new ArrayList<>(foundTags));
     }
 
-
+    /**
+     * 모집중인 게시글 숫자 반환
+     */
+    public Map<String, Object> getRecruitBoardCount() {
+        return null;
+    }
 }

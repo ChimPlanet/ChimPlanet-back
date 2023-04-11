@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -77,6 +78,11 @@ public class BoardController {
     @GetMapping("/api/boards/popular")
     public ResponseEntity<List<Board>> findAllBoardByPopular() {
         return ResponseEntity.ok().body(boardService.findBoardsByReadCount());
+    }
+
+    @GetMapping("/api/boards/recruitBoard")
+    public ResponseEntity<Map<String, Object>> getRecruitBoardCount() {
+        return ResponseEntity.ok().body(boardService.getRecruitBoardCount());
     }
 
 }

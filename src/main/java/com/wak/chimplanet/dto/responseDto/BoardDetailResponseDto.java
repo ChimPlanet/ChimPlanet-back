@@ -3,7 +3,6 @@ package com.wak.chimplanet.dto.responseDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
-import com.wak.chimplanet.entity.TagObj;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,14 +20,14 @@ public class BoardDetailResponseDto {
     private String boardTitle; /* 게시글 제목 */
     private String writer; /* 게시글 작성자 */
 
-    private Integer readCount; /* 조회수 */
-    @JsonFormat(pattern = "yyyy.MM.dd HH:mm", timezone = "Asia/Seoul")
+    private String readCount; /* 조회수 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime regDate; /* 생성일자 */
     private String isEnd; /* 마감여부 */
     private List<BoardTagResponseDto> tags; /* 태그이름 */
-    private Boolean unauthorized; /* 접근권한 */
+    private boolean unauthorized; /* 접근권한 */
 
-    /*    public static BoardDetailResponseDto from(BoardDetail boardDetail, Board board) {
+/*    public static BoardDetailResponseDto from(BoardDetail boardDetail, Board board) {
         return BoardDetailResponseDto.builder()
                 .articleId(boardDetail.getArticleId())
                 .content(boardDetail.getContent())
@@ -63,4 +62,5 @@ public class BoardDetailResponseDto {
 
         return builder.build();
     }
+    
 }
