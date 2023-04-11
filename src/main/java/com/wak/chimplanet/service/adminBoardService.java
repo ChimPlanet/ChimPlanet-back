@@ -3,6 +3,7 @@ package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.dto.requestDto.BoardTagRequestDto;
 import com.wak.chimplanet.dto.requestDto.admin.AdminBoardUpdateRequestDto;
+import com.wak.chimplanet.dto.responseDto.admin.AdminBoardResponseDto;
 import com.wak.chimplanet.dto.responseDto.admin.AdminUpdateBoardResponseDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardTag;
@@ -37,16 +38,21 @@ public class adminBoardService {
         Board findBoard = adminBoardRepository.findBoardWithTags(dto.getArticleId())
                 .orElseThrow(() -> new IllegalArgumentException("Board not found with id " + dto.getArticleId()));
 
+        // 기존 BoardTag 모두 삭제
+        findBoard.getBoardTags().clear();
+
         List<TagObj> tags = tagRepository.findAllByChildId(dto.getBoardTags().stream()
                 .map(BoardTagRequestDto::getChildTagId)
                 .collect(Collectors.toList()));
-        List<BoardTag> boardTags = new ArrayList<>();
 
+        List<BoardTag> boardTags = new ArrayList<>();
         for(TagObj tag : tags) {
-            BoardTag boardTag = BoardTag.createBoardTag(tag, findBoard);
-            findBoard.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
-            boardTags.add(boardTag); // BoardTag 리스트에도 추가
+            boardTags.add(BoardTag.addBoardTag(tag, findBoard)); // BoardTag 리스트에도 추가
         }
+
+        // insert 쿼리만 실행되고 delete 쿼리가 실행이 안되는 문제가 있어 하드코딩으로 잠시 대체합니다.
+        // BoardTag 컬럼들을 복합키로 대체해야할 듯...
+        adminBoardRepository.deleteBoardTags(dto.getArticleId());
 
         findBoard.updateAdminBoard(dto.getIsEnd(), boardTags);
 

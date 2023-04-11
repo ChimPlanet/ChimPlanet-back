@@ -1,6 +1,7 @@
 package com.wak.chimplanet.controller;
 
 import com.wak.chimplanet.dto.requestDto.admin.AdminBoardUpdateRequestDto;
+import com.wak.chimplanet.dto.responseDto.admin.AdminBoardResponseDto;
 import com.wak.chimplanet.dto.responseDto.admin.AdminGetBoardResponseDto;
 import com.wak.chimplanet.dto.responseDto.admin.AdminUpdateBoardResponseDto;
 import com.wak.chimplanet.entity.Board;
@@ -39,7 +40,10 @@ public class AdminBoardController {
             @PathVariable String articleId,
             @RequestBody AdminBoardUpdateRequestDto adminBoardUpdateRequestDto) {
 
-        Board updateBoard = adminBoardService.updateBoard(adminBoardUpdateRequestDto);
-        return ResponseEntity.ok().body(new AdminUpdateBoardResponseDto("Success", HttpStatus.OK, updateBoard));
+        Board board =  adminBoardService.updateBoard(adminBoardUpdateRequestDto);
+        return ResponseEntity.ok().body(
+                new AdminUpdateBoardResponseDto(
+                        "Success", HttpStatus.OK, new AdminBoardResponseDto(board)));
+
     }
 }
