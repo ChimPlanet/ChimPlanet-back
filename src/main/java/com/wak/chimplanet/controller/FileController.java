@@ -89,7 +89,7 @@ public class FileController {
         @RequestParam(value = "redirectUrl") String redirectUrl,
         @RequestParam(value = "sequence") int sequence,
         @RequestParam(value = "redirectType") String redirectType,
-        @RequestPart(value = "files") @ApiParam(value="변경 파일", required = false) MultipartFile[] files,
+        @RequestPart(value = "files", required = false) @ApiParam(value="변경 파일", required = false) MultipartFile[] files,
         @PathVariable Long fileId) {
 
         FileUploadRequestDto fileUploadRequestDto = FileUploadRequestDto.createFileUploadRequestDto(
@@ -104,16 +104,22 @@ public class FileController {
             fileResponseDto.setMessage("File uploaded successfully");
             fileResponseDto.setStatus(HttpStatus.OK);
 
-            // 메타데이터 생성
-            Map<String, Object> metadata = new HashMap<>();
-            metadata.put("fileName", files[0].getOriginalFilename());
-            metadata.put("fileSize", files[0].getSize());
-            metadata.put("fileExtension", FilenameUtils.getExtension(files[0].getOriginalFilename()));
-            metadata.put("uploadTime", LocalDateTime.now());
-            fileResponseDto.setData(metadata);
+            if (files != null && files.length > 0) {
+                // 파일 업로드가 있었을 때만 메타데이터 생성
+                // 메타데이터 생성
+                Map<String, Object> metadata = new HashMap<>();
+                metadata.put("fileName", files[0].getOriginalFilename());
+                metadata.put("fileSize", files[0].getSize());
+                metadata.put("fileExtension", FilenameUtils.getExtension(files[0].getOriginalFilename()));
+                metadata.put("uploadTime", LocalDateTime.now());
+                fileResponseDto.setData(metadata);
+            } else {
+                fileResponseDto.setData(null);
+            }
 
             return ResponseEntity.ok().body(fileResponseDto);
         } catch (Exception e) {
+            e.printStackTrace();
             FileResponseDto fileResponseDto = new FileResponseDto();
             fileResponseDto.setMessage("File upload failed: " + e.getMessage());
             fileResponseDto.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -156,9 +162,18 @@ public class FileController {
             @ApiResponse(code = 400, message = "Bad Request", response = FileResponseDto.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = FileResponseDto.class)})
     @PutMapping("/sequence")
-    public ResponseEntity<FileResponseDto> updateSequence(@RequestBody List<FileSequenceRequestDto> sequenceList) {
-        fileService.updateSequence(sequenceList);
-        return ResponseEntity.ok().body(new FileResponseDto<>());
+    public ResponseEntity<FileResponseDto> updateSequence(
+            @RequestBody List<FileSequenceRequestDto> sequenceList) {
+        try {
+            fileService.updateSequence(sequenceList);
+            FileResponseDto<FileEntity> responseDto = new FileResponseDto<>();
+            return ResponseEntity.ok().body(responseDto);
+        } catch (IllegalArgumentException e) {
+            FileResponseDto<String> responseDto = new FileResponseDto<>();
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDto);
+        }
     }
 
 }

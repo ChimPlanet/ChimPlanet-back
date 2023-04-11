@@ -43,4 +43,9 @@ public class BoardTag {
                 .tagObj(tag)
                 .build();
     }
+
+    public void updateBoardTags(Board board, TagObj tag) {
+        this.board = board;
+        this.tagObj = tag;
+    }
 }

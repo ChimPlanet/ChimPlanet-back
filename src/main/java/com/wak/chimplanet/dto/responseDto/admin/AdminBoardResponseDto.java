@@ -1,13 +1,14 @@
-package com.wak.chimplanet.dto.responseDto;
+package com.wak.chimplanet.dto.responseDto.admin;
 
+import com.wak.chimplanet.dto.responseDto.BoardTagResponseDto;
 import com.wak.chimplanet.entity.Board;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import io.swagger.models.auth.In;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 게시글 목록을 리턴할 Response 클래스
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardResponseDto {
+public class AdminBoardResponseDto {
 
     private String articleId;
     private String boardTitle;
@@ -31,7 +32,7 @@ public class BoardResponseDto {
     private List<BoardTagResponseDto> boardTags;
 
     /* Entity -> Dto */
-    public BoardResponseDto(Board board) {
+    public AdminBoardResponseDto(Board board) {
         this.articleId = board.getArticleId();
         this.boardTitle = board.getBoardTitle();
         this.writer = board.getWriter();
@@ -45,12 +46,9 @@ public class BoardResponseDto {
             Collectors.toList());
     }
 
-    /**
-     * 리스트 형태로 전달
-     */
-    public static List<BoardResponseDto> from(List<Board> boards) {
-        return boards.stream()
-            .map(BoardResponseDto::new)
-            .collect(Collectors.toList());
+    public static AdminBoardResponseDto from(Board board) {
+        return new AdminBoardResponseDto(board);
     }
+
+
 }

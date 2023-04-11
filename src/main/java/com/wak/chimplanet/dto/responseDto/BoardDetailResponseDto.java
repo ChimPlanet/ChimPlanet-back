@@ -62,7 +62,5 @@ public class BoardDetailResponseDto {
 
         return builder.build();
     }
-
-
-
+    
 }

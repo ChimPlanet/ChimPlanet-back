@@ -89,10 +89,15 @@ public class BoardRepository {
         ;
     }
 
-    public Board findBoardWithTags(String articleId) {
-        return em.createQuery("select b from Board b join fetch b.boardTags where b.articleId = :articleId", Board.class)
+    public Optional<Board> findBoardWithTags(String articleId) {
+        try {
+            Board board = em.createQuery("select b from Board b join fetch b.boardTags where b.articleId = :articleId", Board.class)
                 .setParameter("articleId", articleId)
                 .getSingleResult();
+            return Optional.of(board);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     public Optional<Board> findById(String articleId) {
