@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Entity
@@ -66,7 +67,9 @@ public class Board {
 
     // private String official; [공식] 모집 게시물
 
-    // 연관관계 메서드
+    /**
+     * 연관관계 메서드
+     */
     public void addBoardTag(BoardTag boardTag) {
         if(this.boardTags == null) {
             boardTags = new ArrayList<>();
@@ -114,6 +117,15 @@ public class Board {
     public void updateAdminBoard(String isEnd, List<BoardTag> boardTags) {
         this.isEnd = isEnd;
         this.boardTags = boardTags;
+    }
+
+    /**
+     *  boardTags 리스트에서 해당 BoardTag를 삭제한 후, BoardTag의 Board 정보를 null로 변경합니다.
+     */
+    public void removeBoardTag(BoardTag boardTag) {
+        if (this.boardTags.remove(boardTag)) {
+            boardTag.setBoard(null);
+        }
     }
 
 }

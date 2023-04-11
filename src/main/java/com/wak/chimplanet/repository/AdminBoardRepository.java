@@ -1,11 +1,11 @@
 package com.wak.chimplanet.repository;
 
+import static com.wak.chimplanet.entity.QBoard.board;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.wak.chimplanet.dto.responseDto.admin.AdminGetBoardResponseDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.QBoard;
 import com.wak.chimplanet.entity.QBoardTag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -30,5 +30,11 @@ public class AdminBoardRepository {
                 .fetchOne();
 
         return Optional.ofNullable(board);
+    }
+
+    public void deleteBoardTags(String articleId) {
+        em.createQuery("delete from BoardTag bt where bt.board.articleId = :articleId")
+                .setParameter("articleId", articleId)
+                .executeUpdate();
     }
 }
