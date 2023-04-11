@@ -121,7 +121,7 @@ public class BoardService {
     /**
      * 게시글에서 태그 리스트 분류하기
      */
-    public List<TagObj> categorizingTag(String content) {
+    public List<TagObj>     categorizingTag(String content) {
         // 문장에서 찾은 태그명
         Set<String> foundTags = new HashSet<>();
         List<TagObj> tags = tagRepository.findALl();

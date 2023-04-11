@@ -29,22 +29,25 @@ public class OfficialBoardService {
 
         BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(officialBoard.getArticleId());
 
+        System.out.print("Board Detail :: ");
+        System.out.println(boardDetail);
+
         List<TagObj> tags = boardService.categorizingTag(boardDetail.getContent());
 
-        List<BoardTag> boardTags = new ArrayList<>();
+        System.out.print("Tags List :: ");
+        System.out.println(tags);
+
+        List<OfficialBoardTag> officialBoardTags = new ArrayList<>();
+
 
         for(TagObj tag : tags) {
-//            OfficialBoardTag officialBoardTag = OfficialBoardTag.createBoardTag(tag, );
-//            newOfficialBoard.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
-//            boardTags.add(boardTag); // BoardTag 리스트에도 추가
+            OfficialBoardTag officialBoardTag = OfficialBoardTag.createOfficialBoardTag(tag, officialBoard);
         }
-
 
 //        Api로 조회한 Official article 저장
         officialBoardReporitory.save(officialBoard);
 
-
-
         return officialBoardReporitory.findAll();
     }
+
 }
