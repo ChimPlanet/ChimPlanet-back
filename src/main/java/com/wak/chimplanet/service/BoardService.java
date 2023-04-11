@@ -1,7 +1,7 @@
 package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.common.config.exception.NotFoundException;
-import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
+import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDto;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.*;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
@@ -9,10 +9,8 @@ import com.wak.chimplanet.repository.BoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,10 +51,10 @@ public class BoardService {
     /**
      * 게시판 게시물 상세내용 가져오기
      */
-    public BoardDetailResponseDTO getBoardOne(String articleId) {
+    public BoardDetailResponseDto getBoardOne(String articleId) {
         BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
         Board board = boardRepository.findBoardWithTags(articleId).orElse(null);
-        return Optional.of(BoardDetailResponseDTO.from(boardDetail, board))
+        return Optional.of(BoardDetailResponseDto.from(boardDetail, board))
             .orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
     }
 
