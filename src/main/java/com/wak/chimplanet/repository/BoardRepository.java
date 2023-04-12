@@ -4,6 +4,7 @@ import static com.wak.chimplanet.entity.QBoard.board;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.Board;
@@ -11,6 +12,7 @@ import com.wak.chimplanet.entity.QBoardTag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import org.springframework.data.domain.Pageable;
@@ -30,17 +32,9 @@ public class BoardRepository {
     }
 
     public List<Board> saveAll(List<Board> articles) {
-        int batchSize = 50;
-
         List<Board> savedBoards = new ArrayList<>();
-        int i = 0;
         for (Board board : articles) {
             em.persist(board);
-            i++;
-            if (i % batchSize == 0) {
-                em.flush();
-                em.clear();
-            }
             savedBoards.add(board);
         }
         return savedBoards;
@@ -65,7 +59,6 @@ public class BoardRepository {
      * 무한스크롤 구현
      */
     public Slice<BoardResponseDto> findBoardsByLastArticleId(String lastArticleId, Pageable pageable) {
-
         List<Board> boards = queryFactory.selectFrom(board)
             .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
             .where(
@@ -78,6 +71,28 @@ public class BoardRepository {
 
         // 무한 스크롤 처리
         return checkLastPage(pageable, boards);
+    }
+
+    /**
+     * TAG ID 기준으로 검색
+     */
+    public Slice<BoardResponseDto> findBoardByTagIds(String lastArticleId, Pageable pageable, List<String> tagIds) {
+        JPQLQuery<Board> query = queryFactory.selectFrom(board)
+            .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
+            .where(ltArticleId(lastArticleId));
+
+        if(tagIds != null && !tagIds.isEmpty()) {
+            query.where(board.boardTags.any().tagObj.childTagId.in(tagIds));
+        }
+
+        List<Board> boards = query
+            .orderBy(board.articleId.desc())
+            .limit(pageable.getPageSize() + 1)
+            .fetchResults()
+            .getResults();
+
+        return new SliceImpl<>(boards.stream().map(BoardResponseDto::new)
+            .collect(Collectors.toList()), pageable, boards.size() > pageable.getPageSize());
     }
 
     public List<Board> findBoardsByReadCount() {
@@ -102,7 +117,6 @@ public class BoardRepository {
 
     public Optional<Board> findById(String articleId) {
         Optional<Board> board = null;
-
         try {
             board = Optional.ofNullable(em.createQuery("select b from Board b where b.articleId = :articleId", Board.class)
                 .setParameter("articleId", articleId)
@@ -110,9 +124,9 @@ public class BoardRepository {
         } catch (NoResultException e) {
             board = Optional.empty();
         } finally {
-            return board;
-        }
+        return board;
     }
+}
 
     // no-offset 방식 처리 메서드
     private BooleanExpression ltArticleId(String lastArticleId) {

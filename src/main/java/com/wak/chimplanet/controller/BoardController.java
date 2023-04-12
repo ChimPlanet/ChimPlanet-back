@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -83,6 +84,17 @@ public class BoardController {
     @GetMapping("/api/boards/recruitBoard")
     public ResponseEntity<Map<String, Object>> getRecruitBoardCount() {
         return ResponseEntity.ok().body(boardService.getRecruitBoardCount());
+    }
+
+    @ApiOperation(value = "태그명으로 검색하기")
+    @GetMapping("/api/boards/search")
+    public ResponseEntity<Slice<BoardResponseDto>> searchBoard(
+        @ApiParam(value = "마지막 게시물 아이디") @RequestParam(value = "lastArticleId", required = false) String lastArticleId,
+        @ApiParam(value = "한 페이지당 게시물 개수", defaultValue = "20") @RequestParam(value = "size", defaultValue = "20") int size,
+        @ApiParam(value = "페이지 번호", defaultValue = "0") @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestBody List<String> searchTagId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("articleId").descending());
+        return ResponseEntity.ok().body(boardService.findBoardByTagIds(lastArticleId, pageable, searchTagId));
     }
 
 }
