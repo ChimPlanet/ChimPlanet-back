@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardTagRequestDto {
-
-    private String articleId;
+    
     private String parentTagId;
     private String childTagId;
 
