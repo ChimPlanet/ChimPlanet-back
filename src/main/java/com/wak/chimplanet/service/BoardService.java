@@ -53,7 +53,7 @@ public class BoardService {
      */
     public BoardDetailResponseDto getBoardOne(String articleId) {
         BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
-        Board board = boardRepository.findBoardWithTags(articleId);
+        Board board = boardRepository.findBoardWithTags(articleId).orElse(null);
         return Optional.of(BoardDetailResponseDto.from(boardDetail, board))
                 .orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
     }

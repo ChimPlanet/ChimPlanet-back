@@ -1,6 +1,7 @@
 package com.wak.chimplanet.controller;
 
 import com.wak.chimplanet.dto.requestDto.admin.AdminBoardUpdateRequestDto;
+import com.wak.chimplanet.dto.responseDto.admin.AdminBoardResponseDto;
 import com.wak.chimplanet.dto.responseDto.admin.AdminGetBoardResponseDto;
 import com.wak.chimplanet.dto.responseDto.admin.AdminUpdateBoardResponseDto;
 import com.wak.chimplanet.entity.Board;
@@ -34,15 +35,13 @@ public class AdminBoardController {
     }
 
     @ApiOperation(value = "관리자 게시글 수정", notes = "마감여부 및 태그 수정")
-    @PutMapping("/board/updateBoard/{articleId}")
+    @PutMapping("/board/updateBoard/")
     public ResponseEntity<AdminUpdateBoardResponseDto> updateBoard(
-            @PathVariable String articleId,
             @RequestBody AdminBoardUpdateRequestDto adminBoardUpdateRequestDto) {
 
         Board board =  adminBoardService.updateBoard(adminBoardUpdateRequestDto);
         return ResponseEntity.ok().body(
-                new AdminUpdateBoardResponseDto(
-                        "Success", HttpStatus.OK, new AdminBoardResponseDto(board)));
+                new AdminUpdateBoardResponseDto("Success", HttpStatus.OK, AdminBoardResponseDto.from(board)));
 
     }
 }
