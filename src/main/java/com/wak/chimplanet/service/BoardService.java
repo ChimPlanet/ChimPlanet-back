@@ -101,6 +101,7 @@ public class BoardService {
                 BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
 
                 String unauthorized = "N"; // 접근권한 여부
+
                 if(boardDetail == null) {
                     unauthorized = "Y";
                     board.setUnauthorized(unauthorized);
@@ -123,6 +124,8 @@ public class BoardService {
                     List<BoardTag> boardTags = new ArrayList<>();
 
                     for(TagObj tag : tags) {
+                        log.info("찾은 태그 ID : {}", tag.getChildTagId());
+
                         BoardTag boardTag = BoardTag.createBoardTag(tag, board);
                         board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
                         boardTags.add(boardTag); // BoardTag 리스트에도 추가
@@ -139,7 +142,6 @@ public class BoardService {
                     }
                 }
             }
-
             boardRepository.saveAll(boards);
         }
         return boards;
@@ -163,6 +165,16 @@ public class BoardService {
     public Slice<BoardResponseDto> findBoardsByPaging(String lastArticleId, Pageable pageable) {
         Slice<BoardResponseDto> boards = boardRepository.findBoardsByLastArticleId(
             lastArticleId, pageable);
+        log.info("Slice BoardResponse size: {} ", boards.getSize());
+        return boards;
+    }
+
+    /**
+     * 게시판 목록 가져오기 페이징 처리 추가
+     */
+    public Slice<BoardResponseDto> findBoardByTagIds(String lastArticleId, Pageable pageable, List<String> tagIds) {
+        Slice<BoardResponseDto> boards = boardRepository.findBoardByTagIds(
+            lastArticleId, pageable, tagIds);
         log.info("Slice BoardResponse size: {} ", boards.getSize());
         return boards;
     }
