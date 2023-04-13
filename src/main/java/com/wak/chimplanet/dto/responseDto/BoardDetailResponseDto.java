@@ -20,7 +20,7 @@ public class BoardDetailResponseDto {
     private String boardTitle; /* 게시글 제목 */
     private String writer; /* 게시글 작성자 */
 
-    private String readCount; /* 조회수 */
+    private Integer readCount; /* 조회수 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime regDate; /* 생성일자 */
     private String isEnd; /* 마감여부 */
