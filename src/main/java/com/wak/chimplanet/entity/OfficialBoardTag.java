@@ -32,7 +32,7 @@ public class OfficialBoardTag {
                 .tagObj(tag)
                 .build();
 
-//        officialBoard.addOfficialBoardTag(officialBoardTag);
+        officialBoard.addOfficialBoardTag(officialBoardTag);
 
         return officialBoardTag;
     }

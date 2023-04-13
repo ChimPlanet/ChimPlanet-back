@@ -39,10 +39,16 @@ public class OfficialBoardService {
 
         List<OfficialBoardTag> officialBoardTags = new ArrayList<>();
 
-
         for(TagObj tag : tags) {
             OfficialBoardTag officialBoardTag = OfficialBoardTag.createOfficialBoardTag(tag, officialBoard);
+            officialBoardTags.add(officialBoardTag); // BoardTag 리스트에도 추가
+
         }
+
+        officialBoard.setBoardTitle(boardDetail.getBoardTitle());
+        officialBoard.setWriter(boardDetail.getWriter());
+        officialBoard.setRedirectURL(boardDetail.getRedirectURL());
+        officialBoard.setOfficialBoardTags(officialBoardTags);
 
 //        Api로 조회한 Official article 저장
         officialBoardReporitory.save(officialBoard);

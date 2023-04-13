@@ -57,4 +57,12 @@ public class OfficialBoard{
     @OneToMany(mappedBy = "tagObj", cascade = CascadeType.ALL)
     private List<OfficialBoardTag> officialBoardTags = new ArrayList<>();
 
+    public void addOfficialBoardTag(OfficialBoardTag officialBoardTag) {
+        if(this.officialBoardTags == null) {
+            officialBoardTags = new ArrayList<>();
+        }
+        officialBoardTags.add(officialBoardTag);
+        officialBoardTag.setOfficialBoard(this);
+    }
+
 }
