@@ -170,12 +170,18 @@ public class BoardService {
     }
 
     /**
-     * 게시판 목록 가져오기 페이징 처리 추가
+     * 게시글 태그 검색
      */
-    public Slice<BoardResponseDto> findBoardByTagIds(String lastArticleId, Pageable pageable, List<String> tagIds) {
+    public Slice<BoardResponseDto> findBoardByTagIds(String lastArticleId, Pageable pageable, List<String> tagIds, String title) {
+
+        if(tagIds.isEmpty() && title.isEmpty() && title == null) {
+            throw new IllegalArgumentException("검색어를 확인해주세요");
+        }
+
         Slice<BoardResponseDto> boards = boardRepository.findBoardByTagIds(
-            lastArticleId, pageable, tagIds);
+            lastArticleId, pageable, tagIds, title);
         log.info("Slice BoardResponse size: {} ", boards.getSize());
+
         return boards;
     }
 

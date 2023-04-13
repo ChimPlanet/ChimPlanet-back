@@ -29,7 +29,7 @@ class TagObjServiceTest {
     @Rollback(value = false)
     void saveTag() {
 
-        int prevQty = tagRepository.findALl().size();
+        int prevQty = tagRepository.findAll().size();
 
         TagObj tagObj = TagObj.builder()
                 .tagName("testTag2")
@@ -38,7 +38,7 @@ class TagObjServiceTest {
 
         tagRepository.save(tagObj);
 
-        int resultQty = tagRepository.findALl().size();
+        int resultQty = tagRepository.findAll().size();
 
         prevQty = prevQty + 1;
         assertEquals(resultQty, prevQty);

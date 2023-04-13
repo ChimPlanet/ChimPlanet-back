@@ -92,9 +92,10 @@ public class BoardController {
         @ApiParam(value = "마지막 게시물 아이디") @RequestParam(value = "lastArticleId", required = false) String lastArticleId,
         @ApiParam(value = "한 페이지당 게시물 개수", defaultValue = "20") @RequestParam(value = "size", defaultValue = "20") int size,
         @ApiParam(value = "페이지 번호", defaultValue = "0") @RequestParam(value = "page", defaultValue = "0") int page,
-        @RequestBody List<String> searchTagId) {
+        @ApiParam(value = "게시글 제목", required = false) @RequestParam(value = "title", defaultValue = "null", required = false) String title,
+        @ApiParam(value = "검색하려는 태그", required = false) @RequestParam(required = false) List<String> searchTagId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("articleId").descending());
-        return ResponseEntity.ok().body(boardService.findBoardByTagIds(lastArticleId, pageable, searchTagId));
+        return ResponseEntity.ok().body(boardService.findBoardByTagIds(lastArticleId, pageable, searchTagId,title));
     }
 
 }

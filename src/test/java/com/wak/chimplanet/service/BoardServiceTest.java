@@ -2,8 +2,12 @@ package com.wak.chimplanet.service;
 
 import static org.junit.Assert.assertEquals;
 import static com.wak.chimplanet.entity.QBoard.board;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
 
@@ -13,12 +17,17 @@ import com.wak.chimplanet.repository.BoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,4 +108,21 @@ public class BoardServiceTest {
         assertEquals("10604364", findBoard.getArticleId());
     }
 
+    @Test
+    public void findBoardsByPaging() {
+    }
+
+    @Test
+    public void findBoardByTagIds_withTagIdsAndTitle_shouldReturnSliceOfBoards() {
+        // Given
+        List<String> tagIds = Arrays.asList("101");
+        String title = "개발";
+        String lastArticleId = null;
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("articleId").descending());
+        // When
+        Slice<BoardResponseDto> result = boardService.findBoardByTagIds(lastArticleId, pageable, tagIds, title);
+        // Then
+        assertEquals(result.get().collect(Collectors.toList()).get(0).getBoardTitle().contains("개발"), true);
+
+    }
 }
