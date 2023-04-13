@@ -42,7 +42,7 @@ public class BoardDetailResponseDto {
 
     public static BoardDetailResponseDto from(BoardDetail boardDetail, Board board) {
         BoardDetailResponseDtoBuilder builder = BoardDetailResponseDto.builder();
-
+        
         if (boardDetail != null) {
             builder.articleId(boardDetail.getArticleId())
                     .content(boardDetail.getContent())

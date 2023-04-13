@@ -75,14 +75,20 @@ public class BoardRepository {
 
     /**
      * TAG ID 기준으로 검색
+     * tagIds 가 있는 경우에는 tagIds로 검색
+     * title 이 있는 경우에는 title로 검색
      */
-    public Slice<BoardResponseDto> findBoardByTagIds(String lastArticleId, Pageable pageable, List<String> tagIds) {
+    public Slice<BoardResponseDto> findBoardByTagIds(String lastArticleId, Pageable pageable, List<String> tagIds, String title) {
         JPQLQuery<Board> query = queryFactory.selectFrom(board)
             .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
             .where(ltArticleId(lastArticleId));
 
         if(tagIds != null && !tagIds.isEmpty()) {
             query.where(board.boardTags.any().tagObj.childTagId.in(tagIds));
+        }
+
+        if(title != null && !title.isBlank()) {
+            query.where(board.boardTitle.containsIgnoreCase(title));
         }
 
         List<Board> boards = query
@@ -98,10 +104,6 @@ public class BoardRepository {
     public List<Board> findBoardsByReadCount() {
         return em.createQuery("select b from Board b LEFT JOIN FETCH  b.boardTags where read_count >= 500", Board.class)
                 .getResultList();
-    }
-    
-    public void saveTags(List<String> tags, String articleId) {
-        ;
     }
 
     public Optional<Board> findBoardWithTags(String articleId) {
