@@ -47,7 +47,7 @@ public class BoardDetailResponseDto {
             builder.articleId(boardDetail.getArticleId())
                     .content(boardDetail.getContent())
                     .redirectURL(boardDetail.getRedirectURL())
-                    .readCount(board.getReadCount())
+                    .readCount(boardDetail.getReadCount())
                     .writer(board.getWriter())
                     .boardTitle(board.getBoardTitle())
                     .tags(board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(Collectors.toList()));

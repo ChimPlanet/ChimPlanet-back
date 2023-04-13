@@ -125,14 +125,12 @@ public class NaverCafeAtricleApi {
         String API_URL = "https://apis.naver.com/cafe-web/cafe-articleapi/v2.1/cafes/27842958/articles/"
             + articleId
             + "?query=&menuId=148&boardType=L&useCafeId=true&requestFrom=A";
-            // + "$buid=d0a510a5-6bd3-491d-b48f-527de1947875";
 
         JsonObject obj = getNaverCafeArticleList(API_URL);
 
         if(obj.has("error")) {
             logger.warn("권한이 없는 게시물 입니다.");
             return null;
-            // throw new IllegalArgumentException("권한이 없는 게시물 입니다.");
         }
 
         JsonObject article = obj.getAsJsonObject("result").getAsJsonObject("article");
@@ -141,15 +139,14 @@ public class NaverCafeAtricleApi {
         logger.info(article.toString());
         logger.info("articleId: {}, contentHtml: {}", article.get("id"), article.get("contentHtml"));
 
-        BoardDetail boardDetail = BoardDetail.builder()
+        return BoardDetail.builder()
             .articleId(article.get("id").getAsString())
             .content(article.get("contentHtml").getAsString())
             .boardTitle(article.get("subject").getAsString())
             .writer(writer.get("nick").getAsString())
             .redirectURL("https://cafe.naver.com/steamindiegame" + articleId)
+            .readCount(article.get("readCount").getAsInt())
             .build();
-
-        return boardDetail;
     }
 
     /**
@@ -157,7 +154,8 @@ public class NaverCafeAtricleApi {
      */
     private static String isEnd(String title) {
         String END_TITLE = "마감";
-        if(title.contains(END_TITLE)) return "END";
+        String END_TITLE_SECOND = "완료";
+        if(title.contains(END_TITLE) || title.contains(END_TITLE_SECOND)) return "END";
         return "ING";
     }
 

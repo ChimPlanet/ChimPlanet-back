@@ -106,7 +106,7 @@ public class BoardRepository {
 
     public Optional<Board> findBoardWithTags(String articleId) {
         try {
-            Board board = em.createQuery("select b from Board b join fetch b.boardTags where b.articleId = :articleId", Board.class)
+            Board board = em.createQuery("select b from Board b left join fetch b.boardTags where b.articleId = :articleId", Board.class)
                 .setParameter("articleId", articleId)
                 .getSingleResult();
             return Optional.of(board);
