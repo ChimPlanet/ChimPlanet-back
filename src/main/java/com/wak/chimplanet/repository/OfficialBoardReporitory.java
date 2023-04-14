@@ -13,7 +13,7 @@ public class OfficialBoardReporitory {
     private final EntityManager em;
 
     public List<OfficialBoard> findAll() {
-        return em.createQuery("select o form OfficialBoard o", OfficialBoard.class).getResultList();
+        return em.createQuery("select o from OfficialBoard o", OfficialBoard.class).getResultList();
     }
 
     public void save(OfficialBoard officialBoard) {

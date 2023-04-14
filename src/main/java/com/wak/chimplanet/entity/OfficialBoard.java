@@ -12,11 +12,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "official_board")
-@Getter @Setter
+@Getter @Setter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "공식 게시글 정보")
 @Builder // 임시 추가 -> DTO 로 옮겨야함
+
 public class OfficialBoard{
 
     @Id
