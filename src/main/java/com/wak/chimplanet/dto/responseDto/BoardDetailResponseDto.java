@@ -48,16 +48,16 @@ public class BoardDetailResponseDto {
                     .content(boardDetail.getContent())
                     .redirectURL(boardDetail.getRedirectURL())
                     .readCount(boardDetail.getReadCount())
-                    .writer(board.getWriter())
-                    .boardTitle(board.getBoardTitle())
-                    .tags(board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(Collectors.toList()));
+                    .writer(boardDetail.getWriter())
+                    .boardTitle(boardDetail.getBoardTitle());
         }
 
         if (board != null) {
             builder.readCount(board.getReadCount())
                     .regDate(board.getRegDate())
                     .isEnd(board.getIsEnd())
-                    .unauthorized(board.getUnauthorized().equals("N"));
+                    .unauthorized(board.getUnauthorized().equals("N"))
+                    .tags(board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(Collectors.toList()));
         }
 
         return builder.build();
