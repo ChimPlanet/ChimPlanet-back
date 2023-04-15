@@ -19,6 +19,7 @@ public class BoardDetailResponseDto {
     private String redirectURL; /* 이동할 주소 */
     private String boardTitle; /* 게시글 제목 */
     private String writer; /* 게시글 작성자 */
+    private String profileImageUrl; /* 프로필 이미지 URL */
 
     private Integer readCount; /* 조회수 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -49,15 +50,18 @@ public class BoardDetailResponseDto {
                     .redirectURL(boardDetail.getRedirectURL())
                     .readCount(boardDetail.getReadCount())
                     .writer(boardDetail.getWriter())
-                    .boardTitle(boardDetail.getBoardTitle());
+                    .profileImageUrl(boardDetail.getProfileImageUrl())
+                    .boardTitle(board.getBoardTitle());
+
         }
 
         if (board != null) {
             builder.readCount(board.getReadCount())
                     .regDate(board.getRegDate())
                     .isEnd(board.getIsEnd())
-                    .unauthorized(board.getUnauthorized().equals("N"))
-                    .tags(board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(Collectors.toList()));
+                    .tags(board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(Collectors.toList()))
+                    .unauthorized(board.getUnauthorized().equals("N"));
+
         }
 
         return builder.build();
