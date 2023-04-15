@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,8 +95,14 @@ public class BoardController {
         @ApiParam(value = "페이지 번호", defaultValue = "0") @RequestParam(value = "page", defaultValue = "0") int page,
         @ApiParam(value = "게시글 제목", required = false) @RequestParam(value = "title", defaultValue = "null", required = false) String title,
         @ApiParam(value = "검색하려는 태그", required = false) @RequestParam(required = false) List<String> searchTagId) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("articleId").descending());
-        return ResponseEntity.ok().body(boardService.findBoardByTagIds(lastArticleId, pageable, searchTagId,title));
+
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("articleId").descending());
+            Slice<BoardResponseDto> boardSlice = boardService.findBoardByTagIds(lastArticleId, pageable, searchTagId,title);
+            return ResponseEntity.ok().body(boardSlice);
+        } catch(IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 에러 메시지를 전달할 수 있도록 수정
+        }
     }
 
 }

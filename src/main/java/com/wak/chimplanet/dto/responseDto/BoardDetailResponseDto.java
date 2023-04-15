@@ -52,6 +52,7 @@ public class BoardDetailResponseDto {
                     .writer(boardDetail.getWriter())
                     .profileImageUrl(boardDetail.getProfileImageUrl())
                     .boardTitle(board.getBoardTitle());
+
         }
 
         if (board != null) {
@@ -60,6 +61,7 @@ public class BoardDetailResponseDto {
                     .isEnd(board.getIsEnd())
                     .tags(board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(Collectors.toList()))
                     .unauthorized(board.getUnauthorized().equals("N"));
+
         }
 
         return builder.build();
