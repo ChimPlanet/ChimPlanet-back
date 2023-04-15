@@ -144,6 +144,7 @@ public class NaverCafeAtricleApi {
             .content(article.get("contentHtml").getAsString())
             .boardTitle(article.get("subject").getAsString())
             .writer(writer.get("nick").getAsString())
+            .profileImageUrl(writer.get("image").getAsJsonObject().get("image").getAsString())
             .redirectURL("https://cafe.naver.com/steamindiegame" + articleId)
             .readCount(article.get("readCount").getAsInt())
             .build();
