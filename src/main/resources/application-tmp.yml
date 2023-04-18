@@ -1,0 +1,40 @@
+# Production environment
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active:
+      on-profile: tmp
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://19.19.20.131:3306/chimplanet
+    username: pds
+    password: pds@gksdlf%17
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        # show_sql : true
+        format_sql: true
+
+  logging:
+    level:
+      org.hibernate.SQL: info
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  servlet:
+    multipart:
+      maxFileSize: 20MB
+      maxRequestSize: 20MB
+
+path:
+  # upload-images: '/home/ec2-user/wak/images/'
+  upload-images: /home/ippbx/test/images

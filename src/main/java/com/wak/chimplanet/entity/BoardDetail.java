@@ -1,6 +1,8 @@
 package com.wak.chimplanet.entity;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,10 +16,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BoardDetail {
 
-    @Id
     private String articleId;
     private String content;
     private String redirectURL;
+    private String boardTitle; /* 게시글 제목 */
+    private String writer; /* 게시글 작성자 */
+    private Integer readCount;
+    private String profileImageUrl; /* 프로필 이미지 url*/
     private List<TagObj> tagList;
 
 }

@@ -1,7 +1,15 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.8'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	// querydsl 플러그인 추가
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com.wak.chimplanet'
@@ -22,6 +30,8 @@ dependencies {
 	// jsoup
 	implementation 'org.jsoup:jsoup:1.15.4'
 
+	implementation 'commons-io:commons-io:2.11.0'
+
 	// Swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
@@ -32,6 +42,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.google.code.gson/gson
 	implementation 'com.google.code.gson:gson:2.8.9'
 
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.6'
+
+
 	// 쿼리 파라미터 로그 라이브러리
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
 
@@ -39,6 +52,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client' // MariaDB
+	implementation 'mysql:mysql-connector-java:8.0.27'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -47,8 +62,40 @@ dependencies {
 	testImplementation("org.junit.vintage:junit-vintage-engine") {
 		exclude group: "org.hamcrest", module: "hamcrest-core"
 	}
+
+	// querydsl 디펜던시 추가
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+
+// querydsl 사용할 경로 지정합니다. 현재 지정한 부분은 .gitignore에 포함되므로 git에 올라가지 않습니다.
+def querydslDir = "$buildDir/generated/'querydsl'"
+
+// JPA 사용여부 및 사용 경로 설정
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+// build시 사용할 sourceSet 추가 설정
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+// querydsl 컴파일 시 사용할 옵션 설정
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+// querydsl이 compileClassPath를 상속하도록 설정
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
 }

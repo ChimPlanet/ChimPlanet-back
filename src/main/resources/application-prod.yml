@@ -1,0 +1,36 @@
+# Production environment
+spring:
+  profiles:
+    active:
+      on-profile: prod
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://chimplanet-db.cff65pogxbuj.ap-northeast-1.rds.amazonaws.com:3306/chimplanet?serverTimezone=Asia/Seoul
+    username: root
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        # show_sql : true
+        format_sql: true
+
+  logging:
+    level:
+      org.hibernate.SQL: info
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  servlet:
+    multipart:
+      maxFileSize: 20MB
+      maxRequestSize: 20MB
+
+path:
+  upload-images: '/home/ec2-user/wak/images/'
