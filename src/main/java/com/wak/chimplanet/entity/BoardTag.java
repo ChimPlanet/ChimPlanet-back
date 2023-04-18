@@ -1,11 +1,21 @@
 package com.wak.chimplanet.entity;
 
 
-import lombok.*;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter @Setter
 @Entity
@@ -17,7 +27,7 @@ public class BoardTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_tag_id", nullable = false)
-    private Integer boardTagId;
+    private Long boardTagId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id", nullable = false)
@@ -30,9 +40,9 @@ public class BoardTag {
     // 생성메서드
     public static BoardTag createBoardTag(TagObj tag, Board board) {
         BoardTag boardTag = BoardTag.builder()
-                .board(board)
-                .tagObj(tag)
-                .build();
+            .board(board)
+            .tagObj(tag)
+            .build();
         board.addBoardTag(boardTag);
         return boardTag;
     }
@@ -42,5 +52,10 @@ public class BoardTag {
                 .board(board)
                 .tagObj(tag)
                 .build();
+    }
+
+    public void updateBoardTags(Board board, TagObj tag) {
+        this.board = board;
+        this.tagObj = tag;
     }
 }

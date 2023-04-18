@@ -27,8 +27,8 @@ public class TagRepositoryTest {
 
 
     @Test
-    public void findALl() {
-        List<TagObj> tagRepositoryList = tagRepository.findALl();
+    public void findAll() {
+        List<TagObj> tagRepositoryList = tagRepository.findAll();
         assertEquals(tagRepositoryList.size(), 8);
     }
 
