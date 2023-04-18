@@ -24,6 +24,11 @@ public class TagObjRepository {
                 .getResultList();
     }
 
+
+    public TagObj findById(int tagId) {
+        return em.find(TagObj.class, tagId);
+    }
+    
     public List<TagObj> findAllByChildId(List<String> childIds) {
         return em.createQuery("SELECT t FROM TagObj t WHERE t.childTagId IN :childIds", TagObj.class)
                 .setParameter("childIds", childIds)
@@ -31,11 +36,7 @@ public class TagObjRepository {
     }
 
     public void save(TagObj tagObj) {
-        if(tagObj.getTagId() == null){
-            em.persist(tagObj);
-        }else{
-            em.merge((tagObj));
-        }
+        em.persist(tagObj);
     }
 
     public void deleteById (TagObj tagObj){
