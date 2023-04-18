@@ -77,20 +77,17 @@ public class BoardService {
             for(Board board : articles) {
                 String articleId = board.getArticleId();
                 BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
-
                 if(boardDetail == null) {
                     board.setUnauthorized("Y");
                 } else {
                     List<TagObj> tags = categorizingTag(boardDetail.getContent());
                     List<BoardTag> boardTags = new ArrayList<>();
-
                     for(TagObj tag : tags) {
                         BoardTag boardTag = BoardTag.createBoardTag(tag, board);
                         board.addBoardTag(boardTag);
                         boardTags.add(boardTag);
                     }
                 }
-
             }*/
 
             // 게시글 가져오기 + 태그저장 => 일단 돌아만 가게 만든 소스코드
