@@ -1,0 +1,4 @@
+[submodule "Chimplanet-privates"]
+  path = Chimplanet-privates
+  url = https://github.com/ChimPlanet/Chimplanet-privates
+  branch = main
