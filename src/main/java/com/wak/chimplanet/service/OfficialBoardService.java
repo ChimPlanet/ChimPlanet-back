@@ -29,13 +29,7 @@ public class OfficialBoardService {
 
         BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(officialBoard.getArticleId());
 
-        System.out.print("Board Detail :: ");
-        System.out.println(boardDetail);
-
         List<TagObj> tags = boardService.categorizingTag(boardDetail.getContent());
-
-        System.out.print("Tags List :: ");
-        System.out.println(tags);
 
         List<OfficialBoardTag> officialBoardTags = new ArrayList<>();
 
@@ -56,4 +50,10 @@ public class OfficialBoardService {
         return officialBoardReporitory.findAll();
     }
 
+    public  List<OfficialBoard> deleteOfficialBoard(String articleId) {
+
+        officialBoardReporitory.deleteById(articleId);
+
+        return officialBoardReporitory.findAll();
+    }
 }

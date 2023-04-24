@@ -19,4 +19,10 @@ public class OfficialBoardReporitory {
     public void save(OfficialBoard officialBoard) {
         em.persist(officialBoard);
     }
+
+    public void deleteById(String articleId) {
+
+        OfficialBoard officialBoard = em.find(OfficialBoard.class, articleId);
+        em.remove(articleId);
+    }
 }
