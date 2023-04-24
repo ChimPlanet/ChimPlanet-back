@@ -1,26 +1,37 @@
 package com.wak.chimplanet.service;
 
-import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDTO;
+import static org.junit.Assert.assertEquals;
+import static com.wak.chimplanet.entity.QBoard.board;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
+
 import com.wak.chimplanet.entity.TagObj;
 import com.wak.chimplanet.naver.NaverCafeAtricleApi;
+import com.wak.chimplanet.repository.BoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -32,6 +43,7 @@ public class BoardServiceTest {
     @Autowired
     TagObjRepository tagRepository;
     @Autowired BoardService boardService;
+    @Autowired BoardRepository boardRepository;
     @Autowired EntityManager em;
 
     /**
@@ -60,10 +72,57 @@ public class BoardServiceTest {
         assertEquals(actualTags.get(0).getTagName(), "백엔드");
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void 권한이_없는_게시물() {
-        String articleId = "10117009"; // 권한이 없는 친구
-        BoardDetailResponseDTO boardOne = boardService.getBoardOne(articleId);
+        // given
+        String articleId = "10117009"; // 권한이 없는 게시물 ID
+        Board board = Board.builder()
+            .articleId(articleId)
+            .unauthorized("N")
+            .build();
+
+        boardRepository.saveBoard(board);
+
+        // when
+        Board retrievedBoard = boardRepository.findById(articleId).orElse(null);
+        if(naverCafeAtricleApi.getNaverCafeArticleOne(articleId) == null) {
+            retrievedBoard.setUnauthorized("Y");
+            boardRepository.saveBoard(retrievedBoard);
+        }
+
+
+        // then
+        assertEquals("Y", boardRepository.findById(articleId).orElse(null).getUnauthorized());
     }
 
+    @Test
+    public void findByQueryDsl() {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        Board findBoard = queryFactory
+            .select(board)
+            .from(board)
+            .where(board.articleId.eq("10604364"))
+            .fetchOne();
+
+        assertEquals("10604364", findBoard.getArticleId());
+    }
+
+    @Test
+    public void findBoardsByPaging() {
+    }
+
+    @Test
+    public void findBoardByTagIds_withTagIdsAndTitle_shouldReturnSliceOfBoards() {
+        // Given
+        List<String> tagIds = Arrays.asList("101");
+        String title = "개발";
+        String lastArticleId = null;
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("articleId").descending());
+        // When
+        Slice<BoardResponseDto> result = boardService.findBoardByTagIds(lastArticleId, pageable, tagIds, title);
+        // Then
+        assertEquals(result.get().collect(Collectors.toList()).get(0).getBoardTitle().contains("개발"), true);
+
+    }
 }

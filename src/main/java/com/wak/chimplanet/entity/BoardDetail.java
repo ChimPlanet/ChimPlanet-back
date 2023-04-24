@@ -21,6 +21,8 @@ public class BoardDetail {
     private String redirectURL;
     private String boardTitle; /* 게시글 제목 */
     private String writer; /* 게시글 작성자 */
+    private Integer readCount;
+    private String profileImageUrl; /* 프로필 이미지 url*/
     private List<TagObj> tagList;
 
 }

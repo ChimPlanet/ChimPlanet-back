@@ -93,15 +93,19 @@ public class FileService {
                 // ID로 조회한 결과값이 없는 경우
                 () -> new IllegalArgumentException("File not found with id " + fileUploadRequestDto.getFileId())
             );
+        String orignFileName = findFileEntityById.getFileName();
+        log.info("findFileEntityById : {}, fileName: {}", findFileEntityById.getFileId(), findFileEntityById.getFileName());
         
         // 조회한 엔티티를 변경
         FileEntity fileEntity = findFileEntityById.updateFile(fileUploadRequestDto, multipartFiles);
 
         log.info("updateFileEntity : {}", fileEntity.toString());
 
-        // 이미지 파일변경
-        findFileEntityById.changeFile(fileEntity.getFileName()
-            , fileEntity.getFileName(), filePath, multipartFiles);
+
+        // 파일이 존재하는 경우에만 이미지 파일을 변경
+        if (multipartFiles != null && multipartFiles.length > 0) {
+            findFileEntityById.changeFile(orignFileName, fileEntity.getFileName(), filePath, multipartFiles);
+        }
 
         return findFileEntityById.getFileId();
     }
@@ -169,6 +173,7 @@ public class FileService {
         for (FileEntity fileEntity : fileEntities) {
             int newSequence = newSequenceMap.get(fileEntity.getFileId());
             if (fileEntity.getSequence() != newSequence) {
+                // 해당 로직 변경 필요.
 //                if (fileRepository.existsById(fileEntity.getFileId())) {
 //                    throw new IllegalArgumentException("Sequence " + newSequence + " is already in use for image type " + fileEntity.getImageType());
 //                }
