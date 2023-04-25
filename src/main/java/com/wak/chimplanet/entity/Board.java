@@ -62,7 +62,9 @@ public class Board {
     private String unauthorized;
 
     @Builder.Default
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "article_id")
     private List<BoardTag> boardTags = new ArrayList<>();
 
     // private String official; [공식] 모집 게시물
