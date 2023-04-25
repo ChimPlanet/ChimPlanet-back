@@ -31,6 +31,10 @@ public class TagObjService {
             newTagObj.setTagName(tagObj.getTagName());
         }
 
-        return tagObjRepository.findALl();
+        return tagObjRepository.findAll();
+    }
+
+    public List<TagObj> deleteTag(TagObj tagObj) {
+        return tagObjRepository.findAll();
     }
 }

@@ -36,8 +36,20 @@ public class TagObjController {
     }
 
     @ApiOperation(value = "Tag 저장")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tag저장 List리턴", content = @Content(schema = @Schema(implementation = TagObj.class)))
+    })
     @PostMapping("/")
     public ResponseEntity<List<TagObj>> saveTag(TagObj tagObj){
         return ResponseEntity.ok().body(tagObjService.saveTag(tagObj));
+    }
+
+    @ApiOperation(value = "Tag 삭제")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tag 삭제 List리턴", content = @Content(schema = @Schema(implementation = TagObj.class)))
+    })
+    @DeleteMapping("/")
+    public ResponseEntity<List<TagObj>> deleteTag(TagObj tagObj){
+        return ResponseEntity.ok().body(tagObjService.deleteTag(tagObj));
     }
 }
