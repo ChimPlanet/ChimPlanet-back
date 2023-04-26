@@ -72,8 +72,8 @@ public class BoardService {
         for(int i = 1; i <= 5; i++) {
             ArrayList<Board> articles = naverCafeArticleApi.getArticles(API_URL + i);
             log.info("articleSize : {} ", articles.size());
-
-            // 게시글 가져오기 + 태그저장 => 일단 돌아만 가게 만든 소스코드
+            
+            // 게시글 가져오기 + 태그저장
             for(int j = 0; j < articles.size(); j++) {
                 Board board = articles.get(j);
                 String articleId = board.getArticleId();
