@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.hibernate.annotations.ColumnDefault;
 
 
 @Entity
@@ -57,15 +58,15 @@ public class Board {
     private String isEnd;
 
     @Column(name = "unauthorized")
-    // @ColumnDefault("Y")
+    @ColumnDefault("N")
     @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N, default = N")
     private String unauthorized;
 
     @Builder.Default
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "article_id")
     private List<BoardTag> boardTags = new ArrayList<>();
-
-    // private String official; [공식] 모집 게시물
 
     /**
      * 연관관계 메서드

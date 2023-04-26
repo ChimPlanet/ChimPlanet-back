@@ -4,7 +4,7 @@ import com.wak.chimplanet.common.config.exception.NotFoundException;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDto;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.*;
-import com.wak.chimplanet.naver.NaverCafeAtricleApi;
+import com.wak.chimplanet.naver.NaverCafeArticleApi;
 import com.wak.chimplanet.repository.BoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.*;
 @Slf4j
 public class BoardService {
 
-    private final NaverCafeAtricleApi naverCafeAtricleApi;
+    private final NaverCafeArticleApi naverCafeArticleApi;
     private final BoardRepository boardRepository;
     private final TagObjRepository tagRepository;
 
@@ -34,9 +34,9 @@ public class BoardService {
         + "&search.page=";
 
     @Autowired
-    public BoardService(NaverCafeAtricleApi naverCafeAtricleApi,
+    public BoardService(NaverCafeArticleApi naverCafeArticleApi,
                         BoardRepository boardRepository, TagObjRepository tagRepository) {
-        this.naverCafeAtricleApi = naverCafeAtricleApi;
+        this.naverCafeArticleApi = naverCafeArticleApi;
         this.boardRepository = boardRepository;
         this.tagRepository = tagRepository;
     }
@@ -45,14 +45,14 @@ public class BoardService {
      * 최신 게시판 받아오기
      */
     public ArrayList<Board> getAllBoardList() {
-        return naverCafeAtricleApi.getArticles(API_URL);
+        return naverCafeArticleApi.getArticles(API_URL);
     }
 
     /**
      * 게시판 게시물 상세내용 가져오기
      */
     public BoardDetailResponseDto getBoardOne(String articleId) {
-        BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
+        BoardDetail boardDetail = naverCafeArticleApi.getNaverCafeArticleOne(articleId);
         Board board = boardRepository.findBoardWithTags(articleId).orElse(null);
         return Optional.of(BoardDetailResponseDto.from(boardDetail, board))
                 .orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
@@ -66,36 +66,19 @@ public class BoardService {
     @Transactional
     public List<Board> saveAllBoards() {
         ArrayList<Board> boards = new ArrayList<>();
+        List<TagObj> tagList = tagRepository.findAll();
         int pageSize = 20; // 저장할 페이지 갯수
 
         for(int i = 1; i <= 5; i++) {
-            ArrayList<Board> articles = naverCafeAtricleApi.getArticles(API_URL + i);
+            ArrayList<Board> articles = naverCafeArticleApi.getArticles(API_URL + i);
             log.info("articleSize : {} ", articles.size());
-
-/*
-            // 리팩토리중인 소스코드
-            for(Board board : articles) {
-                String articleId = board.getArticleId();
-                BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
-                if(boardDetail == null) {
-                    board.setUnauthorized("Y");
-                } else {
-                    List<TagObj> tags = categorizingTag(boardDetail.getContent());
-                    List<BoardTag> boardTags = new ArrayList<>();
-                    for(TagObj tag : tags) {
-                        BoardTag boardTag = BoardTag.createBoardTag(tag, board);
-                        board.addBoardTag(boardTag);
-                        boardTags.add(boardTag);
-                    }
-                }
-            }*/
-
-            // 게시글 가져오기 + 태그저장 => 일단 돌아만 가게 만든 소스코드
+            
+            // 게시글 가져오기 + 태그저장
             for(int j = 0; j < articles.size(); j++) {
                 Board board = articles.get(j);
                 String articleId = board.getArticleId();
 
-                BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(articleId);
+                BoardDetail boardDetail = naverCafeArticleApi.getNaverCafeArticleOne(articleId);
 
                 String unauthorized = "N"; // 접근권한 여부
 
@@ -117,12 +100,10 @@ public class BoardService {
                 } else {
                     String content = Optional.ofNullable(boardDetail.getContent()).orElse(null);
 
-                    List<TagObj> tags = categorizingTag(content);
+                    List<TagObj> tags = categorizingTag(content, tagList);
                     List<BoardTag> boardTags = new ArrayList<>();
 
                     for(TagObj tag : tags) {
-                        log.info("찾은 태그 ID : {}", tag.getChildTagId());
-
                         BoardTag boardTag = BoardTag.createBoardTag(tag, board);
                         board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
                         boardTags.add(boardTag); // BoardTag 리스트에도 추가
@@ -151,6 +132,7 @@ public class BoardService {
 
     /**
      * 게시판 목록 가져오기 from DataBase
+     * 페이징처리 안되어있어 사용하지 않음
      */
     public List<BoardResponseDto> findAllBoard() {
         return BoardResponseDto.from(boardRepository.findAllBoard());
@@ -185,19 +167,21 @@ public class BoardService {
     /**
      * 게시판 목록 인기글 가져오기
      */
-    public List<Board> findBoardsByReadCount() {
-        return boardRepository.findBoardsByReadCount();
+    public Slice<BoardResponseDto> findBoardsByReadCount() {
+        Slice<BoardResponseDto> boards = boardRepository.findBoardsByLastArticleId(null, null);
+        return boards;
     }
 
     /**
      * 게시글에서 태그 리스트 분류하기
      */
-    public List<TagObj> categorizingTag(String content) {
+    public List<TagObj> categorizingTag(String content, List<TagObj> tags) {
         if(content.isEmpty()) return null;
 
         // 문장에서 찾은 태그명
         Set<String> foundTags = new HashSet<>();
-        List<TagObj> tags = tagRepository.findAll();
+        // 문장에서 찾은 태그 코드
+        Set<TagObj> findTagSet = new HashSet<>();
 
        for(TagObj tag : tags) {
            // log.info("검색하는 태그명: {}", tag.getTagName());
@@ -206,13 +190,14 @@ public class BoardService {
 //            }
            if(content.contains(tag.getTagName())) {
                foundTags.add(tag.getTagName());
+               findTagSet.add(tag);
            }
 
         }
 
         log.info("찾은 태그명 : {}", foundTags.toString());
 
-       return tagRepository.findAllByName(new ArrayList<>(foundTags));
+       return new ArrayList<>(findTagSet);
     }
 
     /**
