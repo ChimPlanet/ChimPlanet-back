@@ -2,14 +2,17 @@ package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
+import com.wak.chimplanet.entity.BoardTag;
 import com.wak.chimplanet.entity.TagObj;
 import com.wak.chimplanet.naver.NaverCafeArticleApi;
+import com.wak.chimplanet.repository.BoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import javax.swing.text.html.HTML.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ public class CafeBoardScheduleService {
 
     private final NaverCafeArticleApi naverCafeArticleApi;
     private final TagObjRepository tagObjRepository;
+    private final BoardRepository boardRepository;
 
     private final static String API_URL = "https://apis.naver.com/cafe-web/cafe2/ArticleListV2.json?"
         + "search.clubid=27842958" // 왁물원 카페 ID
@@ -58,9 +62,23 @@ public class CafeBoardScheduleService {
                 } else {
                     String content = Optional.ofNullable(boardDetail.getContent()).orElse(null);
                     List<TagObj> tagObjs = categorizingTag(content, tags);
+                    List<BoardTag> boardTags = new ArrayList<>();
+
+                    for(TagObj tag : tags) {
+                        log.info("찾은 태그 ID : {}", tag.getChildTagId());
+
+                        BoardTag boardTag = BoardTag.createBoardTag(tag, board);
+                        board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
+                        boardTags.add(boardTag); // BoardTag 리스트에도 추가
+                    }
+
+                    board.updateBoard(board, boardTags);
                 }
+
+                boards.add(board);
             }
 
+            boardRepository.saveAll(boards);
         }
     }
 

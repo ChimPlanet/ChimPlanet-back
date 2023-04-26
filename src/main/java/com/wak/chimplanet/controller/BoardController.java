@@ -62,25 +62,29 @@ public class BoardController {
     }
 
     @PostMapping("/api/boards")
-    @ApiOperation(value = "게시판 목록 조회 API", notes = "게시판 목록을 조회하고, 페이징 처리합니다.")
+    @ApiOperation(value = "게시판 목록 조회 API", notes = "게시판 목록을 조회하고, 페이징 처리합니다. 기본 정렬조건으 게시글 ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "게시판 목록 조회 성공")
     })
     public ResponseEntity<Slice<BoardResponseDto>> getBoards(
         @ApiParam(value = "마지막 게시물 아이디") @RequestParam(value = "lastArticleId", required = false) String lastArticleId,
         @ApiParam(value = "한 페이지당 게시물 개수", defaultValue = "20") @RequestParam(value = "size", defaultValue = "20") int size,
-        @ApiParam(value = "페이지 번호", defaultValue = "0") @RequestParam(value = "page", defaultValue = "0") int page
+        @ApiParam(value = "페이지 번호", defaultValue = "0") @RequestParam(value = "page", defaultValue = "0") int page,
+        @ApiParam(value = "정렬 컬럼", defaultValue = "articleId") @RequestParam(value = "sort", defaultValue = "articleId") String sort
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("articleId").descending());
+        // 기본은 Descending
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).descending());
         return ResponseEntity.ok().body(boardService.findBoardsByPaging(lastArticleId, pageable));
     }
 
 
+/*
     @ApiOperation(value = "데이터 베이스에서 게시글 인기글 가져오기" , notes = "정렬 기준 read_count")
     @GetMapping("/api/boards/popular")
     public ResponseEntity<List<Board>> findAllBoardByPopular() {
         return ResponseEntity.ok().body(boardService.findBoardsByReadCount());
     }
+*/
 
     @GetMapping("/api/boards/recruitBoard")
     public ResponseEntity<Map<String, Object>> getRecruitBoardCount() {

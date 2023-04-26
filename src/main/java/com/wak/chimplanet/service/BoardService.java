@@ -132,6 +132,7 @@ public class BoardService {
 
     /**
      * 게시판 목록 가져오기 from DataBase
+     * 페이징처리 안되어있어 사용하지 않음
      */
     public List<BoardResponseDto> findAllBoard() {
         return BoardResponseDto.from(boardRepository.findAllBoard());
@@ -166,8 +167,9 @@ public class BoardService {
     /**
      * 게시판 목록 인기글 가져오기
      */
-    public List<Board> findBoardsByReadCount() {
-        return boardRepository.findBoardsByReadCount();
+    public Slice<BoardResponseDto> findBoardsByReadCount() {
+        Slice<BoardResponseDto> boards = boardRepository.findBoardsByLastArticleId(null, null);
+        return boards;
     }
 
     /**

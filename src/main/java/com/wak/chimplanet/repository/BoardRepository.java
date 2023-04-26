@@ -2,6 +2,8 @@ package com.wak.chimplanet.repository;
 
 import static com.wak.chimplanet.entity.QBoard.board;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.JPQLQuery;
@@ -15,9 +17,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -65,7 +69,7 @@ public class BoardRepository {
                 // no-offset 처리
                 ltArticleId(lastArticleId)
             )
-            .orderBy(board.articleId.desc())
+            .orderBy(toOrderSpecifiers(pageable))
             .limit(pageable.getPageSize() + 1) // imit보다 데이터를 1개 더 들고와서, 해당 데이터가 있다면 hasNext 변수에 true를 넣어 알림
             .fetch();
 
@@ -130,7 +134,9 @@ public class BoardRepository {
     }
 }
 
-    // no-offset 방식 처리 메서드
+    /**
+     * no-offset 방식 처리 메서드
+     */
     private BooleanExpression ltArticleId(String lastArticleId) {
         return StringUtils.isNullOrEmpty(lastArticleId) ? null : board.articleId.lt(lastArticleId);
     }
@@ -148,5 +154,28 @@ public class BoardRepository {
         }
 
         return new SliceImpl<>(BoardResponseDto.from(results), pageable, hasNext);
+    }
+
+    /**
+     * OrderSpecifier 를 쿼리로 변환하여 정렬조건 추가
+     * @param pageable
+     * @return
+     */
+    private OrderSpecifier<?> toOrderSpecifiers(Pageable pageable) {
+        // 정렬조건 Null 체크
+        if(!pageable.getSort().isEmpty()) {
+            for(Sort.Order order : pageable.getSort()) {
+                switch (order.getProperty()) {
+                    case "articleId" :
+                        return new OrderSpecifier(Order.DESC, board.articleId);
+                    case "readCount" :
+                        return new OrderSpecifier(Order.DESC, board.readCount);
+                    case "regDate" :
+                        return new OrderSpecifier(Order.DESC, board.regDate);
+                }
+            }
+        }
+
+        return null;
     }
 }
