@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
  * 네이버 카페 게시글 API 연동
  */
 @Component
-public class NaverCafeAtricleApi {
-    protected static final Logger logger = LoggerFactory.getLogger(NaverCafeAtricleApi.class);
+public class NaverCafeArticleApi {
+    protected static final Logger logger = LoggerFactory.getLogger(NaverCafeArticleApi.class);
     
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
 

@@ -23,8 +23,14 @@ public class TagObjService {
 
     @Transactional
     public List<TagObj> saveTag(TagObj tagObj) {
-        tagObjRepository.save(tagObj);
-        return tagObjRepository.findAll();
+        if(tagObj.getTagId() == null){
+            tagObjRepository.save(tagObj);
+        }else{
+            //영속성 되는지 확인필요
+            TagObj newTagObj = tagObjRepository.findById(tagObj.getTagId());
+            newTagObj.setTagName(tagObj.getTagName());
+        }
 
+        return tagObjRepository.findAll();
     }
 }
