@@ -31,6 +31,6 @@ public class TagObjService {
             newTagObj.setTagName(tagObj.getTagName());
         }
 
-        return tagObjRepository.findALl();
+        return tagObjRepository.findAll();
     }
 }

@@ -1,10 +1,10 @@
 package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.entity.*;
-import com.wak.chimplanet.naver.NaverCafeAtricleApi;
+import com.wak.chimplanet.naver.NaverCafeArticleApi;
 import com.wak.chimplanet.repository.OfficialBoardReporitory;
+import com.wak.chimplanet.repository.TagObjRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.filefilter.OrFileFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +16,10 @@ import java.util.List;
 @RequiredArgsConstructor //생성자 주입
 public class OfficialBoardService {
 
-    private final NaverCafeAtricleApi naverCafeAtricleApi;
+    private final NaverCafeArticleApi naverCafeAtricleApi;
     private final OfficialBoardReporitory officialBoardReporitory;
     private final BoardService boardService;
+    private final TagObjRepository tagObjRepository;
 
     public List<OfficialBoard> getAllOfiicialBoard(OfficialBoard officialBoard) {
         return officialBoardReporitory.findAll();
@@ -32,7 +33,9 @@ public class OfficialBoardService {
         System.out.print("Board Detail :: ");
         System.out.println(boardDetail);
 
-        List<TagObj> tags = boardService.categorizingTag(boardDetail.getContent());
+        List<TagObj> tagList = tagObjRepository.findAll();
+
+        List<TagObj> tags = boardService.categorizingTag(boardDetail.getContent(), tagList);
 
         System.out.print("Tags List :: ");
         System.out.println(tags);
