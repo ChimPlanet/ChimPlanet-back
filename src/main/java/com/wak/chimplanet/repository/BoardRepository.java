@@ -105,6 +105,32 @@ public class BoardRepository {
             .collect(Collectors.toList()), pageable, boards.size() > pageable.getPageSize());
     }
 
+    /**
+     * TAG ID 기준으로 검색
+     * tagIds 가 있는 경우에는 tagIds로 검색
+     * title 이 있는 경우에는 title로 검색
+     */
+    public List<BoardResponseDto> findBoardByTagIds(List<String> tagIds, String title) {
+        JPQLQuery<Board> query = queryFactory.selectFrom(board)
+                .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin();
+
+        if(tagIds != null && !tagIds.isEmpty()) {
+            query.where(board.boardTags.any().tagObj.childTagId.in(tagIds));
+        }
+
+        // 공백문자도 검색 안되게
+        if(title != null && !(title.trim().length() > 0)) {
+            query.where(board.boardTitle.containsIgnoreCase(title));
+        }
+
+        List<Board> boards = query
+                .orderBy(board.articleId.desc())
+                .fetchResults()
+                .getResults();
+
+        return boards.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    }
+
     public List<Board> findBoardsByReadCount() {
         return em.createQuery("select b from Board b LEFT JOIN FETCH  b.boardTags where read_count >= 500", Board.class)
                 .getResultList();
