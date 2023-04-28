@@ -107,8 +107,8 @@ public class BoardRepository {
 
     /**
      * TAG ID 기준으로 검색
-     * tagIds 가 있는 경우에는 tagIds로 검색
-     * title 이 있는 경우에는 title로 검색
+     * tagIds 가 있는 경우에는 tagIds 로 검색
+     * title 이 있는 경우에는 title 로 검색
      */
     public List<BoardResponseDto> findBoardByTagIds(List<String> tagIds, String title) {
         JPQLQuery<Board> query = queryFactory.selectFrom(board)
@@ -128,7 +128,7 @@ public class BoardRepository {
                 .fetchResults()
                 .getResults();
 
-        return boards.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return BoardResponseDto.from(boards);
     }
 
     public List<Board> findBoardsByReadCount() {
