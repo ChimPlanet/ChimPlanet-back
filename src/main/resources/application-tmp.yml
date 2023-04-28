@@ -1,13 +1,16 @@
 # Production environment
+server:
+  port: 8081
+
 spring:
   profiles:
     active:
-      on-profile: prod
+      on-profile: tmp
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://chimplanet-db.cff65pogxbuj.ap-northeast-1.rds.amazonaws.com:3306/chimplanet?serverTimezone=Asia/Seoul
-    username: root
-    password: admin10!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://19.19.20.131:3306/chimplanet
+    username: pds
+    password: pds@gksdlf%17
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -33,4 +36,5 @@ spring:
       maxRequestSize: 20MB
 
 path:
-  upload-images: '/home/ec2-user/wak/images/'
+  # upload-images: '/home/ec2-user/wak/images/'
+  upload-images: /home/ippbx/test/images
