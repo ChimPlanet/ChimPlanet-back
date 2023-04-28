@@ -151,24 +151,15 @@ public class BoardService {
     /**
      * 게시글 태그 검색
      */
-    public Slice<BoardResponseDto> findBoardByTagIds(String lastArticleId, Pageable pageable, List<String> tagIds, String title) {
+    public List<BoardResponseDto> findBoardByTagIds(List<String> tagIds, String title) {
 
         if(tagIds.isEmpty() && title.isEmpty() && title == null) {
             throw new IllegalArgumentException("검색어를 확인해주세요");
         }
 
-        Slice<BoardResponseDto> boards = boardRepository.findBoardByTagIds(
-            lastArticleId, pageable, tagIds, title);
-        log.info("Slice BoardResponse size: {} ", boards.getSize());
+        List<BoardResponseDto> boards = boardRepository.findBoardByTagIds(tagIds, title);
+        log.info("Slice BoardResponse size: {} ", boards.size());
 
-        return boards;
-    }
-
-    /**
-     * 게시판 목록 인기글 가져오기
-     */
-    public Slice<BoardResponseDto> findBoardsByReadCount() {
-        Slice<BoardResponseDto> boards = boardRepository.findBoardsByLastArticleId(null, null);
         return boards;
     }
 
