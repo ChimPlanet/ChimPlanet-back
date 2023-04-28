@@ -62,7 +62,7 @@ public class BoardController {
     }
 
     @PostMapping("/api/boards")
-    @ApiOperation(value = "게시판 목록 조회 API", notes = "게시판 목록을 조회하고, 페이징 처리합니다. 기본 정렬조건으 게시글 ID")
+    @ApiOperation(value = "게시판 목록 조회 API", notes = "게시판 목록을 조회하고, 페이징 처리합니다. 기본 정렬조건은 게시글 ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "게시판 목록 조회 성공")
     })
@@ -77,14 +77,6 @@ public class BoardController {
         return ResponseEntity.ok().body(boardService.findBoardsByPaging(lastArticleId, pageable));
     }
 
-
-/*
-    @ApiOperation(value = "데이터 베이스에서 게시글 인기글 가져오기" , notes = "정렬 기준 read_count")
-    @GetMapping("/api/boards/popular")
-    public ResponseEntity<List<Board>> findAllBoardByPopular() {
-        return ResponseEntity.ok().body(boardService.findBoardsByReadCount());
-    }
-*/
 
     @GetMapping("/api/boards/recruitBoard")
     public ResponseEntity<Map<String, Object>> getRecruitBoardCount() {

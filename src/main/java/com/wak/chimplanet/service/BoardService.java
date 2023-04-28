@@ -54,8 +54,7 @@ public class BoardService {
     public BoardDetailResponseDto getBoardOne(String articleId) {
         BoardDetail boardDetail = naverCafeArticleApi.getNaverCafeArticleOne(articleId);
         Board board = boardRepository.findBoardWithTags(articleId).orElse(null);
-        return Optional.of(BoardDetailResponseDto.from(boardDetail, board))
-                .orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
+        return BoardDetailResponseDto.from(boardDetail, board);
     }
 
     /**
@@ -152,14 +151,10 @@ public class BoardService {
      * 게시글 태그 검색
      */
     public List<BoardResponseDto> findBoardByTagIds(List<String> tagIds, String title) {
-
-        if(tagIds.isEmpty() && title.isEmpty() && title == null) {
-            throw new IllegalArgumentException("검색어를 확인해주세요");
-        }
+        if(title.isEmpty() && title == null) throw new IllegalArgumentException("검색어를 확인해주세요");
 
         List<BoardResponseDto> boards = boardRepository.findBoardByTagIds(tagIds, title);
         log.info("Slice BoardResponse size: {} ", boards.size());
-
         return boards;
     }
 

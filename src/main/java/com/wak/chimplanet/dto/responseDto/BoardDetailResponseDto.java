@@ -28,19 +28,6 @@ public class BoardDetailResponseDto {
     private List<BoardTagResponseDto> tags; /* 태그이름 */
     private boolean unauthorized; /* 접근권한 */
 
-/*    public static BoardDetailResponseDto from(BoardDetail boardDetail, Board board) {
-        return BoardDetailResponseDto.builder()
-                .articleId(boardDetail.getArticleId())
-                .content(boardDetail.getContent())
-                .redirectURL(boardDetail.getRedirectURL())
-                .readCount(board.getReadCount())
-                .regDate(board.getRegDate())
-                .isEnd(board.getIsEnd())
-                .tags(board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(Collectors.toList()))
-                .unauthorized(board.getUnauthorized().equals("N"))
-                .build();
-    }*/
-
     public static BoardDetailResponseDto from(BoardDetail boardDetail, Board board) {
         BoardDetailResponseDtoBuilder builder = BoardDetailResponseDto.builder();
         
@@ -51,8 +38,7 @@ public class BoardDetailResponseDto {
                     .readCount(boardDetail.getReadCount())
                     .writer(boardDetail.getWriter())
                     .profileImageUrl(boardDetail.getProfileImageUrl())
-                    .boardTitle(board.getBoardTitle());
-
+                    .boardTitle(boardDetail.getBoardTitle());
         }
 
         if (board != null) {
@@ -61,7 +47,6 @@ public class BoardDetailResponseDto {
                     .isEnd(board.getIsEnd())
                     .tags(board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(Collectors.toList()))
                     .unauthorized(board.getUnauthorized().equals("N"));
-
         }
 
         return builder.build();
