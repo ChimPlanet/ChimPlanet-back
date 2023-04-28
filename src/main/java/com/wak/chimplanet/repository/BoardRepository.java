@@ -112,7 +112,8 @@ public class BoardRepository {
      */
     public List<BoardResponseDto> findBoardByTagIds(List<String> tagIds, String title) {
         JPQLQuery<Board> query = queryFactory.selectFrom(board)
-                .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin();
+                .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
+                .distinct();
 
         if(tagIds != null && !tagIds.isEmpty()) {
             query.where(board.boardTags.any().tagObj.childTagId.in(tagIds));
