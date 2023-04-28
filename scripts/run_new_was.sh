@@ -4,7 +4,7 @@
 
 CURRENT_PORT=$(cat /home/ec2-user/service_url.inc | grep -Po '[0-9]+' | tail -1)
 JAR_NAME=$(ls /home/ec2-user/chimplanet/build/libs/ | grep '.jar' | tail -n 1)
-JAR_PATH= /home/ec2-user/chimplanet/build/libs/$JAR_NAME
+JAR_PATH=/home/ec2-user/chimplanet/build/libs/$JAR_NAME
 TARGET_PORT=0
 
 echo "> Current port of running WAS is ${CURRENT_PORT}."
