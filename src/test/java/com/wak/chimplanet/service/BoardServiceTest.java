@@ -122,9 +122,9 @@ public class BoardServiceTest {
 
         Pageable pageable = PageRequest.of(0, 20, Sort.by("articleId").descending());
         // When
-        Slice<BoardResponseDto> result = boardService.findBoardByTagIds(lastArticleId, pageable, tagIds, title);
+        List<BoardResponseDto> result = boardService.findBoardByTagIds(tagIds, title);
 
         // Then
-        assertEquals(result.get().collect(Collectors.toList()).get(0).getBoardTitle().contains("개발"), true);
+        assertEquals(result.get(0).getBoardTitle().contains("개발"), true);
     }
 }
