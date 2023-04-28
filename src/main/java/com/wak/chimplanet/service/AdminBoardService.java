@@ -3,8 +3,6 @@ package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.dto.requestDto.BoardTagRequestDto;
 import com.wak.chimplanet.dto.requestDto.admin.AdminBoardUpdateRequestDto;
-import com.wak.chimplanet.dto.responseDto.admin.AdminBoardResponseDto;
-import com.wak.chimplanet.dto.responseDto.admin.AdminUpdateBoardResponseDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardTag;
 import com.wak.chimplanet.entity.TagObj;
@@ -12,7 +10,6 @@ import com.wak.chimplanet.repository.AdminBoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class adminBoardService {
+public class AdminBoardService {
 
     private final AdminBoardRepository adminBoardRepository;
     private final TagObjRepository tagRepository;

@@ -19,8 +19,8 @@ public class NaverCafeBoardScheduler {
      * *           *　　　　　　*　　　　　　*　　　　　　*　　　　　　*
      * 초(0-59)   분(0-59)　　시간(0-23)　　일(1-31)　　월(1-12)　　요일(0-7)
      */
-    @Scheduled(cron = "0 10 * * * *")
-    public void scheduleNaverCafeBoard() {
+    @Scheduled(cron = "0 0 */4 * * *")
+    public void scheduleCafeBoard() {
         log.info("scheduleNaverCafeBoard task cron jobs");
         boardService.saveAllBoards(); // 임시로 주석처리
     }
