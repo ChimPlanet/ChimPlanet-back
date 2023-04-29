@@ -1,5 +1,7 @@
 package com.wak.chimplanet.controller;
 
+import com.wak.chimplanet.common.config.exception.ApiErrorResult;
+import com.wak.chimplanet.common.config.exception.UnauthorizedException;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDto;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.Board;
@@ -46,13 +48,20 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 상세정보 가져오기(articleId)", notes = "왁물원 공고 게시글 내용가져오기")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시글 상세 조회 성공", content = @Content(schema = @Schema(implementation = BoardDetail.class)))
-            // @ApiResponse(responseCode = "400", description = "접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ApiErrorResult.class))),
-            //@ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "게시글 상세 조회 성공",
+                    content = @Content(schema = @Schema(implementation = BoardDetail.class)))
+            , @ApiResponse(responseCode = "401", description = "권한이 없는 게시글입니다.",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResult.class)))
     })
     @GetMapping("/api/boards/{articleId}")
-    public ResponseEntity<BoardDetailResponseDto> getBoardOne(@PathVariable String articleId) {
-        return ResponseEntity.ok().body(boardService.getBoardOne(articleId));
+    public ResponseEntity<?> getBoardOne(@PathVariable String articleId) {
+        try {
+            BoardDetailResponseDto result = boardService.getBoardOne(articleId);
+            return ResponseEntity.ok().body(result);
+        } catch (UnauthorizedException e) {
+            ApiErrorResult errorResult = new ApiErrorResult(HttpStatus.UNAUTHORIZED.value(), "권한이 없는 게시글입니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResult);
+        }
     }
 
     @ApiOperation(value = "데이터 베이스에서 게시글 가져오기" , notes = "1차 분류 완료")
@@ -84,6 +93,9 @@ public class BoardController {
     }
 
     @ApiOperation(value = "태그명으로 검색하기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
     @GetMapping("/api/boards/search")
     public ResponseEntity<List<BoardResponseDto>> searchBoard(
         @ApiParam(value = "게시글 제목", required = false) @RequestParam(value = "title", defaultValue = "null", required = false) String title,
