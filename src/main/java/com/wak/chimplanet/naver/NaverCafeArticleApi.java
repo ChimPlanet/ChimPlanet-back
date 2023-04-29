@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.naming.AuthenticationException;
+
 /**
  * 네이버 카페 게시글 API 연동
  */
@@ -129,7 +131,7 @@ public class NaverCafeArticleApi {
         JsonObject obj = getNaverCafeArticleList(API_URL);
 
         if(obj.has("error")) {
-            logger.warn("권한이 없는 게시물 입니다.");
+            logger.warn("{} 권한이 없는 게시물 입니다.", articleId);
             return null;
         }
 

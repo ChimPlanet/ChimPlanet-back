@@ -1,6 +1,7 @@
 package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.common.config.exception.NotFoundException;
+import com.wak.chimplanet.common.config.exception.UnauthorizedException;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDto;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.*;
@@ -54,6 +55,7 @@ public class BoardService {
     public BoardDetailResponseDto getBoardOne(String articleId) {
         BoardDetail boardDetail = naverCafeArticleApi.getNaverCafeArticleOne(articleId);
         Board board = boardRepository.findBoardWithTags(articleId).orElse(null);
+        if(boardDetail == null) throw new UnauthorizedException("권한이 없습니다.");
         return BoardDetailResponseDto.from(boardDetail, board);
     }
 
