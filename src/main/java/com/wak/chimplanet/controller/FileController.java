@@ -13,6 +13,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -145,7 +147,7 @@ public class FileController {
             fileResponseDto.setData("deleteFileId :: " + deletedFileId);
 
             return ResponseEntity.ok(fileResponseDto);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
 
             FileResponseDto<FileEntity> fileResponseDto = new FileResponseDto<>();
             fileResponseDto.setMessage("File Delete failed: " + e.getMessage());
