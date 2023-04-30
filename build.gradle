@@ -72,6 +72,14 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+task copyPrivate(type :Copy) {
+	copy {
+		from './Chimplanet-privates'
+		include "*.yml"
+		into 'src/main/resources/'
+	}
+}
+
 
 // querydsl 사용할 경로 지정합니다. 현재 지정한 부분은 .gitignore에 포함되므로 git에 올라가지 않습니다.
 def querydslDir = "$buildDir/generated/'querydsl'"
