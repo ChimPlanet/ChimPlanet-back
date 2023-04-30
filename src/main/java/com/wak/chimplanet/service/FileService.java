@@ -124,13 +124,15 @@ public class FileService {
 //            // 파일 uri 가 존재하나 삭제할 파일이 존재하지 않는 경우
 //            throw new FileNotFoundException("File does not exist.");
 //        }
-
-        try {
-            Files.delete(deletePath);
-            fileRepository.delete(fileEntity);
-        } catch (IOException e) {
-            // 파일 삭제 중 오류 발생
-            throw new IllegalArgumentException("Failed to delete file.");
+        // 삭제할 파일이 존재하는 경우에만 파일 삭제 로직실행
+        if(Files.exists(deletePath)) {
+            try {
+                Files.delete(deletePath);
+                fileRepository.delete(fileEntity);
+            } catch (IOException e) {
+                // 파일 삭제 중 오류 발생
+                throw new IllegalArgumentException("Failed to delete file.");
+            }
         }
 
         return fileId;
