@@ -128,36 +128,16 @@ public class FileService {
         if(Files.exists(deletePath)) {
             try {
                 Files.delete(deletePath);
-                fileRepository.delete(fileEntity);
             } catch (IOException e) {
                 // 파일 삭제 중 오류 발생
                 throw new IllegalArgumentException("Failed to delete file.");
             }
         }
 
+        fileRepository.delete(fileEntity);
+
         return fileId;
     }
-
-/*
-    @Transactional
-    public void updateSequence(List<FileSequenceRequestDto> sequenceList) {
-
-        for (FileSequenceRequestDto fileSequenceRequestDto : sequenceList ) {
-            FileEntity fileEntity = fileRepository.findById(fileSequenceRequestDto.getFileId())
-                    .orElseThrow(() -> new IllegalArgumentException("File not found with id " + fileSequenceRequestDto.getFileId()));
-
-            // 시퀀스 값이 유효하지 않은 경우 예외를 던집니다.
-            int newSequence = fileSequenceRequestDto.getSequence();
-            if (newSequence < 0) {
-                throw new IllegalArgumentException("Invalid sequence: " + newSequence);
-            }
-
-            if (fileEntity.getSequence() != newSequence) {
-                fileEntity.changeSequence(newSequence);
-            }
-        }
-    }
-*/
 
     @Transactional
     public void updateSequence(List<FileSequenceRequestDto> sequenceList) {
