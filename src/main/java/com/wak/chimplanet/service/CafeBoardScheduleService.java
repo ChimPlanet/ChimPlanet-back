@@ -1,5 +1,6 @@
 package com.wak.chimplanet.service;
 
+import com.wak.chimplanet.common.util.Utility;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
 import com.wak.chimplanet.entity.BoardTag;
@@ -7,6 +8,9 @@ import com.wak.chimplanet.entity.TagObj;
 import com.wak.chimplanet.naver.NaverCafeArticleApi;
 import com.wak.chimplanet.repository.BoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
+
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +50,8 @@ public class CafeBoardScheduleService {
 
         int pageSize = 10; /*  저장할 페이지 갯수 */
 
+        Instant startTime = Instant.now(); // 시작 시간
+
         for(int i = 0; i <= pageSize; i++) {
             ArrayList<Board> articles = naverCafeArticleApi.getArticles(API_URL + i);
 
@@ -61,12 +67,10 @@ public class CafeBoardScheduleService {
                     board.setUnauthorized("Y");
                 } else {
                     String content = Optional.ofNullable(boardDetail.getContent()).orElse(null);
-                    List<TagObj> tagObjs = categorizingTag(content, tags);
+                    List<TagObj> tagObjs = Utility.categorizingTag(content, tags);
                     List<BoardTag> boardTags = new ArrayList<>();
 
                     for(TagObj tag : tags) {
-                        log.info("찾은 태그 ID : {}", tag.getChildTagId());
-
                         BoardTag boardTag = BoardTag.createBoardTag(tag, board);
                         board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
                         boardTags.add(boardTag); // BoardTag 리스트에도 추가
@@ -80,30 +84,12 @@ public class CafeBoardScheduleService {
 
             boardRepository.saveAll(boards);
         }
-    }
 
-    /**
-     * 게시글에서 태그 리스트 분류하기
-     */
-    public List<TagObj> categorizingTag(String content, List<TagObj> tags) {
-        if(content.isEmpty()) return null;
+        Instant endTime = Instant.now(); // 종료 시간
+        long elapsedTime = Duration.between(startTime, endTime).toMillis(); // 실행 시간
+        int savedBoardCount = boards.size(); // 저장한 게시글 수
 
-        // 문장에서 찾은 태그명
-        Set<String> foundTags = new HashSet<>();
-
-        // 문장에서 찾은 태그 코드
-        Set<TagObj> findTagSet = new HashSet<>();
-
-        for(TagObj tag : tags) {
-            if(content.contains(tag.getTagName())) {
-                foundTags.add(tag.getTagName());
-                findTagSet.add(tag);
-            }
-        }
-
-        log.info("찾은 태그명 : {}", foundTags.toString());
-
-        return new ArrayList<>(findTagSet);
+        log.info("saveAllBoardsPerPage task finished. elapsedTime(ms)={}, savedBoardCount={}", elapsedTime, savedBoardCount);
     }
 
 
