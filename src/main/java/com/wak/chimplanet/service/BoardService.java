@@ -142,9 +142,9 @@ public class BoardService {
     /**
      * 게시판 목록 가져오기 페이징 처리 추가
      */
-    public Slice<BoardResponseDto> findBoardsByPaging(String lastArticleId, Pageable pageable) {
+    public Slice<BoardResponseDto> findBoardsByPaging(String lastArticleId, Pageable pageable, String isEnd) {
         Slice<BoardResponseDto> boards = boardRepository.findBoardsByLastArticleId(
-            lastArticleId, pageable);
+            lastArticleId, pageable, isEnd);
         log.info("Slice BoardResponse size: {} ", boards.getSize());
         return boards;
     }

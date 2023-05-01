@@ -62,12 +62,17 @@ public class BoardRepository {
     /**
      * 무한스크롤 구현
      */
-    public Slice<BoardResponseDto> findBoardsByLastArticleId(String lastArticleId, Pageable pageable) {
+    public Slice<BoardResponseDto> findBoardsByLastArticleId(String lastArticleId, Pageable pageable, String isEnd) {
+        BooleanExpression isEndCondition = null;
+
+        if(isEnd != null) isEndCondition = board.isEnd.eq(isEnd);
+
         List<Board> boards = queryFactory.selectFrom(board)
             .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
             .where(
                 // no-offset 처리
                 ltArticleId(lastArticleId)
+                , isEndCondition
             )
             .orderBy(toOrderSpecifiers(pageable))
             .limit(pageable.getPageSize() + 1) // imit보다 데이터를 1개 더 들고와서, 해당 데이터가 있다면 hasNext 변수에 true를 넣어 알림
@@ -75,34 +80,6 @@ public class BoardRepository {
 
         // 무한 스크롤 처리
         return checkLastPage(pageable, boards);
-    }
-
-    /**
-     * TAG ID 기준으로 검색
-     * tagIds 가 있는 경우에는 tagIds로 검색
-     * title 이 있는 경우에는 title로 검색
-     */
-    public Slice<BoardResponseDto> findBoardByTagIds(String lastArticleId, Pageable pageable, List<String> tagIds, String title) {
-        JPQLQuery<Board> query = queryFactory.selectFrom(board)
-            .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
-            .where(ltArticleId(lastArticleId));
-
-        if(tagIds != null && !tagIds.isEmpty()) {
-            query.where(board.boardTags.any().tagObj.childTagId.in(tagIds));
-        }
-
-        if(title != null && !title.isBlank()) {
-            query.where(board.boardTitle.containsIgnoreCase(title));
-        }
-
-        List<Board> boards = query
-            .orderBy(board.articleId.desc())
-            .limit(pageable.getPageSize() + 1)
-            .fetchResults()
-            .getResults();
-
-        return new SliceImpl<>(boards.stream().map(BoardResponseDto::new)
-            .collect(Collectors.toList()), pageable, boards.size() > pageable.getPageSize());
     }
 
     /**
