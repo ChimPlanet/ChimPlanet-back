@@ -6,12 +6,16 @@ import com.wak.chimplanet.dto.responseDto.admin.AdminGetBoardResponseDto;
 import com.wak.chimplanet.dto.responseDto.admin.AdminUpdateBoardResponseDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.service.AdminBoardService;
+import com.wak.chimplanet.service.BoardService;
+import com.wak.chimplanet.service.CafeBoardScheduleService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminBoardController {
 
     private final AdminBoardService adminBoardService;
+    private final BoardService boardService;
 
     @GetMapping("/board/{articleId}")
     public ResponseEntity<AdminGetBoardResponseDto> getBoard(@PathVariable String articleId) {
@@ -39,6 +44,19 @@ public class AdminBoardController {
         Board board =  adminBoardService.updateBoard(adminBoardUpdateRequestDto);
         return ResponseEntity.ok().body(
                 new AdminUpdateBoardResponseDto("Success", HttpStatus.OK, AdminBoardResponseDto.from(board)));
+    }
 
+    private final CafeBoardScheduleService cafeBoardScheduleService;
+
+    /**
+     * 스케줄러 강제 실행을 위한 메서드
+     */
+    @ApiOperation(value = "스케줄러 강제 실행 API")
+    @GetMapping("/scheduler/start")
+    public int scheduleStart() {
+        log.info("scheduleNaverCafeBoard task exec");
+        List<Board> boardList = boardService.saveAllBoards();
+        // cafeBoardScheduleService.saveAllBoardsPerPage();
+        return boardList.size();
     }
 }

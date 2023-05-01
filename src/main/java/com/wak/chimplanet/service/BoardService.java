@@ -2,6 +2,7 @@ package com.wak.chimplanet.service;
 
 import com.wak.chimplanet.common.config.exception.NotFoundException;
 import com.wak.chimplanet.common.config.exception.UnauthorizedException;
+import com.wak.chimplanet.common.util.Utility;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDto;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.*;
@@ -68,9 +69,9 @@ public class BoardService {
     public List<Board> saveAllBoards() {
         ArrayList<Board> boards = new ArrayList<>();
         List<TagObj> tagList = tagRepository.findAll();
-        int pageSize = 20; // 저장할 페이지 갯수
+        int pageSize = 10; // 저장할 페이지 갯수
 
-        for(int i = 1; i <= 5; i++) {
+        for(int i = 1; i <= pageSize; i++) {
             ArrayList<Board> articles = naverCafeArticleApi.getArticles(API_URL + i);
             log.info("articleSize : {} ", articles.size());
             
@@ -101,7 +102,7 @@ public class BoardService {
                 } else {
                     String content = Optional.ofNullable(boardDetail.getContent()).orElse(null);
 
-                    List<TagObj> tags = categorizingTag(content, tagList);
+                    List<TagObj> tags = Utility.categorizingTag(content, tagList);
                     List<BoardTag> boardTags = new ArrayList<>();
 
                     for(TagObj tag : tags) {
@@ -158,34 +159,6 @@ public class BoardService {
         List<BoardResponseDto> boards = boardRepository.findBoardByTagIds(tagIds, title);
         log.info("Slice BoardResponse size: {} ", boards.size());
         return boards;
-    }
-
-    /**
-     * 게시글에서 태그 리스트 분류하기
-     */
-    public List<TagObj> categorizingTag(String content, List<TagObj> tags) {
-        if(content.isEmpty()) return null;
-
-        // 문장에서 찾은 태그명
-        Set<String> foundTags = new HashSet<>();
-        // 문장에서 찾은 태그 코드
-        Set<TagObj> findTagSet = new HashSet<>();
-
-       for(TagObj tag : tags) {
-           // log.info("검색하는 태그명: {}", tag.getTagName());
-//            if (kmpSearch(content, tag.getTagName())) { // 태그 이름으로 검색
-//                foundTags.add(tag.getTagName());
-//            }
-           if(content.contains(tag.getTagName())) {
-               foundTags.add(tag.getTagName());
-               findTagSet.add(tag);
-           }
-
-        }
-
-        log.info("찾은 태그명 : {}", foundTags.toString());
-
-       return new ArrayList<>(findTagSet);
     }
 
     /**

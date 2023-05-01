@@ -19,18 +19,7 @@ import java.util.List;
 public class NaverCafeBoardScheduler {
 
     private final BoardService boardService;
-    private final CafeBoardScheduleService cafeBoardScheduleService;
 
-    /**
-     * 스케줄러 강제 실행을 위한 메서드
-     */
-    @GetMapping("/scheduler/start")
-    public int scheduleStart() {
-        log.info("scheduleNaverCafeBoard task exec");
-        List<Board> boardList = boardService.saveAllBoards();
-        // cafeBoardScheduleService.saveAllBoardsPerPage();
-        return boardList.size();
-    }
 
     /**
      * 10분 주기 naverBoardAPI 조회 스케줄러
