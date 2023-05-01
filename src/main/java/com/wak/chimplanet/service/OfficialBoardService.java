@@ -1,5 +1,6 @@
 package com.wak.chimplanet.service;
 
+import com.wak.chimplanet.common.util.Utility;
 import com.wak.chimplanet.entity.*;
 import com.wak.chimplanet.naver.NaverCafeArticleApi;
 import com.wak.chimplanet.repository.OfficialBoardReporitory;
@@ -35,7 +36,7 @@ public class OfficialBoardService {
 
         List<TagObj> tagList = tagObjRepository.findAll();
 
-        List<TagObj> tags = boardService.categorizingTag(boardDetail.getContent(), tagList);
+        List<TagObj> tags = Utility.categorizingTag(boardDetail.getContent(), tagList);
 
         System.out.print("Tags List :: ");
         System.out.println(tags);

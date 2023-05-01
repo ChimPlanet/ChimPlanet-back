@@ -1,6 +1,12 @@
 package com.wak.chimplanet.common.util;
 
+import com.wak.chimplanet.entity.TagObj;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 public class Utility {
@@ -59,5 +65,28 @@ public class Utility {
     }
 
 
+    /**
+     * 게시글에서 태그 리스트 분류하기
+     */
+    public static List<TagObj> categorizingTag(String content, List<TagObj> tags) {
+        if(content.isEmpty()) return null;
+
+        // 문장에서 찾은 태그명
+        Set<String> foundTags = new HashSet<>();
+
+        // 문장에서 찾은 태그 코드
+        Set<TagObj> findTagSet = new HashSet<>();
+
+        for(TagObj tag : tags) {
+            if(content.contains(tag.getTagName())) {
+                foundTags.add(tag.getTagName());
+                findTagSet.add(tag);
+            }
+        }
+
+        log.info("찾은 태그명 : {}", foundTags.toString());
+
+        return new ArrayList<>(findTagSet);
+    }
 
 }
