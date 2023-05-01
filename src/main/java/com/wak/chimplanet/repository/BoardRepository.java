@@ -65,7 +65,7 @@ public class BoardRepository {
     public Slice<BoardResponseDto> findBoardsByLastArticleId(String lastArticleId, Pageable pageable, String isEnd) {
         BooleanExpression isEndCondition = null;
 
-        if(isEndCondition != null) isEndCondition = board.isEnd.eq(isEnd);
+        if(isEnd != null) isEndCondition = board.isEnd.eq(isEnd);
 
         List<Board> boards = queryFactory.selectFrom(board)
             .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()

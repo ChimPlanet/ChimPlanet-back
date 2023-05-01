@@ -80,7 +80,7 @@ public class BoardController {
         @ApiParam(value = "한 페이지당 게시물 개수", defaultValue = "20") @RequestParam(value = "size", defaultValue = "20") int size,
         @ApiParam(value = "페이지 번호", defaultValue = "0") @RequestParam(value = "page", defaultValue = "0") int page,
         @ApiParam(value = "정렬 컬럼", defaultValue = "articleId") @RequestParam(value = "sort", defaultValue = "articleId") String sort,
-        @ApiParam(value = "마감 여부") @RequestParam(value = "isEnd", required = false) String isEnd
+        @ApiParam(value = "마감 여부[END, ING]") @RequestParam(value = "isEnd", required = false) String isEnd
     ) {
         // 기본은 Descending
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort).descending());
