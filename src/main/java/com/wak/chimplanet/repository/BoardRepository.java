@@ -96,8 +96,7 @@ public class BoardRepository {
             query.where(board.boardTags.any().tagObj.childTagId.in(tagIds));
         }
 
-        // 공백문자도 검색 안되게
-        if(title != null && !(title.trim().length() > 0)) {
+        if (title != null && !title.trim().isEmpty()) {
             query.where(board.boardTitle.containsIgnoreCase(title));
         }
 
