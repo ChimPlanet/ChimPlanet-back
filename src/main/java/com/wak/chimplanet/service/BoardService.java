@@ -63,7 +63,7 @@ public class BoardService {
     /**
      * 게시판 내용 대량 저장하기
      *  10페이지씩 순회하면서 데이터 저장
-     *  Batch 쪽으로 추후 변경 예정
+     *  Batch 쪽으로 추후 변경 -> CafeSchedulerService 로 변경 완료
      */
     @Transactional
     public List<Board> saveAllBoards() {
