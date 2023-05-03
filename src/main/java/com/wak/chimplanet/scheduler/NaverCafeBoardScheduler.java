@@ -18,8 +18,7 @@ import java.util.List;
 @Slf4j
 public class NaverCafeBoardScheduler {
 
-    private final BoardService boardService;
-
+    private CafeBoardScheduleService cafeBoardScheduleService;
 
     /**
      * 10분 주기 naverBoardAPI 조회 스케줄러
@@ -27,11 +26,12 @@ public class NaverCafeBoardScheduler {
      * *           *　　　　　　*　　　　　　*　　　　　　*　　　　　　*
      * 초(0-59)   분(0-59)　　시간(0-23)　　일(1-31)　　월(1-12)　　요일(0-7)
      */
-    @Scheduled(cron = "0 0 */4 * * *")
+    @Scheduled(cron = "0 0 */6 * * *")
     public void scheduleCafeBoard() {
         log.info("scheduleNaverCafeBoard task cron jobs");
-        boardService.saveAllBoards();
-        // cafeBoardScheduleService.saveAllBoardsPerPage();
+        // boardService.saveAllBoards();
+        int pageSize = 10; // 수집할 페이지의 갯수 기본 10 페이지
+        cafeBoardScheduleService.saveAllBoardsPerPage(pageSize);
     }
 
 }

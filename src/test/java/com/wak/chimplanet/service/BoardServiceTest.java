@@ -5,8 +5,10 @@ import static com.wak.chimplanet.entity.QBoard.board;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.wak.chimplanet.common.util.Utility;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.BoardDetail;
@@ -68,10 +70,10 @@ public class BoardServiceTest {
 
         // when
         List<String> expectedTags = Arrays.asList("백엔드");
-        List<TagObj> actualTags = boardService.categorizingTag(content, tags);
+        List<TagObj> actualTags = Utility.categorizingTag(content, tags);
 
         // then
-        // assertEquals(actualTags.get(0).getTagName(), "백엔드");
+        assertEquals(actualTags.get(0).getTagName(), "백엔드");
     }
 
     @Test
@@ -103,14 +105,22 @@ public class BoardServiceTest {
         Board findBoard = queryFactory
             .select(board)
             .from(board)
-            .where(board.articleId.eq("10604364"))
+            .where(board.articleId.eq("10694851"))
             .fetchOne();
 
-        assertEquals("10604364", findBoard.getArticleId());
+        assertEquals("10694851", findBoard.getArticleId());
     }
 
     @Test
     public void findBoardsByPaging() {
+        final int expectResultSize = 20;
+
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("articleId").descending());
+        Slice<BoardResponseDto> end = boardService.findBoardsByPaging(null, pageable, "END");
+
+        int resultSize = end.getSize();
+
+        assertEquals(expectResultSize, resultSize);
     }
 
     @Test

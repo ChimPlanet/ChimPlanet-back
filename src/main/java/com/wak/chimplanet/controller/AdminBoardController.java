@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -51,12 +52,11 @@ public class AdminBoardController {
     /**
      * 스케줄러 강제 실행을 위한 메서드
      */
-    @ApiOperation(value = "스케줄러 강제 실행 API")
-    @GetMapping("/scheduler/start")
-    public int scheduleStart() {
+    @ApiOperation(value = "스케줄러 강제 실행 API", notes = "수집할 페이지 갯수를 입력해주세요 기본값 : 20")
+    @GetMapping("/scheduler/{pageSize}")
+    public void scheduleStart(@PathVariable(required = false) Optional<Integer> inputPageSize) {
         log.info("scheduleNaverCafeBoard task exec");
-        List<Board> boardList = boardService.saveAllBoards();
-        // cafeBoardScheduleService.saveAllBoardsPerPage();
-        return boardList.size();
+        // List<Board> boardList = boardService.saveAllBoards();
+        cafeBoardScheduleService.saveAllBoardsPerPage(inputPageSize.orElse(20));
     }
 }
