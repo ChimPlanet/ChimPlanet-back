@@ -4,7 +4,6 @@ import com.wak.chimplanet.entity.Board;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.swagger.models.auth.In;
 import lombok.*;
 
 import java.time.LocalDateTime;

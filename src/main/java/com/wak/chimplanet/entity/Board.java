@@ -85,7 +85,7 @@ public class Board {
     public static Board createBoardWithTag(Board board, List<BoardTag> boardTags, String unauthorized) {
         return Board.builder()
                 .articleId(board.articleId)
-                .writer(board.articleId)
+                .writer(board.writer)
                 .boardTitle(board.boardTitle)
                 .writer(board.writer)
                 .articleId(board.articleId)

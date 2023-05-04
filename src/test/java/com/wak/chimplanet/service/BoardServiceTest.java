@@ -141,7 +141,8 @@ public class BoardServiceTest {
     @Test
     public void findBoardByTagIds_withTagIds_shouldReturnSliceOfBoards() {
         // Given
-        List<Long> tagIds = Arrays.asList(100L);
+        List<Long> tagIds = Arrays.asList(101L);
+        String lastArticleId = null;
 
         Pageable pageable = PageRequest.of(0, 20, Sort.by("articleId").descending());
         // When

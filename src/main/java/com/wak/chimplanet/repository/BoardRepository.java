@@ -15,10 +15,9 @@ import com.wak.chimplanet.entity.QBoardTag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import org.aspectj.weaver.ast.Or;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -63,14 +62,21 @@ public class BoardRepository {
     /**
      * 무한스크롤 구현
      */
-    public Slice<BoardResponseDto> findBoardsByLastArticleId(String lastValue, Pageable pageable, String isEnd) {
+    public Slice<BoardResponseDto> findBoardsByLastArticleId(
+            String sortColumn, String lastArticleId, String lastValue, Pageable pageable, String isEnd) {
         BooleanExpression isEndCondition = null;
         BooleanExpression ltReadCountCondition = null;
         BooleanExpression ltArticleIdCondition = null;
 
+        if(sortColumn.equals("readCount")) {
+            // 조회수는 unique 값이 아니므로 작거나 같음 조건
+            ltReadCountCondition = board.readCount.loe(Long.parseLong(lastValue));
+            ltArticleIdCondition = board.articleId.ne(lastArticleId);
+        } else if(sortColumn.equals("articleId")) {
+            ltArticleIdCondition = ltArticleId(lastValue);
+        }
+
         if(isEnd != null) isEndCondition = board.isEnd.eq(isEnd);
-        // if(lastReadCount != null) ltReadCountCondition = board.readCount.lt(lastReadCount);
-        if(lastValue != null) ltArticleIdCondition = ltArticleId(lastValue);
 
         List<Board> boards = queryFactory.selectFrom(board)
                 .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
@@ -79,7 +85,7 @@ public class BoardRepository {
                         ltReadCountCondition,
                         ltArticleIdCondition
                 )
-                .orderBy(board.readCount.desc(), board.articleId.desc())
+                .orderBy(toOrderSpecifiers(pageable))
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
@@ -179,7 +185,6 @@ public class BoardRepository {
                     case "articleId" :
                         return new OrderSpecifier(Order.DESC, board.articleId);
                     case "readCount" :
-                        System.out.println(order.getProperty());
                         return new OrderSpecifier(Order.DESC, board.readCount);
                     case "regDate" :
                         return new OrderSpecifier(Order.DESC, board.regDate);
