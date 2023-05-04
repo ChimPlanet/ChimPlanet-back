@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -143,9 +144,10 @@ public class BoardService {
     /**
      * 게시판 목록 가져오기 페이징 처리 추가
      */
-    public Slice<BoardResponseDto> findBoardsByPaging(String lastArticleId, Pageable pageable, String isEnd) {
+    public Slice<BoardResponseDto> findBoardsByPaging(
+            String sortColumn, String lastArticleId, String lastInputValue, Pageable pageable, String isEnd) {
         Slice<BoardResponseDto> boards = boardRepository.findBoardsByLastArticleId(
-            lastArticleId, pageable, isEnd);
+                sortColumn, lastArticleId, lastInputValue, pageable, isEnd);
         log.info("Slice BoardResponse size: {} ", boards.getSize());
         return boards;
     }
@@ -153,13 +155,23 @@ public class BoardService {
     /**
      * 게시글 태그 검색
      */
-    public List<BoardResponseDto> findBoardByTagIds(List<String> tagIds, String title) {
-        if(title.isEmpty() && title == null) throw new IllegalArgumentException("검색어를 확인해주세요");
+    public List<BoardResponseDto> findBoardByTagIds(List<Long> tagIds, String title) {
+        log.info(String.valueOf(CollectionUtils.isEmpty(tagIds)));
+        log.info(String.valueOf(title == null));
+
+        if (tagIds == null && title == null) {
+            throw new IllegalArgumentException("검색어를 확인해주세요");
+        }
+        if (!CollectionUtils.isEmpty(tagIds) && title != null) {
+            throw new IllegalArgumentException("title과 tag는 동시에 검색할 수 없습니다");
+        }
 
         List<BoardResponseDto> boards = boardRepository.findBoardByTagIds(tagIds, title);
         log.info("Slice BoardResponse size: {} ", boards.size());
         return boards;
     }
+
+
 
     /**
      * 모집중인 게시글 숫자 반환

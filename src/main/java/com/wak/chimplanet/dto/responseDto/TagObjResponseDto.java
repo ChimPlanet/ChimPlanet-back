@@ -11,8 +11,8 @@ public class TagObjResponseDto {
 
     private Long tagId;
     private String tagName;
-    private String parentTagId;
-    private String childTagId;
+    private Long parentTagId;
+    private Long childTagId;
 
 
     public TagObjResponseDto(TagObj tagObj) {

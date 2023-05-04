@@ -34,8 +34,8 @@ class TagObjServiceTest {
         TagObj tagObj = TagObj.builder()
                 .tagId(610L)
                 .tagName("testTag2")
-                .parentTagId("600")
-                .childTagId("610")
+                .parentTagId(600L)
+                .childTagId(610L)
                 .build();
 
         tagRepository.save(tagObj);
