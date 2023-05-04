@@ -24,6 +24,7 @@ if [ ! -z ${TARGET_PID} ]; then
   sudo kill ${TARGET_PID}
 fi
 
-nohup java -jar -Dserver.port=${TARGET_PORT} $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
+# nohup java -jar -Dspring.profiles.active=prod -Dserver.port=${TARGET_PORT} $JAR_PATH > /dev/null 2> /dev/null < /dev/null & >
+nohup java -jar -Dspring.profiles.active=prod -Dserver.port=${TARGET_PORT} $JAR_PATH > /dev/null 2> /dev/null < /dev/null   &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0
