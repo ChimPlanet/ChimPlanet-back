@@ -22,10 +22,10 @@ public class TagObj {
     private String tagName;
 
     @Column(name = "parent_tag_id", length = 50, nullable = false)
-    private String parentTagId;
+    private Long parentTagId;
 
     @Column(name = "child_tag_id", length = 50, nullable = false)
-    private String childTagId;
+    private Long childTagId;
 
     /*@Column(name = "description", length = 50)
     private String description;*/
