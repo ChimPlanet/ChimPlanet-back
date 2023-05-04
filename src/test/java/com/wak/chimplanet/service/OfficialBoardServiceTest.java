@@ -19,13 +19,42 @@ public class OfficialBoardServiceTest {
     OfficialBoardService officialBoardService;
 
     @Test
+    public void 공식_게시글_조회(){
+
+        OfficialBoard officialBoard = new OfficialBoard().builder()
+                .build();
+
+        List<OfficialBoard> officialBoardList = officialBoardService.getAllOfiicialBoard(officialBoard);
+
+        System.out.println("=======length :  "  + officialBoardList.size() + "======" );
+
+        int listIndex = 0;
+        for (OfficialBoard obj : officialBoardList) {
+
+            System.out.println("================");
+            System.out.println(obj.toString());
+
+            listIndex++;
+        }
+
+        assertEquals(officialBoardList.size(), listIndex);
+
+    }
+
+    @Test
     public void 공식_게시글_저장(){
+
+
         //임시 게시글 번호
         String articleId = "10258505";
+
 
         OfficialBoard officialBoard = new OfficialBoard().builder()
                 .articleId(articleId)
                 .build();
+
+        //기존 길이
+        int boardListSize = officialBoardService.getAllOfiicialBoard(officialBoard).size();
 
         List<OfficialBoard> officialBoardList = officialBoardService.saveOfficialBoard(officialBoard);
 
@@ -33,5 +62,7 @@ public class OfficialBoardServiceTest {
             System.out.println("articleId :: " + articleId + "저장 후 조회");
             System.out.println(board.toString());
         }
+
+        assertEquals(boardListSize + 1, officialBoardList);
     }
 }

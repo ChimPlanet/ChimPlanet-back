@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -40,9 +42,9 @@ public class OfficialBoardController {
         return ResponseEntity.ok().body(officialBoardService.saveOfficialBoard(officialBoard));
     }
 
-
-
-
-
+    @DeleteMapping(value = "/{articleId}")
+    public ResponseEntity<List<OfficialBoard>> deleteOfficialBoard(@PathVariable String articleId) {
+        return ResponseEntity.ok().body(officialBoardService.deleteOfficialBoard(articleId));
+    }
 
 }

@@ -24,8 +24,7 @@ public class TagObjRepository {
                 .getResultList();
     }
 
-
-    public TagObj findById(Long tagId) {
+    public TagObj findById(long tagId) {
         return em.find(TagObj.class, tagId);
     }
     
