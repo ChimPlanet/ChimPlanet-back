@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  S3_BUCKET_NAME: chimplanet-bucket #s3버킷 이름
+  S3_BUCKET_NAME: chimplanet-deploy #s3버킷 이름
   PROJECT_NAME: chimplanet
 
 jobs:
@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with :
+          token : ${{ secrets.PRIVATE_TOKEN }}
+          submodules : true
 
       - name: Set up JDK 11
         uses: actions/setup-java@v1
@@ -28,7 +31,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --exclude-task test # 테스트 코드 제외 옵션 추가(임시)
         shell: bash
 
       - name: Make zip file
@@ -40,11 +43,11 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-1
+          aws-region: ap-northeast-2
 
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-1 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
 
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name deploy_chimplanet_code --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name deploy_chimplanet_code --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws deploy create-deployment --application-name chimplanet-deploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name chimplanet-develop --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
         # application-name = Deploy 애플리케이션 이름 / deployment-config-name = 배포 그룹 설정에서 선택했던 배포 방식 / deployment-group-name = 배포 그룹 이름

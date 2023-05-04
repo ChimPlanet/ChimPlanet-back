@@ -18,12 +18,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.naming.AuthenticationException;
+
 /**
  * 네이버 카페 게시글 API 연동
  */
 @Component
-public class NaverCafeAtricleApi {
-    protected static final Logger logger = LoggerFactory.getLogger(NaverCafeAtricleApi.class);
+public class NaverCafeArticleApi {
+    protected static final Logger logger = LoggerFactory.getLogger(NaverCafeArticleApi.class);
     
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
 
@@ -129,7 +131,7 @@ public class NaverCafeAtricleApi {
         JsonObject obj = getNaverCafeArticleList(API_URL);
 
         if(obj.has("error")) {
-            logger.warn("권한이 없는 게시물 입니다.");
+            logger.warn("{} 권한이 없는 게시물 입니다.", articleId);
             return null;
         }
 
@@ -144,7 +146,7 @@ public class NaverCafeAtricleApi {
             .content(article.get("contentHtml").getAsString())
             .boardTitle(article.get("subject").getAsString())
             .writer(writer.get("nick").getAsString())
-            .profileImageUrl(writer.get("image").getAsJsonObject().get("image").getAsString())
+            .profileImageUrl(writer.get("image").getAsJsonObject().get("url").getAsString())
             .redirectURL("https://cafe.naver.com/steamindiegame" + articleId)
             .readCount(article.get("readCount").getAsInt())
             .build();

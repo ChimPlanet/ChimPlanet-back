@@ -32,8 +32,10 @@ class TagObjServiceTest {
         int prevQty = tagRepository.findAll().size();
 
         TagObj tagObj = TagObj.builder()
+                .tagId(610L)
                 .tagName("testTag2")
-                .parentTagId("100")
+                .parentTagId(600L)
+                .childTagId(610L)
                 .build();
 
         tagRepository.save(tagObj);

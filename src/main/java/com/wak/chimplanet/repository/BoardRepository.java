@@ -2,6 +2,9 @@ package com.wak.chimplanet.repository;
 
 import static com.wak.chimplanet.entity.QBoard.board;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.JPQLQuery;
@@ -12,12 +15,13 @@ import com.wak.chimplanet.entity.QBoardTag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -58,47 +62,63 @@ public class BoardRepository {
     /**
      * 무한스크롤 구현
      */
-    public Slice<BoardResponseDto> findBoardsByLastArticleId(String lastArticleId, Pageable pageable) {
-        List<Board> boards = queryFactory.selectFrom(board)
-            .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
-            .where(
-                // no-offset 처리
-                ltArticleId(lastArticleId)
-            )
-            .orderBy(board.articleId.desc())
-            .limit(pageable.getPageSize() + 1) // imit보다 데이터를 1개 더 들고와서, 해당 데이터가 있다면 hasNext 변수에 true를 넣어 알림
-            .fetch();
+    public Slice<BoardResponseDto> findBoardsByLastArticleId(
+            String sortColumn, String lastArticleId, String lastValue, Pageable pageable, String isEnd) {
+        BooleanExpression isEndCondition = null;
+        BooleanExpression ltReadCountCondition = null;
+        BooleanExpression ltArticleIdCondition = null;
 
-        // 무한 스크롤 처리
+        if(sortColumn.equals("readCount")) {
+            // 조회수는 unique 값이 아니므로 작거나 같음 조건
+            ltReadCountCondition = board.readCount.loe(Long.parseLong(lastValue));
+            ltArticleIdCondition = board.articleId.ne(lastArticleId);
+        } else if(sortColumn.equals("articleId")) {
+            ltArticleIdCondition = ltArticleId(lastValue);
+        }
+
+        if(isEnd != null) isEndCondition = board.isEnd.eq(isEnd);
+
+        List<Board> boards = queryFactory.selectFrom(board)
+                .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
+                .where(
+                        isEndCondition,
+                        ltReadCountCondition,
+                        ltArticleIdCondition
+                )
+                .orderBy(toOrderSpecifiers(pageable))
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
         return checkLastPage(pageable, boards);
     }
 
     /**
      * TAG ID 기준으로 검색
-     * tagIds 가 있는 경우에는 tagIds로 검색
-     * title 이 있는 경우에는 title로 검색
+     * tagIds 가 있는 경우에는 tagIds 로 검색
+     * title 이 있는 경우에는 title 로 검색
      */
-    public Slice<BoardResponseDto> findBoardByTagIds(String lastArticleId, Pageable pageable, List<String> tagIds, String title) {
+    public List<BoardResponseDto> findBoardByTagIds(List<Long> tagIds, String title) {
         JPQLQuery<Board> query = queryFactory.selectFrom(board)
-            .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
-            .where(ltArticleId(lastArticleId));
+                .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
+                .distinct();
 
-        if(tagIds != null && !tagIds.isEmpty()) {
-            query.where(board.boardTags.any().tagObj.childTagId.in(tagIds));
+        BooleanBuilder whereBuilder = new BooleanBuilder();
+
+        if (tagIds != null && !tagIds.isEmpty()) {
+            whereBuilder.or(board.boardTags.any().tagObj.childTagId.in(tagIds));
         }
 
-        if(title != null && !title.isBlank()) {
-            query.where(board.boardTitle.containsIgnoreCase(title));
+        if (title != null && !title.trim().isEmpty()) {
+            whereBuilder.or(board.boardTitle.containsIgnoreCase(title));
         }
 
         List<Board> boards = query
-            .orderBy(board.articleId.desc())
-            .limit(pageable.getPageSize() + 1)
-            .fetchResults()
-            .getResults();
+                .where(whereBuilder)
+                .orderBy(board.articleId.desc())
+                .fetchResults()
+                .getResults();
 
-        return new SliceImpl<>(boards.stream().map(BoardResponseDto::new)
-            .collect(Collectors.toList()), pageable, boards.size() > pageable.getPageSize());
+        return BoardResponseDto.from(boards);
     }
 
     public List<Board> findBoardsByReadCount() {
@@ -130,7 +150,9 @@ public class BoardRepository {
     }
 }
 
-    // no-offset 방식 처리 메서드
+    /**
+     * no-offset 방식 처리 메서드
+     */
     private BooleanExpression ltArticleId(String lastArticleId) {
         return StringUtils.isNullOrEmpty(lastArticleId) ? null : board.articleId.lt(lastArticleId);
     }
@@ -148,5 +170,28 @@ public class BoardRepository {
         }
 
         return new SliceImpl<>(BoardResponseDto.from(results), pageable, hasNext);
+    }
+
+    /**
+     * OrderSpecifier 를 쿼리로 변환하여 정렬조건 추가
+     * @param pageable
+     * @return
+     */
+    private OrderSpecifier<?> toOrderSpecifiers(Pageable pageable) {
+        // 정렬조건 Null 체크
+        if(!pageable.getSort().isEmpty()) {
+            for(Sort.Order order : pageable.getSort()) {
+                switch (order.getProperty()) {
+                    case "articleId" :
+                        return new OrderSpecifier(Order.DESC, board.articleId);
+                    case "readCount" :
+                        return new OrderSpecifier(Order.DESC, board.readCount);
+                    case "regDate" :
+                        return new OrderSpecifier(Order.DESC, board.regDate);
+                }
+            }
+        }
+
+        return null;
     }
 }

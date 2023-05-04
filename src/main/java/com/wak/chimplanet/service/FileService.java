@@ -7,6 +7,7 @@ import com.wak.chimplanet.entity.FileEntity;
 import com.wak.chimplanet.entity.ImageType;
 import com.wak.chimplanet.repository.FileRepository;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -111,7 +112,7 @@ public class FileService {
     }
 
     @Transactional
-    public Long deleteImage(Long fileId) {
+    public Long deleteImage(Long fileId) throws FileNotFoundException {
         FileEntity fileEntity = fileRepository.findById(fileId)
             .orElseThrow(() -> new IllegalArgumentException("File not found with id " + fileId));
 
@@ -119,42 +120,24 @@ public class FileService {
 
         log.info("deleteFileName : {}, deleteFilePath : {}", fileEntity.getFileName(), deletePath.toString());
 
-        if (!Files.exists(deletePath)) {
-            // 삭제할 파일이 존재하지 않는 경우
-            throw new IllegalArgumentException("File does not exist.");
+//        if (fileEntity.getImageUri() != null && !Files.exists(deletePath)) {
+//            // 파일 uri 가 존재하나 삭제할 파일이 존재하지 않는 경우
+//            throw new FileNotFoundException("File does not exist.");
+//        }
+        // 삭제할 파일이 존재하는 경우에만 파일 삭제 로직실행
+        if(Files.exists(deletePath)) {
+            try {
+                Files.delete(deletePath);
+            } catch (IOException e) {
+                // 파일 삭제 중 오류 발생
+                throw new IllegalArgumentException("Failed to delete file.");
+            }
         }
 
-        try {
-            Files.delete(deletePath);
-            fileRepository.delete(fileEntity);
-        } catch (IOException e) {
-            // 파일 삭제 중 오류 발생
-            throw new IllegalArgumentException("Failed to delete file.");
-        }
+        fileRepository.delete(fileEntity);
 
         return fileId;
     }
-
-/*
-    @Transactional
-    public void updateSequence(List<FileSequenceRequestDto> sequenceList) {
-
-        for (FileSequenceRequestDto fileSequenceRequestDto : sequenceList ) {
-            FileEntity fileEntity = fileRepository.findById(fileSequenceRequestDto.getFileId())
-                    .orElseThrow(() -> new IllegalArgumentException("File not found with id " + fileSequenceRequestDto.getFileId()));
-
-            // 시퀀스 값이 유효하지 않은 경우 예외를 던집니다.
-            int newSequence = fileSequenceRequestDto.getSequence();
-            if (newSequence < 0) {
-                throw new IllegalArgumentException("Invalid sequence: " + newSequence);
-            }
-
-            if (fileEntity.getSequence() != newSequence) {
-                fileEntity.changeSequence(newSequence);
-            }
-        }
-    }
-*/
 
     @Transactional
     public void updateSequence(List<FileSequenceRequestDto> sequenceList) {
