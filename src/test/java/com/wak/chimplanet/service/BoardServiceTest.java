@@ -117,7 +117,8 @@ public class BoardServiceTest {
         final int expectResultSize = 20;
 
         Pageable pageable = PageRequest.of(0, 20, Sort.by("articleId").descending());
-        Slice<BoardResponseDto> end = boardService.findBoardsByPaging(null, pageable, "END");
+        Slice<BoardResponseDto> end = boardService.findBoardsByPaging(
+                "articleId", null, null, pageable, "END");
 
         int resultSize = end.getSize();
 
