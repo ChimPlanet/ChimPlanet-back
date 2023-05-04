@@ -26,6 +26,11 @@ repositories {
 	mavenCentral()
 }
 
+jar {
+	// plain.jar 생성 방지를 위한 설정 추가
+	enabled = false
+}
+
 dependencies {
 	// jsoup
 	implementation 'org.jsoup:jsoup:1.15.4'
