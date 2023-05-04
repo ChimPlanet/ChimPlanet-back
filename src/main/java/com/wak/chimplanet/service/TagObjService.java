@@ -33,4 +33,8 @@ public class TagObjService {
 
         return tagObjRepository.findAll();
     }
+
+    public List<TagObj> deleteTag(TagObj tagObj) {
+        return tagObjRepository.findAll();
+    }
 }

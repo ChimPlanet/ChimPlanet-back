@@ -38,9 +38,6 @@ public class OfficialBoardService {
 
         List<TagObj> tags = Utility.categorizingTag(boardDetail.getContent(), tagList);
 
-        System.out.print("Tags List :: ");
-        System.out.println(tags);
-
         List<OfficialBoardTag> officialBoardTags = new ArrayList<>();
 
         for(TagObj tag : tags) {
@@ -60,4 +57,10 @@ public class OfficialBoardService {
         return officialBoardReporitory.findAll();
     }
 
+    public  List<OfficialBoard> deleteOfficialBoard(String articleId) {
+
+        officialBoardReporitory.deleteById(articleId);
+
+        return officialBoardReporitory.findAll();
+    }
 }
