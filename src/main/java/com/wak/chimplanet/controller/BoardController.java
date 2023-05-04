@@ -99,13 +99,14 @@ public class BoardController {
     })
     @GetMapping("/api/boards/search")
     public ResponseEntity<List<BoardResponseDto>> searchBoard(
-        @ApiParam(value = "게시글 제목", required = false) @RequestParam(value = "title", defaultValue = "null", required = false) String title,
-        @ApiParam(value = "검색하려는 태그", required = false) @RequestParam(required = false) List<String> searchTagId) {
-
+        @ApiParam(value = "게시글 제목", required = false) @RequestParam(value = "title", required = false) String title,
+        @ApiParam(value = "검색하려는 태그", required = false) @RequestParam(required = false) List<Long> searchTagId) {
         try {
+            log.info("parameter title : {} , tagsId : {}", title, searchTagId.toString());
             List<BoardResponseDto> findBoardList = boardService.findBoardByTagIds(searchTagId, title);
             return ResponseEntity.ok().body(findBoardList);
         } catch(IllegalArgumentException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 에러 메시지를 전달할 수 있도록 수정
         }
     }

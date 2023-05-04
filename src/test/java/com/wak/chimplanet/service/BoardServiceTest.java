@@ -19,6 +19,7 @@ import com.wak.chimplanet.repository.BoardRepository;
 import com.wak.chimplanet.repository.TagObjRepository;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.junit.Test;
@@ -124,17 +125,30 @@ public class BoardServiceTest {
     }
 
     @Test
-    public void findBoardByTagIds_withTagIdsAndTitle_shouldReturnSliceOfBoards() {
+    public void findBoardByTagIds_withTitle_shouldReturnSliceOfBoards() {
         // Given
-        List<String> tagIds = Arrays.asList("101");
         String title = "개발";
-        String lastArticleId = null;
 
         Pageable pageable = PageRequest.of(0, 20, Sort.by("articleId").descending());
         // When
-        List<BoardResponseDto> result = boardService.findBoardByTagIds(tagIds, title);
+        List<BoardResponseDto> result = boardService.findBoardByTagIds(null, title);
+        System.out.println(result.get(0).getBoardTags().toString());
 
         // Then
-        assertEquals(result.get(0).getBoardTitle().contains("개발"), true);
+        assertEquals(true, result.get(0).getBoardTitle().contains("개발"));
     }
+
+    @Test
+    public void findBoardByTagIds_withTagIds_shouldReturnSliceOfBoards() {
+        // Given
+        List<Long> tagIds = Arrays.asList(100L);
+
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("articleId").descending());
+        // When
+        List<BoardResponseDto> result = boardService.findBoardByTagIds(tagIds, null);
+
+        // Then
+        assertEquals(true, result.get(0).getBoardTags().get(0).getTagObjResponseDto().getChildTagId() == 100 );
+    }
+
 }

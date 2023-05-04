@@ -2,6 +2,7 @@ package com.wak.chimplanet.repository;
 
 import static com.wak.chimplanet.entity.QBoard.board;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -62,23 +63,26 @@ public class BoardRepository {
     /**
      * 무한스크롤 구현
      */
-    public Slice<BoardResponseDto> findBoardsByLastArticleId(String lastArticleId, Pageable pageable, String isEnd) {
+    public Slice<BoardResponseDto> findBoardsByLastArticleId(String lastValue, Pageable pageable, String isEnd) {
         BooleanExpression isEndCondition = null;
+        BooleanExpression ltReadCountCondition = null;
+        BooleanExpression ltArticleIdCondition = null;
 
         if(isEnd != null) isEndCondition = board.isEnd.eq(isEnd);
+        // if(lastReadCount != null) ltReadCountCondition = board.readCount.lt(lastReadCount);
+        if(lastValue != null) ltArticleIdCondition = ltArticleId(lastValue);
 
         List<Board> boards = queryFactory.selectFrom(board)
-            .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
-            .where(
-                // no-offset 처리
-                ltArticleId(lastArticleId)
-                , isEndCondition
-            )
-            .orderBy(toOrderSpecifiers(pageable))
-            .limit(pageable.getPageSize() + 1) // imit보다 데이터를 1개 더 들고와서, 해당 데이터가 있다면 hasNext 변수에 true를 넣어 알림
-            .fetch();
+                .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
+                .where(
+                        isEndCondition,
+                        ltReadCountCondition,
+                        ltArticleIdCondition
+                )
+                .orderBy(board.readCount.desc(), board.articleId.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
 
-        // 무한 스크롤 처리
         return checkLastPage(pageable, boards);
     }
 
@@ -87,20 +91,23 @@ public class BoardRepository {
      * tagIds 가 있는 경우에는 tagIds 로 검색
      * title 이 있는 경우에는 title 로 검색
      */
-    public List<BoardResponseDto> findBoardByTagIds(List<String> tagIds, String title) {
+    public List<BoardResponseDto> findBoardByTagIds(List<Long> tagIds, String title) {
         JPQLQuery<Board> query = queryFactory.selectFrom(board)
                 .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
                 .distinct();
 
-        if(tagIds != null && !tagIds.isEmpty()) {
-            query.where(board.boardTags.any().tagObj.childTagId.in(tagIds));
+        BooleanBuilder whereBuilder = new BooleanBuilder();
+
+        if (tagIds != null && !tagIds.isEmpty()) {
+            whereBuilder.or(board.boardTags.any().tagObj.childTagId.in(tagIds));
         }
 
         if (title != null && !title.trim().isEmpty()) {
-            query.where(board.boardTitle.containsIgnoreCase(title));
+            whereBuilder.or(board.boardTitle.containsIgnoreCase(title));
         }
 
         List<Board> boards = query
+                .where(whereBuilder)
                 .orderBy(board.articleId.desc())
                 .fetchResults()
                 .getResults();
@@ -172,6 +179,7 @@ public class BoardRepository {
                     case "articleId" :
                         return new OrderSpecifier(Order.DESC, board.articleId);
                     case "readCount" :
+                        System.out.println(order.getProperty());
                         return new OrderSpecifier(Order.DESC, board.readCount);
                     case "regDate" :
                         return new OrderSpecifier(Order.DESC, board.regDate);
