@@ -63,6 +63,8 @@ public class OfficialBoardServiceTest {
             System.out.println(board.toString());
         }
 
-        assertEquals(boardListSize + 1, officialBoardList);
+        System.out.println();
+
+        assertEquals(boardListSize + 1, officialBoardList.size());
     }
 }
