@@ -46,7 +46,7 @@ public class OfficialBoardServiceTest {
 
 
         //임시 게시글 번호
-        String articleId = "10258505";
+        String articleId = "10930730";
 
 
         OfficialBoard officialBoard = new OfficialBoard().builder()
