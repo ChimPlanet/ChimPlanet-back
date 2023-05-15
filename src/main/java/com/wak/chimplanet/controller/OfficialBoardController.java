@@ -36,7 +36,7 @@ public class OfficialBoardController {
 
     @ApiOperation(value = "왁물원 공식 공고 Data 저장")
     @PostMapping(value = "/")
-    public ResponseEntity<List<OfficialBoard>> saveOfficialBoard(@RequestBody OfficialBoard officialBoard) {
+    public ResponseEntity<List<OfficialBoard>> saveOfficialBoard(@RequestParam OfficialBoard officialBoard) {
         return ResponseEntity.ok().body(officialBoardService.saveOfficialBoard(officialBoard));
     }
 
