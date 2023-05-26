@@ -29,7 +29,6 @@ public class OfficialBoardController {
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "리스트 로드 성공", content = @Content(schema = @Schema(implementation = OfficialBoard.class)))
     })
-    @GetMapping
     public ResponseEntity<List<OfficialBoard>> getAllOfiicialBoard(@RequestBody OfficialBoard officialBoard){
         return ResponseEntity.ok().body(officialBoardService.getAllOfiicialBoard(officialBoard));
     }
