@@ -1,6 +1,6 @@
 spring:
   profiles:
-    default: dev # 기본 실행환경 설정
+    default: prod # 기본 실행환경 설정
 
 logging-module:
   version: 0.0.3
