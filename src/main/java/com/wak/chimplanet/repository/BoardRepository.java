@@ -68,7 +68,7 @@ public class BoardRepository {
         BooleanExpression ltReadCountCondition = null;
         BooleanExpression ltArticleIdCondition = null;
 
-        if(sortColumn.equals("readCount")) {
+        if(sortColumn.equals("readCount") && lastValue != null) {
             // 조회수는 unique 값이 아니므로 작거나 같음 조건
             ltReadCountCondition = board.readCount.loe(Long.parseLong(lastValue));
             ltArticleIdCondition = board.articleId.ne(lastArticleId);
