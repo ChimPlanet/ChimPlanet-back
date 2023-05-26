@@ -1,5 +1,6 @@
 package com.wak.chimplanet.repository;
 
+import com.wak.chimplanet.entity.OfficialBoardTag;
 import com.wak.chimplanet.entity.TagObj;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -38,7 +39,13 @@ public class TagObjRepository {
         em.persist(tagObj);
     }
 
-    public void deleteById (TagObj tagObj){
-        //Delete Logic 확인
+    public List<OfficialBoardTag> findOffcialBoard(TagObj tagObj) {
+        return em.createQuery("SELECT t FROM OfficialBoardTag t WHERE t.tag_id = :tagId", OfficialBoardTag.class)
+                .setParameter("tagId", tagObj.getTagId())
+                .getResultList();
+    }
+
+    public void delete(TagObj findedTag) {
+        em.remove(findedTag);
     }
 }

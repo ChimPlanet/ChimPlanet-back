@@ -1,11 +1,13 @@
 package com.wak.chimplanet.service;
 
+import com.wak.chimplanet.entity.OfficialBoardTag;
 import com.wak.chimplanet.entity.TagObj;
 import com.wak.chimplanet.repository.TagObjRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,6 +37,17 @@ public class TagObjService {
     }
 
     public List<TagObj> deleteTag(TagObj tagObj) {
+
+        List<OfficialBoardTag> officialBoardTag = tagObjRepository.findOffcialBoard(tagObj);
+
+
+
+        if(officialBoardTag.size() > 0){
+            tagObjRepository.delete(tagObj);
+        }else{
+
+        }
+
         return tagObjRepository.findAll();
     }
 }
