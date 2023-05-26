@@ -85,7 +85,9 @@ public class NaverCafeArticleApi {
         for (int i = 0; i < articleList.size(); i++) {
             JsonObject data = articleList.get(i).getAsJsonObject();
             String articleId = String.valueOf(data.get("articleId").getAsLong());
-            String title = data.get("subject").getAsString();
+            String title = data.get("subject").getAsString()
+                    .replaceAll("&lt;", "<")
+                    .replaceAll("&gt;", ">");
             Integer readCount = data.get("readCount").getAsInt();
             String writer = data.get("writerNickname").getAsString();
             String redirectURL = "https://cafe.naver.com/steamindiegame" + articleId;
