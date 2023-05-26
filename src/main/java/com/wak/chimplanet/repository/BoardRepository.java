@@ -73,7 +73,7 @@ public class BoardRepository {
             ltReadCountCondition = board.readCount.loe(Long.parseLong(lastValue));
             ltArticleIdCondition = board.articleId.ne(lastArticleId);
         } else if(sortColumn.equals("articleId")) {
-            ltArticleIdCondition = ltArticleId(lastValue);
+            ltArticleIdCondition = ltArticleId(lastArticleId);
         }
 
         if(isEnd != null) isEndCondition = board.isEnd.eq(isEnd);
