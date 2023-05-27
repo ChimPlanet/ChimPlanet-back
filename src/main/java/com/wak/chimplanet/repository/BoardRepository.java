@@ -42,11 +42,6 @@ public class BoardRepository {
             savedBoards.add(board);
         }
         return savedBoards;
-        /*return IntStream.range(0, (articles.size() + batchSize - 1) / batchSize)
-            .mapToObj(i -> articles.subList(i * batchSize, Math.min((i + 1) * batchSize, articles.size())))
-            .flatMap(Collection::stream)
-            .peek(board -> em.persist(board))
-            .collect(Collectors.toList());*/
     }
 
     public void saveBoard(Board board) {
