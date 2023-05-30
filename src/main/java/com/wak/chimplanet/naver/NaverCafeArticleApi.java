@@ -155,13 +155,21 @@ public class NaverCafeArticleApi {
     }
 
     /**
-     * 공고가 마감인지 확인하는 메소드
+     * 게시물의 공고가 마감인지 확인하는 메소드
      */
     private static String isEnd(String title) {
         String END_TITLE = "마감";
         String END_TITLE_SECOND = "완료";
         if(title.contains(END_TITLE) || title.contains(END_TITLE_SECOND)) return "END";
         return "ING";
+    }
+
+    /**
+     * 게시물의 내용이 구인인지 구직인지 판별
+     * 현재 개발중
+     */
+    private String isJobSearching(String title) {
+        return "구직중";
     }
 
     /**
