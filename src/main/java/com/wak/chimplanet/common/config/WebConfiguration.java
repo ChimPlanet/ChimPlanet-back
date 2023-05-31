@@ -29,6 +29,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")
+            .addResourceLocations("http://api.chimplanet.site/")
             .addResourceLocations("file://" + filePath);
     }
 }
