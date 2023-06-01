@@ -29,19 +29,20 @@ public class OfficialBoardController {
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "리스트 로드 성공", content = @Content(schema = @Schema(implementation = OfficialBoard.class)))
     })
-    @GetMapping
-    public ResponseEntity<List<OfficialBoard>> getAllOfiicialBoard(@RequestBody OfficialBoard officialBoard){
+    @GetMapping(value = "/")
+    public ResponseEntity<List<OfficialBoard>> getAllOfiicialBoard(OfficialBoard officialBoard){
         return ResponseEntity.ok().body(officialBoardService.getAllOfiicialBoard(officialBoard));
     }
 
     @ApiOperation(value = "왁물원 공식 공고 Data 저장")
     @PostMapping(value = "/")
-    public ResponseEntity<List<OfficialBoard>> saveOfficialBoard(@RequestParam OfficialBoard officialBoard) {
+    public ResponseEntity<List<OfficialBoard>> saveOfficialBoard(OfficialBoard officialBoard) {
         return ResponseEntity.ok().body(officialBoardService.saveOfficialBoard(officialBoard));
     }
 
     @DeleteMapping(value = "/{articleId}")
     public ResponseEntity<List<OfficialBoard>> deleteOfficialBoard(@PathVariable String articleId) {
+
         return ResponseEntity.ok().body(officialBoardService.deleteOfficialBoard(articleId));
     }
 
