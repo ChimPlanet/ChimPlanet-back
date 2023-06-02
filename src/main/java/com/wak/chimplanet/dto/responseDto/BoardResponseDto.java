@@ -27,6 +27,7 @@ public class BoardResponseDto {
     private Integer readCount;
     private String isEnd;
     private String unauthorized;
+    private String teamOperationInfo;
     private List<BoardTagResponseDto> boardTags;
 
     /* Entity -> Dto */
@@ -40,6 +41,7 @@ public class BoardResponseDto {
         this.readCount = board.getReadCount();
         this.isEnd = board.getIsEnd();
         this.unauthorized = board.getUnauthorized();
+        this.teamOperationInfo = board.getTeamOperationInfo();
         this.boardTags = board.getBoardTags().stream().map(BoardTagResponseDto::new).collect(
             Collectors.toList());
     }
