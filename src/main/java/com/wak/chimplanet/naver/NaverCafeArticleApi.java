@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -97,7 +99,9 @@ public class NaverCafeArticleApi {
             }
             String regDate = dateTimeStampToString(data.get("writeDateTimestamp").getAsLong());
             String isEnd = isEnd(title);
-            String teamOperationInfo = isJobSearching(data.get("headId").getAsString());
+            String teamOperationInfo;
+            if(data.has("headId")) teamOperationInfo = isJobSearching(null);
+            else teamOperationInfo= isJobSearching(data.get("headIWd").getAsString());
 
 
             logger.info("title: {}, viewCount: {}, articleId: {}, writer: {}"
@@ -170,9 +174,11 @@ public class NaverCafeArticleApi {
     /**
      * 게시물의 내용이 구인인지 구직인지 판별
      * 311 : 팀 창설, 312 : 팀 구합니다
-     * @return creation : 팀 창설, searching : 팀 구직, noHeadName : ㅁㅁㄹ
+     * @return recruit : 팀 창설, searching : 팀 구직, noHeadName : ㅁㅁㄹ
      */
     private static String isJobSearching(String headName) {
+        if(headName == null ) return "noHeadName";
+
         if(headName.equals("311")) {
             return "recruit";
         }
@@ -180,7 +186,7 @@ public class NaverCafeArticleApi {
             return "searching";
         }
 
-        return "noHeadName" ;
+        return "noHeadName";
     }
 
     /**

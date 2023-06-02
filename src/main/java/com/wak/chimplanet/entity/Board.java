@@ -63,7 +63,7 @@ public class Board {
     private String unauthorized;
 
     @Column(name = "teamOperationInfo")
-    @ApiModelProperty(value = "팀 구인 / 구직 구분", example = "creation || creation")
+    @ApiModelProperty(value = "팀 구인 / 구직 구분", example = "recruit : 팀 창설, searching : 팀 구직, noHeadName : ㅁㅁㄹ")
     private String teamOperationInfo;
 
     @Builder.Default
