@@ -97,10 +97,12 @@ public class NaverCafeArticleApi {
             }
             String regDate = dateTimeStampToString(data.get("writeDateTimestamp").getAsLong());
             String isEnd = isEnd(title);
+            String teamOperationInfo = isJobSearching(data.get("headId").getAsString());
+
 
             logger.info("title: {}, viewCount: {}, articleId: {}, writer: {}"
-                    + ", redirectURL: {}, thumbnailURL: {}, regDate: {}"
-                , title, readCount, articleId, writer, redirectURL, thumbnailURL, regDate);
+                    + ", redirectURL: {}, thumbnailURL: {}, regDate: {}, teamOperationInfo: {}"
+                , title, readCount, articleId, writer, redirectURL, thumbnailURL, regDate, teamOperationInfo);
 
             Board board = Board.builder()
                     .boardTitle(title)
@@ -111,6 +113,7 @@ public class NaverCafeArticleApi {
                     .redirectURL(redirectURL)
                     .isEnd(isEnd)
                     .regDate(LocalDateTime.parse(regDate, FORMATTER))
+                    .teamOperationInfo(teamOperationInfo)
                     .build();
 
             boardArrayList.add(board);
@@ -166,10 +169,18 @@ public class NaverCafeArticleApi {
 
     /**
      * 게시물의 내용이 구인인지 구직인지 판별
-     * 현재 개발중
+     * 311 : 팀 창설, 312 : 팀 구합니다
+     * @return creation : 팀 창설, searching : 팀 구직, noHeadName : ㅁㅁㄹ
      */
-    private String isJobSearching(String title) {
-        return "구직중";
+    private static String isJobSearching(String headName) {
+        if(headName.equals("311")) {
+            return "recruit";
+        }
+        if(headName.equals("312")) {
+            return "searching";
+        }
+
+        return "noHeadName" ;
     }
 
     /**
