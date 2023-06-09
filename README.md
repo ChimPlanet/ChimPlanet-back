@@ -1,9 +1,8 @@
 # ChimPlanet 
 
 ### 배포주소
-> 백엔드 서버 :  
-> 프론트 서버 :   
-> 메인 페이지 : http://chimplanet.kro.kr/
+> 테스트 페이지 : (http://43.201.200.221:1008/#article-view)
+> 메인 페이지 : 공사중
 
 ## Team ChimPlanet-backEndServer
 
