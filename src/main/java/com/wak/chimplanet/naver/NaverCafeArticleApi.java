@@ -100,8 +100,8 @@ public class NaverCafeArticleApi {
             String regDate = dateTimeStampToString(data.get("writeDateTimestamp").getAsLong());
             String isEnd = isEnd(title);
             String teamOperationInfo;
-            if(data.has("headId")) teamOperationInfo = isJobSearching(null);
-            else teamOperationInfo= isJobSearching(data.get("headIWd").getAsString());
+            if(!data.has("headId")) teamOperationInfo = isJobSearching(null);
+            else teamOperationInfo = isJobSearching(data.get("headId").getAsString());
 
 
             logger.info("title: {}, viewCount: {}, articleId: {}, writer: {}"
