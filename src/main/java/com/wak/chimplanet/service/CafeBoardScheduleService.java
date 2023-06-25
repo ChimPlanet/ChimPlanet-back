@@ -81,7 +81,7 @@ public class CafeBoardScheduleService {
                 Board newBoard = Board.createBoardWithTag(board, boardTags,board.getUnauthorized());
                 Board existingBoard = boardRepository.findById(articleId).orElse(null); // 기존에 같은 ID를 가지고 있는 경우 UPDATE 쿼리를 날림
 
-                if(existingBoard != null) board.updateBoard(board, boardTags);
+                if(existingBoard != null) existingBoard.updateBoard(board, boardTags);
                 else boards.add(newBoard);
             }
 
@@ -94,6 +94,4 @@ public class CafeBoardScheduleService {
 
         log.info("saveAllBoardsPerPage task finished. elapsedTime(ms)={}, savedBoardCount={}", elapsedTime, savedBoardCount);
     }
-
-
 }
