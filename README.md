@@ -3,7 +3,7 @@
 ### 배포주소
 > 테스트 페이지 : (http://43.201.200.221:1008/#article-view)
 
-> 메인 페이지 : 공사중
+> 메인 페이지 : www.chimplanet.site
 
 ## Team ChimPlanet-backEndServer
 
