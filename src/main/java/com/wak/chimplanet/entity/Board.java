@@ -112,7 +112,7 @@ public class Board {
         this.readCount = board.readCount;
         this.thumbnailURL = board.thumbnailURL;
         this.isEnd = board.isEnd;
-        this.boardTags = boardTags;
+        // this.boardTags = boardTags;
         this.unauthorized = board.unauthorized;
     }
     
