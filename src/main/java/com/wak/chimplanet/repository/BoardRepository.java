@@ -50,52 +50,53 @@ public class BoardRepository {
 
     public List<Board> findAllBoard() {
         // JPQL 사용쿼리
-        return em.createQuery( "SELECT b FROM Board b LEFT JOIN FETCH b.boardTags", Board.class)
-                .getResultList();
+        return em.createQuery("SELECT b FROM Board b LEFT JOIN FETCH b.boardTags", Board.class)
+            .getResultList();
     }
 
     /**
      * 무한스크롤 구현
      */
     public Slice<BoardResponseDto> findBoardsByLastArticleId(
-            String sortColumn, String lastArticleId, String lastValue, Pageable pageable, String isEnd) {
+        String sortColumn, String lastArticleId, String lastValue, Pageable pageable,
+        String isEnd) {
         BooleanExpression isEndCondition = null;
         BooleanExpression ltReadCountCondition = null;
         BooleanExpression ltArticleIdCondition = null;
 
-        if(sortColumn.equals("readCount") && lastValue != null) {
+        if (sortColumn.equals("readCount") && lastValue != null) {
             // 조회수는 unique 값이 아니므로 작거나 같음 조건
             ltReadCountCondition = board.readCount.loe(Long.parseLong(lastValue));
             ltArticleIdCondition = board.articleId.ne(lastArticleId);
-        } else if(sortColumn.equals("articleId") || sortColumn.equals("regDate")) {
+        } else if (sortColumn.equals("articleId") || sortColumn.equals("regDate")) {
             ltArticleIdCondition = ltArticleId(lastArticleId);
         }
 
-        if(isEnd != null) isEndCondition = board.isEnd.eq(isEnd);
+        if (isEnd != null) {
+            isEndCondition = board.isEnd.eq(isEnd);
+        }
 
         List<Board> boards = queryFactory.selectFrom(board)
-                .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
-                .where(
-                        isEndCondition,
-                        ltReadCountCondition,
-                        ltArticleIdCondition
-                )
-                .orderBy(toOrderSpecifiers(pageable))
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
+            .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
+            .where(
+                isEndCondition,
+                ltReadCountCondition,
+                ltArticleIdCondition
+            )
+            .orderBy(toOrderSpecifiers(pageable))
+            .limit(pageable.getPageSize() + 1)
+            .fetch();
 
         return checkLastPage(pageable, boards);
     }
 
     /**
-     * TAG ID 기준으로 검색
-     * tagIds 가 있는 경우에는 tagIds 로 검색
-     * title 이 있는 경우에는 title 로 검색
+     * TAG ID 기준으로 검색 tagIds 가 있는 경우에는 tagIds 로 검색 title 이 있는 경우에는 title 로 검색
      */
     public List<BoardResponseDto> findBoardByTagIds(List<Long> tagIds, String title) {
         JPQLQuery<Board> query = queryFactory.selectFrom(board)
-                .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
-                .distinct();
+            .leftJoin(board.boardTags, QBoardTag.boardTag).fetchJoin()
+            .distinct();
 
         BooleanBuilder whereBuilder = new BooleanBuilder();
 
@@ -108,22 +109,26 @@ public class BoardRepository {
         }
 
         List<Board> boards = query
-                .where(whereBuilder)
-                .orderBy(board.articleId.desc())
-                .fetchResults()
-                .getResults();
+            .where(whereBuilder)
+            .orderBy(board.articleId.desc())
+            .fetchResults()
+            .getResults();
 
         return BoardResponseDto.from(boards);
     }
 
     public List<Board> findBoardsByReadCount() {
-        return em.createQuery("select b from Board b LEFT JOIN FETCH  b.boardTags where read_count >= 500", Board.class)
-                .getResultList();
+        return em.createQuery(
+                "select b from Board b LEFT JOIN FETCH  b.boardTags where read_count >= 500",
+                Board.class)
+            .getResultList();
     }
 
     public Optional<Board> findBoardWithTags(String articleId) {
         try {
-            Board board = em.createQuery("select b from Board b left join fetch b.boardTags where b.articleId = :articleId", Board.class)
+            Board board = em.createQuery(
+                    "select b from Board b left join fetch b.boardTags where b.articleId = :articleId",
+                    Board.class)
                 .setParameter("articleId", articleId)
                 .getSingleResult();
             return Optional.of(board);
@@ -133,17 +138,15 @@ public class BoardRepository {
     }
 
     public Optional<Board> findById(String articleId) {
-        Optional<Board> board = null;
         try {
-            board = Optional.ofNullable(em.createQuery("select b from Board b where b.articleId = :articleId", Board.class)
-                .setParameter("articleId", articleId)
-                .getSingleResult());
+            return Optional.ofNullable(
+                em.createQuery("select b from Board b where b.articleId = :articleId", Board.class)
+                    .setParameter("articleId", articleId)
+                    .getSingleResult());
         } catch (NoResultException e) {
-            board = Optional.empty();
-        } finally {
-        return board;
+            return Optional.empty();
+        }
     }
-}
 
     /**
      * no-offset 방식 처리 메서드
@@ -169,19 +172,20 @@ public class BoardRepository {
 
     /**
      * OrderSpecifier 를 쿼리로 변환하여 정렬조건 추가
+     *
      * @param pageable
      * @return
      */
     private OrderSpecifier<?> toOrderSpecifiers(Pageable pageable) {
         // 정렬조건 Null 체크
-        if(!pageable.getSort().isEmpty()) {
-            for(Sort.Order order : pageable.getSort()) {
+        if (!pageable.getSort().isEmpty()) {
+            for (Sort.Order order : pageable.getSort()) {
                 switch (order.getProperty()) {
-                    case "articleId" :
+                    case "articleId":
                         return new OrderSpecifier(Order.DESC, board.articleId);
-                    case "readCount" :
+                    case "readCount":
                         return new OrderSpecifier(Order.DESC, board.readCount);
-                    case "regDate" :
+                    case "regDate":
                         return new OrderSpecifier(Order.DESC, board.regDate);
                 }
             }
