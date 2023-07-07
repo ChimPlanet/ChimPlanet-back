@@ -118,6 +118,7 @@ public class NaverCafeArticleApi {
                     .isEnd(isEnd)
                     .regDate(LocalDateTime.parse(regDate, FORMATTER))
                     .teamOperationInfo(teamOperationInfo)
+                    .unauthorized("N")
                     .build();
 
             boardArrayList.add(board);
