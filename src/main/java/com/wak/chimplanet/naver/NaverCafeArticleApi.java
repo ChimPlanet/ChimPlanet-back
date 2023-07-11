@@ -92,7 +92,7 @@ public class NaverCafeArticleApi {
                     .replaceAll("&gt;", ">");
             Integer readCount = data.get("readCount").getAsInt();
             String writer = data.get("writerNickname").getAsString();
-            String redirectURL = "https://cafe.naver.com/steamindiegame" + articleId;
+            String redirectURL = "https://cafe.naver.com/steamindiegame/" + articleId;
             String thumbnailURL = null;
             if(data.has("representImage")) {
                 thumbnailURL = data.get("representImage").getAsString();
