@@ -58,8 +58,8 @@ public class Board {
     private String isEnd;
 
     @Column(name = "unauthorized")
-    @ColumnDefault("N")
-    @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N, default = N")
+    @ColumnDefault("'N'")
+    @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N, default = 'N'")
     private String unauthorized;
 
     @Column(name = "teamOperationInfo")
