@@ -4,7 +4,8 @@ name: CICD
 
 on:
   push:
-    branches: [ main ]
+#    branches: [ feature/cicd-update ] #cicd-test
+    branches: [ main ] #cicd-test
 
 env:
   S3_BUCKET_NAME: chimplanet-deploy #s3버킷 이름
