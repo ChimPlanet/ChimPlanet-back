@@ -22,7 +22,7 @@ public class OfficialBoardService {
     private final BoardService boardService;
     private final TagObjRepository tagObjRepository;
 
-    public List<OfficialBoard> getAllOfiicialBoard(OfficialBoard officialBoard) {
+    public List<OfficialBoard> getAllOfficialBoard() {
         return officialBoardReporitory.findAll();
     }
 

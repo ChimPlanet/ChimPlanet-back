@@ -34,8 +34,8 @@ public class OfficialBoardController {
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "리스트 로드 성공", content = @Content(schema = @Schema(implementation = OfficialBoard.class)))
     })
-    public ResponseEntity<List<OfficialBoard>> getAllOfiicialBoard(OfficialBoard officialBoard){
-        return ResponseEntity.ok().body(officialBoardService.getAllOfiicialBoard(officialBoard));
+    public ResponseEntity<List<OfficialBoard>> getAllOfficialBoard(){
+        return ResponseEntity.ok().body(officialBoardService.getAllOfficialBoard());
     }
 
     @ApiOperation(value = "왁물원 공식 공고 Data 저장")
