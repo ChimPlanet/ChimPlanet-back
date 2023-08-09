@@ -19,7 +19,6 @@ public class OfficialBoardService {
 
     private final NaverCafeArticleApi naverCafeAtricleApi;
     private final OfficialBoardReporitory officialBoardReporitory;
-    private final BoardService boardService;
     private final TagObjRepository tagObjRepository;
 
     public List<OfficialBoard> getAllOfficialBoard() {
