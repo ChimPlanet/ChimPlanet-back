@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -85,20 +87,26 @@ public class NaverCafeArticleApi {
         for (int i = 0; i < articleList.size(); i++) {
             JsonObject data = articleList.get(i).getAsJsonObject();
             String articleId = String.valueOf(data.get("articleId").getAsLong());
-            String title = data.get("subject").getAsString();
+            String title = data.get("subject").getAsString()
+                    .replaceAll("&lt;", "<")
+                    .replaceAll("&gt;", ">");
             Integer readCount = data.get("readCount").getAsInt();
             String writer = data.get("writerNickname").getAsString();
-            String redirectURL = "https://cafe.naver.com/steamindiegame" + articleId;
+            String redirectURL = "https://cafe.naver.com/steamindiegame/" + articleId;
             String thumbnailURL = null;
             if(data.has("representImage")) {
                 thumbnailURL = data.get("representImage").getAsString();
             }
             String regDate = dateTimeStampToString(data.get("writeDateTimestamp").getAsLong());
             String isEnd = isEnd(title);
+            String teamOperationInfo;
+            if(!data.has("headId")) teamOperationInfo = isJobSearching(null);
+            else teamOperationInfo = isJobSearching(data.get("headId").getAsString());
+
 
             logger.info("title: {}, viewCount: {}, articleId: {}, writer: {}"
-                    + ", redirectURL: {}, thumbnailURL: {}, regDate: {}"
-                , title, readCount, articleId, writer, redirectURL, thumbnailURL, regDate);
+                    + ", redirectURL: {}, thumbnailURL: {}, regDate: {}, teamOperationInfo: {}"
+                , title, readCount, articleId, writer, redirectURL, thumbnailURL, regDate, teamOperationInfo);
 
             Board board = Board.builder()
                     .boardTitle(title)
@@ -109,6 +117,8 @@ public class NaverCafeArticleApi {
                     .redirectURL(redirectURL)
                     .isEnd(isEnd)
                     .regDate(LocalDateTime.parse(regDate, FORMATTER))
+                    .teamOperationInfo(teamOperationInfo)
+                    .unauthorized("N")
                     .build();
 
             boardArrayList.add(board);
@@ -153,13 +163,31 @@ public class NaverCafeArticleApi {
     }
 
     /**
-     * 공고가 마감인지 확인하는 메소드
+     * 게시물의 공고가 마감인지 확인하는 메소드
      */
     private static String isEnd(String title) {
         String END_TITLE = "마감";
         String END_TITLE_SECOND = "완료";
         if(title.contains(END_TITLE) || title.contains(END_TITLE_SECOND)) return "END";
         return "ING";
+    }
+
+    /**
+     * 게시물의 내용이 구인인지 구직인지 판별
+     * 311 : 팀 창설, 312 : 팀 구합니다
+     * @return recruit : 팀 창설, searching : 팀 구직, noHeadName : ㅁㅁㄹ
+     */
+    private static String isJobSearching(String headName) {
+        if(headName == null ) return "noHeadName";
+
+        if(headName.equals("311")) {
+            return "recruit";
+        }
+        if(headName.equals("312")) {
+            return "searching";
+        }
+
+        return "noHeadName";
     }
 
     /**

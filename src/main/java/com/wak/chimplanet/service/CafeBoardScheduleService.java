@@ -49,8 +49,6 @@ public class CafeBoardScheduleService {
         ArrayList<Board> boards = new ArrayList<>();
         List<TagObj> tags = tagObjRepository.findAll();
 
-        // int pageSize = 10; /*  저장할 페이지 갯수 */
-
         Instant startTime = Instant.now(); // 시작 시간
 
         for (int i = 0; i <= pageSize; i++) {
@@ -72,17 +70,19 @@ public class CafeBoardScheduleService {
                 List<TagObj> tagObjs = Utility.categorizingTag(content, tags);
                 List<BoardTag> boardTags = new ArrayList<>();
 
-                for (TagObj tag : tags) {
+                for (TagObj tag : tagObjs) {
                     BoardTag boardTag = BoardTag.createBoardTag(tag, board);
                     board.addBoardTag(boardTag); // Board의 연관관계 메서드로 BoardTag 추가
                     boardTags.add(boardTag); // BoardTag 리스트에도 추가
                 }
 
                 Board newBoard = Board.createBoardWithTag(board, boardTags,board.getUnauthorized());
-                Board existingBoard = boardRepository.findById(articleId).orElse(null); // 기존에 같은 ID를 가지고 있는 경우 UPDATE 쿼리를 날림
+                boardRepository.findById(articleId)
+                    .ifPresentOrElse(
+                        existingBoard -> existingBoard.updateBoard(board, boardTags),
+                        () -> boards.add(newBoard)
+                    );
 
-                if(existingBoard != null) board.updateBoard(board, boardTags);
-                else boards.add(newBoard);
             }
 
             boardRepository.saveAll(boards);
@@ -94,6 +94,4 @@ public class CafeBoardScheduleService {
 
         log.info("saveAllBoardsPerPage task finished. elapsedTime(ms)={}, savedBoardCount={}", elapsedTime, savedBoardCount);
     }
-
-
 }

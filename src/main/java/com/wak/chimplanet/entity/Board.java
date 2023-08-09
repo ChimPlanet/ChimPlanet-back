@@ -58,9 +58,13 @@ public class Board {
     private String isEnd;
 
     @Column(name = "unauthorized")
-    @ColumnDefault("N")
-    @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N, default = N")
+    @ColumnDefault("'N'")
+    @ApiModelProperty(value = "접근 권한 필요 게시물 여부", example = "Y || N, default = 'N'")
     private String unauthorized;
+
+    @Column(name = "teamOperationInfo")
+    @ApiModelProperty(value = "팀 구인 / 구직 구분", example = "recruit : 팀 창설, searching : 팀 구직, noHeadName : ㅁㅁㄹ")
+    private String teamOperationInfo;
 
     @Builder.Default
     // @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -96,6 +100,7 @@ public class Board {
                 .thumbnailURL(board.thumbnailURL)
                 .unauthorized(unauthorized)
                 .boardTags(boardTags)
+                .teamOperationInfo(board.teamOperationInfo)
                 .build();
     }
 
@@ -107,7 +112,7 @@ public class Board {
         this.readCount = board.readCount;
         this.thumbnailURL = board.thumbnailURL;
         this.isEnd = board.isEnd;
-        this.boardTags = boardTags;
+        // this.boardTags = boardTags;
         this.unauthorized = board.unauthorized;
     }
     

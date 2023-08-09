@@ -56,7 +56,7 @@ public class FileService {
         long fileSize = files[0].getSize();
         String safeFile = UUID.randomUUID().toString() + "-" + originFileName; // 고유 파일명
 
-        String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+        String fileUri = ServletUriComponentsBuilder.fromHttpUrl("http://api.chimplanet.site")
             .path("images/")// 리소스 핸들러 명칭
             .path(safeFile)
             .toUriString();
