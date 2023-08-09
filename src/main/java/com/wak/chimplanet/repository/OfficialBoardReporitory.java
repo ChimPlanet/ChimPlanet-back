@@ -23,6 +23,11 @@ public class OfficialBoardReporitory {
     public void deleteById(String articleId) {
 
         OfficialBoard officialBoard = em.find(OfficialBoard.class, articleId);
-        em.remove(articleId);
+
+
+        System.out.println(" ============= officialBoard" + officialBoard.getArticleId());
+        System.out.println(officialBoard);
+        System.out.println(" ============= officialBoard =============");
+        em.remove(officialBoard);
     }
 }
