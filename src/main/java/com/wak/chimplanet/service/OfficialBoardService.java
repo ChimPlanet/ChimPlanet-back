@@ -31,8 +31,6 @@ public class OfficialBoardService {
 
         BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(officialBoard.getArticleId());
 
-        System.out.print("Board Detail :: ");
-        System.out.println(boardDetail);
 
         List<TagObj> tagList = tagObjRepository.findAll();
 

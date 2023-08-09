@@ -24,7 +24,7 @@ public class OfficialBoardServiceTest {
         OfficialBoard officialBoard = new OfficialBoard().builder()
                 .build();
 
-        List<OfficialBoard> officialBoardList = officialBoardService.getAllOfiicialBoard(officialBoard);
+        List<OfficialBoard> officialBoardList = officialBoardService.getAllOfficialBoard();
 
         System.out.println("=======length :  "  + officialBoardList.size() + "======" );
 
@@ -54,7 +54,7 @@ public class OfficialBoardServiceTest {
                 .build();
 
         //기존 길이
-        int boardListSize = officialBoardService.getAllOfiicialBoard(officialBoard).size();
+        int boardListSize = officialBoardService.getAllOfficialBoard().size();
 
         List<OfficialBoard> officialBoardList = officialBoardService.saveOfficialBoard(officialBoard);
 
