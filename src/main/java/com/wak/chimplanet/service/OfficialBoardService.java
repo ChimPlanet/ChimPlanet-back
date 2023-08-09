@@ -19,10 +19,9 @@ public class OfficialBoardService {
 
     private final NaverCafeArticleApi naverCafeAtricleApi;
     private final OfficialBoardReporitory officialBoardReporitory;
-    private final BoardService boardService;
     private final TagObjRepository tagObjRepository;
 
-    public List<OfficialBoard> getAllOfiicialBoard(OfficialBoard officialBoard) {
+    public List<OfficialBoard> getAllOfficialBoard() {
         return officialBoardReporitory.findAll();
     }
 
@@ -31,8 +30,6 @@ public class OfficialBoardService {
 
         BoardDetail boardDetail = naverCafeAtricleApi.getNaverCafeArticleOne(officialBoard.getArticleId());
 
-        System.out.print("Board Detail :: ");
-        System.out.println(boardDetail);
 
         List<TagObj> tagList = tagObjRepository.findAll();
 
