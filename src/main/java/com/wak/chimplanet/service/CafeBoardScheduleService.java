@@ -49,8 +49,6 @@ public class CafeBoardScheduleService {
         ArrayList<Board> boards = new ArrayList<>();
         List<TagObj> tags = tagObjRepository.findAll();
 
-        // int pageSize = 10; /*  저장할 페이지 갯수 */
-
         Instant startTime = Instant.now(); // 시작 시간
 
         for (int i = 0; i <= pageSize; i++) {

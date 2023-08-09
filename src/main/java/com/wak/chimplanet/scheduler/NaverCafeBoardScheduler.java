@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class NaverCafeBoardScheduler {
 
-    private CafeBoardScheduleService cafeBoardScheduleService;
+    private final CafeBoardScheduleService cafeBoardScheduleService;
 
     /**
      * 10분 주기 naverBoardAPI 조회 스케줄러
