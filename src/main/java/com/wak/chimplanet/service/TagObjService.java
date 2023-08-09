@@ -42,7 +42,7 @@ public class TagObjService {
 
 
 
-        if(officialBoardTag.size() > 0){
+        if(officialBoardTag.size() == 0){
             tagObjRepository.delete(tagObj);
         }else{
 

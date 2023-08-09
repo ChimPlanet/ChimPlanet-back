@@ -29,9 +29,11 @@ public class OfficialBoardController {
     private final OfficialBoardService officialBoardService;
 
     @ApiOperation(value = "왁물원 공식 공고 리스트")
+    @GetMapping(value = "/")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "리스트 로드 성공", content = @Content(schema = @Schema(implementation = OfficialBoard.class)))
     })
+    @GetMapping(value = "/")
     public ResponseEntity<List<OfficialBoard>> getAllOfiicialBoard(OfficialBoard officialBoard){
         return ResponseEntity.ok().body(officialBoardService.getAllOfiicialBoard(officialBoard));
     }
@@ -44,6 +46,7 @@ public class OfficialBoardController {
 
     @DeleteMapping(value = "/{articleId}")
     public ResponseEntity<List<OfficialBoard>> deleteOfficialBoard(@PathVariable String articleId) {
+
         return ResponseEntity.ok().body(officialBoardService.deleteOfficialBoard(articleId));
     }
 
