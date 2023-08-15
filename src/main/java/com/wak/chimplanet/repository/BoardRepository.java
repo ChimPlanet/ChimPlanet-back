@@ -12,6 +12,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.Board;
 import com.wak.chimplanet.entity.QBoardTag;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -125,6 +126,11 @@ public class BoardRepository {
     }
 
     public Optional<Board> findBoardWithTags(String articleId) {
+/*        return Optional.ofNullable(em.createQuery(
+                "select b from Board b left join fetch b.boardTags where b.articleId = :articleId",
+                Board.class)
+            .setParameter("articleId", articleId)
+            .getSingleResult());*/
         try {
             Board board = em.createQuery(
                     "select b from Board b left join fetch b.boardTags where b.articleId = :articleId",
@@ -192,5 +198,18 @@ public class BoardRepository {
         }
 
         return null;
+    }
+
+    public List<Board> findBoarPopularBoards(LocalDateTime oneMonthAgo,
+        LocalDateTime currentDate, Pageable pageable) {
+
+        return em.createQuery(
+                "select b from Board b "
+                    + "where b.regDate between :oneMonthAgo and :currentDate "
+                    + "order by b.readCount desc", Board.class)
+            .setParameter("oneMonthAgo", oneMonthAgo)
+            .setParameter("currentDate", currentDate)
+            .setMaxResults(20)
+            .getResultList();
     }
 }
