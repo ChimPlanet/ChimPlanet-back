@@ -44,8 +44,8 @@ public class BoardController {
         @ApiResponse(responseCode = "200", description = "리스트 로드 성공", content = @Content(schema = @Schema(implementation = Board.class)))
     })
     @GetMapping("/api/boards/new")
-    public ResponseEntity<List<Board>> getAllBoardList() {
-        return ResponseEntity.ok().body(boardService.getAllBoardList());
+    public ResponseEntity<List<BoardResponseDto>> getAllBoardList() {
+        return ResponseEntity.ok().body(BoardResponseDto.from(boardService.getAllBoardList()));
     }
 
     @ApiOperation(value = "게시글 상세정보 가져오기(articleId)", notes = "왁물원 공고 게시글 내용가져오기")
