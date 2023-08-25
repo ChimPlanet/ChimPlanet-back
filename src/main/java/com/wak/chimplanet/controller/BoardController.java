@@ -1,7 +1,7 @@
 package com.wak.chimplanet.controller;
 
-import com.wak.chimplanet.common.config.exception.ApiErrorResult;
-import com.wak.chimplanet.common.config.exception.UnauthorizedException;
+import com.wak.chimplanet.exception.ApiErrorResult;
+import com.wak.chimplanet.exception.UnauthorizedException;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDto;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
 import com.wak.chimplanet.entity.Board;
@@ -13,8 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
-import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,17 +99,11 @@ public class BoardController {
     public ResponseEntity<?> searchBoard(
         @ApiParam(value = "게시글 제목", required = false) @RequestParam(value = "title", required = false) String title,
         @ApiParam(value = "검색하려는 태그", required = false) @RequestParam(required = false) List<Long> searchTagId) {
-        try {
-            log.info("parameter title : {} , tagsId : {}", title, searchTagId.toString());
-            List<BoardResponseDto> findBoardList = boardService.findBoardByTagIds(searchTagId,
-                title);
-            return ResponseEntity.ok().body(findBoardList);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiErrorResult(HttpStatus.BAD_REQUEST.value(), "검색 조건을 확인해주세요"));
-        }
+        log.info("parameter title : {} , tagsId : {}", title, searchTagId.toString());
+        List<BoardResponseDto> findBoardList = boardService.findBoardByTagIds(searchTagId,
+            title);
+        return ResponseEntity.ok().body(findBoardList);
     }
 
     @ApiOperation(value = "한달간 인기 공고")
