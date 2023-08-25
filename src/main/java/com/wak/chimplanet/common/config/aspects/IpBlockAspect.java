@@ -1,6 +1,6 @@
 package com.wak.chimplanet.common.config.aspects;
 
-import com.wak.chimplanet.common.config.exception.UnauthorizedException;
+import com.wak.chimplanet.exception.UnauthorizedException;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;

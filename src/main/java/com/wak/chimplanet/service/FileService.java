@@ -120,10 +120,6 @@ public class FileService {
 
         log.info("deleteFileName : {}, deleteFilePath : {}", fileEntity.getFileName(), deletePath.toString());
 
-//        if (fileEntity.getImageUri() != null && !Files.exists(deletePath)) {
-//            // 파일 uri 가 존재하나 삭제할 파일이 존재하지 않는 경우
-//            throw new FileNotFoundException("File does not exist.");
-//        }
         // 삭제할 파일이 존재하는 경우에만 파일 삭제 로직실행
         if(Files.exists(deletePath)) {
             try {

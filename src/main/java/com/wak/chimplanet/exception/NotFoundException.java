@@ -1,4 +1,4 @@
-package com.wak.chimplanet.common.config.exception;
+package com.wak.chimplanet.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException() {
