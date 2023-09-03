@@ -1,6 +1,7 @@
 package com.wak.chimplanet.portfolio.service;
 
 import com.wak.chimplanet.portfolio.domain.Portfolio;
+import com.wak.chimplanet.portfolio.dto.RequestPortfolioByTagsDto;
 import com.wak.chimplanet.portfolio.repository.PortfolioRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,11 @@ public class PortfolioService {
         return portfolioRepository.findPortfolioDetailById(portfolioId);
     }
 
-
+    /**
+     * 태그로 포트폴리오 검색
+     */
+    public List<Portfolio> findPortfolioByTags(
+        RequestPortfolioByTagsDto requestPortfolioByTagsDto) {
+        return portfolioRepository.findPortfolioByTags(requestPortfolioByTagsDto.getTagObjs());
+    }
 }

@@ -1,6 +1,7 @@
 package com.wak.chimplanet.portfolio.controller;
 
 import com.wak.chimplanet.portfolio.domain.Portfolio;
+import com.wak.chimplanet.portfolio.dto.RequestPortfolioByTagsDto;
 import com.wak.chimplanet.portfolio.service.PortfolioService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class PortfolioController {
     @GetMapping("/api/portfolio")
     public ResponseEntity<?> findPortfolios() {
         portfolioService.findPortfolios();
+        return ResponseEntity.status(HttpStatus.OK).body(portfolioService.findPortfolios());
     }
 
     @GetMapping("/api/portfolio/{portfolioId}")
@@ -34,5 +36,11 @@ public class PortfolioController {
         @PathVariable("portfolioId") @Valid Long portfolioId) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(portfolioService.findPortfolioDetailById(portfolioId));
+    }
+
+    @GetMapping("/api/portfolio/")
+    public ResponseEntity<?> findPortfolioByTags(RequestPortfolioByTagsDto requestPortfolioByTagsDto) {
+        portfolioService.findPortfolioByTags(requestPortfolioByTagsDto);
+        return null;
     }
 }

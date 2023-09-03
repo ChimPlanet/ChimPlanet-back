@@ -69,6 +69,7 @@ public class Utility {
      * 게시글에서 태그 리스트 분류하기
      */
     public static List<TagObj> categorizingTag(String content, List<TagObj> tags) {
+        // 본문이 비어있는 경우 return
         if(content.isEmpty()) return null;
 
         // 문장에서 찾은 태그명
