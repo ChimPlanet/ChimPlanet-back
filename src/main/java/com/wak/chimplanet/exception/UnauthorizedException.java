@@ -1,4 +1,4 @@
-package com.wak.chimplanet.common.config.exception;
+package com.wak.chimplanet.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

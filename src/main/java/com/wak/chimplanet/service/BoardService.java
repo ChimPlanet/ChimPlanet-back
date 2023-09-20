@@ -1,6 +1,6 @@
 package com.wak.chimplanet.service;
 
-import com.wak.chimplanet.common.config.exception.UnauthorizedException;
+import com.wak.chimplanet.exception.UnauthorizedException;
 import com.wak.chimplanet.common.util.Utility;
 import com.wak.chimplanet.dto.responseDto.BoardDetailResponseDto;
 import com.wak.chimplanet.dto.responseDto.BoardResponseDto;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
