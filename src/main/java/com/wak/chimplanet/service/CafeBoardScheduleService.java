@@ -64,9 +64,13 @@ public class CafeBoardScheduleService {
                 // 접근 권한이 없는 경우 Y 처리
                 if (boardDetail == null) {
                     board.setUnauthorized("Y");
+                    continue;
                 }
 
-                String content = Optional.ofNullable(boardDetail.getContent()).orElse(null);
+                String content = Optional.ofNullable(boardDetail)
+                                .map(BoardDetail::getContent)
+                                .orElse(null);
+
                 List<TagObj> tagObjs = Utility.categorizingTag(content, tags);
                 List<BoardTag> boardTags = new ArrayList<>();
 
