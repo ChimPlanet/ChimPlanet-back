@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 게시글 목록을 리턴할 Response 클래스
@@ -21,6 +22,7 @@ public class BoardResponseDto {
     private String articleId;
     private String boardTitle;
     private String writer;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime regDate;
     private String thumbnailURL;
     private String redirectURL;
